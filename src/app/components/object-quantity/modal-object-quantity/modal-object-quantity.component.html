@@ -1,0 +1,34 @@
+<ion-content class="background">
+  <div ion-fixed>
+    <button type="button" class="btnClose" (click)="close()">
+      <img src="assets/images/btn.add.png">
+    </button>
+  </div>
+  <div class="bd-list left-green-bar">
+    <div class="title">
+      {{title}}
+    </div>
+    <ion-searchbar
+            placeholder = "Buscar"
+            [showCancelButton]="shouldShowCancel"
+            (ionInput)="onInput($event)"
+            (ionCancel)="onCancel($event)">
+    </ion-searchbar>
+    <ion-list lines="none">
+      <ion-item *ngIf="!multiple">
+        <span class="oneItem">Sólo puedes escoger una categoría</span>
+      </ion-item>
+      <ion-item *ngFor="let item of data" [ngClass]="check(item)" (click)="selectItem(item)">
+        {{ item.name }}
+      </ion-item>
+      <ion-item text-center>
+        <div class="justify-center large">
+          <button class="btnForm" type="button"  (click)="closeModal()">
+            Seleccionar
+          </button>
+        </div>
+      </ion-item>
+    </ion-list>
+  </div>
+
+</ion-content>

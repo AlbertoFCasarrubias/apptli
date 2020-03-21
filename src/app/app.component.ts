@@ -14,34 +14,9 @@ import {Router} from '@angular/router';
 export class AppComponent {
   public appPages = [
         {
-            title: 'Ordenes de trabajo',
+            title: 'Agenda',
             url: '/home',
             icon: 'home'
-        },
-        {
-            title: 'Ventas',
-            url: '/sales',
-            icon: 'cash'
-        },
-        {
-            title: 'Agregar orden de trabajo',
-            url: '/order',
-            icon: 'today'
-        },
-        {
-            title: 'Clientes',
-            url: '/clients',
-            icon: 'people'
-        },
-        {
-            title: 'Materiales',
-            url: '/materials',
-            icon: 'paper'
-        },
-        {
-            title: 'Status',
-            url: '/status-all',
-            icon: 'medical'
         },
         {
             title: 'Usuarios',

@@ -1,0 +1,75 @@
+<div class="schedule">
+  <ion-grid>
+    <ion-row>
+      <ion-col col-1>
+        <div class="header-button" (click)="substractMonth()">
+          <img  src="assets/images/agenda.back.mes.png">
+        </div>
+      </ion-col>
+      <ion-col col-1>
+        <div class="header-button" (click)="substractWeek()">
+          <img src="assets/images/agenda.back.semana.png">
+        </div>
+      </ion-col>
+      <ion-col col-8>
+        <div *ngIf="weekShown" text-center>
+          <span class="header-title">semana</span>
+          <span class="header-week">del {{weekShown.startOf('week').format('D MMM')}} al {{weekShown.endOf('week').format('D MMM')}}</span>
+        </div>
+      </ion-col>
+      <ion-col col-1>
+        <div class="header-button" (click)="addWeek()">
+          <img src="assets/images/agenda.forward.png">
+        </div>
+      </ion-col>
+      <ion-col col-1>
+        <div class="header-button" (click)="addMonth()">
+          <img  src="assets/images/agenda.forward.mes.png">
+        </div>
+      </ion-col>
+    </ion-row>
+    <ion-col col-12 no-padding>
+      <div class="days">
+        <div class="day" [ngClass]="{'today': today.format('YYYY-MM-DD') == day.day.moment.format('YYYY-MM-DD') }" *ngFor="let day of schedule">
+          <span class="dayLetters">{{day.day.moment.format('ddd').substr(0,3)}}</span>
+          <span class="dayNumber"> {{day.day.moment.format('D')}}</span>
+        </div>
+      </div>
+    </ion-col>
+  </ion-grid>
+  <div class="scheduler">
+    <div class="hourColumn" >
+      <div class="hour" *ngFor="let hour of hours">{{hour}}</div>
+    </div>
+    <div class="time" [ngStyle]="{'top.px': time}"></div>
+
+    <div class="week" >
+
+      <div class="flex">
+        <div class="columns" *ngFor="let day of schedule; let i  = index;">
+          <div class="hour"
+               *ngFor="let hour of day.day.horas"
+               dragula="EVENTS"
+               id = "{{day.id}}@{{hour.id}}"
+               (click)="chooseAction(day.id, hour.id, hour.events)">
+
+            <!-- (press)="drag($event)" -->
+            <div (tap)="chooseAction(day.id, hour.id, hour.events, event)"
+                 class="consulta"
+                 [ngStyle]="setStyle(event)"
+                 id = "{{event.id}}"
+                 *ngFor="let event of hour.events">
+              <span *ngIf="event.data.users[0]">{{event.data.users[0].name}}</span>
+              <span *ngIf="hour.events.length<=2">{{event.nombre}}</span>
+              <span *ngIf="hour.events.length>2">{{event.nombre.substring(0,1)}}</span>
+              <span *ngIf="event.data.estatus == 'pay'">Pagado</span>
+              <span *ngIf="event.data.estatus == 'cancelled'">Cancelado</span>
+            </div>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

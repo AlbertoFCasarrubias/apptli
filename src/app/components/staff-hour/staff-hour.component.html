@@ -1,0 +1,32 @@
+<ion-grid class="rowStaff">
+  <ion-row class="rowStaff">
+    <ion-col size="12" size-sm="4" class="day">
+      <ion-list>
+        <ion-item lines="none">
+          <ion-label>{{day}}</ion-label>
+          <ion-toggle float-left [(ngModel)]="activeDay" (ionChange)="toogleActiveDay()"></ion-toggle>
+        </ion-item>
+      </ion-list>
+    </ion-col>
+    <ion-col size-xs="6"  size-md="4" *ngIf="activeDay">
+      <ion-list lines="none">
+        <ion-item>
+          <ion-datetime #idStart float-left class="input-simple" placeholder="entrada" [(ngModel)]="start"
+                        displayFormat="h:mm A" pickerFormat="h mm A"
+                        (ionChange)="changeHour()"
+                        [minuteValues]="minuteValues"></ion-datetime>
+        </ion-item>
+      </ion-list>
+    </ion-col>
+    <ion-col size-xs="6" size-md="4" *ngIf="activeDay">
+      <ion-list lines="none">
+        <ion-item>
+          <ion-datetime #idEnd   float-left class="input-simple" placeholder="salida"  [(ngModel)]="end"
+                        displayFormat="h:mm A" pickerFormat="h mm A"
+                        (ionChange)="changeHour()"
+                        [minuteValues]="minuteValues"></ion-datetime>
+        </ion-item>
+      </ion-list>
+    </ion-col>
+  </ion-row>
+</ion-grid>

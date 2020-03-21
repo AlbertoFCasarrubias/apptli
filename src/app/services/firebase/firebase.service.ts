@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {AngularFireAuth} from '@angular/fire/auth';
 import * as firebase from 'firebase/app';
@@ -12,38 +12,26 @@ import {combineLatest, forkJoin, zip} from 'rxjs';
 })
 export class FirebaseService {
 
-  MATERIALS = 'materials';
-  USERS = 'users';
-  CLIENTS = 'clients';
-  ORDERS = 'orders';
-  STATUS = 'status';
-  NOTIFICATION = 'notification';
+  private MATERIALS = 'materials';
+  private SCHEDULE = 'schedule';
+  private USERS = 'users';
+  private CLIENTS = 'clients';
+  private ORDERS = 'orders';
+  private STATUS = 'status';
+  private NOTIFICATION = 'notification';
 
-  constructor(public afs: AngularFirestore,
-              public afAuth: AngularFireAuth) { }
+  constructor(private afs: AngularFirestore,
+              private afAuth: AngularFireAuth) {
+  }
 
-  // Notification
-  private async checkNotificationExist(orderID)
-  {
-    return this.afs.collection(this.NOTIFICATION, ref => ref.where('order.id','==', orderID))
-        .get()
-        .toPromise()
-        .then(data => {
-          let resp = {};
-
-          for(const d of data.docs) {
-            resp = d.data();
-            resp['id'] = d.id;
-          }
-
-          return resp;
-        });
+  // FIREBASE CALLS
+  private get timestamp() {
+    return firebase.firestore.FieldValue.serverTimestamp();
   }
 
   async createNotification(value) {
     const exist = await this.checkNotificationExist(value.order.id);
-    if(!exist['order'])
-    {
+    if (!exist['order']) {
       value.userRequest = await this.getUserId();
       value.ready = false;
       return this.create(this.NOTIFICATION, value);
@@ -90,6 +78,52 @@ export class FirebaseService {
     return this.delete(this.MATERIALS, id);
   }
 
+  // Schedule
+  createSchedule(value) {
+    return this.create(this.SCHEDULE, value);
+  }
+
+  updateSchedule(value) {
+    return this.update(this.SCHEDULE, value);
+  }
+
+  getSchedules() {
+    const events = this.afs.collection(this.SCHEDULE, ref => ref.orderBy('autoincrement', 'asc'))
+        .valueChanges({idField: 'id'});
+
+    return events.pipe(
+        switchMap(eventsCollection => {
+          const usersObservable = eventsCollection.map(
+              event => {
+                return this.afs.doc(`${this.USERS}/${event['users'][0]}`)
+                    .valueChanges()
+                    .pipe(first());
+              });
+
+          return combineLatest(
+              ...usersObservable
+          )
+              .pipe(map((...users) => {
+                    eventsCollection.forEach((event, index) => {
+                      const userId = event['users'][0];
+                      users[0][index]['id'] = userId;
+                      event['users'][0] = users[0][index];
+                    });
+                    return eventsCollection;
+                  })
+              );
+        })
+    );
+  }
+
+  getSchedule(id) {
+    return this.getById(this.SCHEDULE, id);
+  }
+
+  deleteSchedule(id) {
+    return this.delete(this.SCHEDULE, id);
+  }
+
   // Users
   createUser(value) {
     return this.create(this.USERS, value);
@@ -112,8 +146,7 @@ export class FirebaseService {
     return this.delete(this.USERS, id);
   }
 
-  getAdminUsers()
-  {
+  getAdminUsers() {
     /*
     const auth = admin.initializeApp().auth();
     auth.listUsers().then( users => {
@@ -170,8 +203,7 @@ export class FirebaseService {
 
   async updateOrder(value) {
     const exist = await this.checkNotificationExist(value.id);
-    if(exist['order'])
-    {
+    if (exist['order']) {
       this.deleteNotification(exist['id']);
     }
 
@@ -180,7 +212,7 @@ export class FirebaseService {
 
   getOrders() {
     const orders = this.afs.collection(this.ORDERS, ref => ref.orderBy('date', 'desc'))
-        .valueChanges({ idField: 'id' });
+        .valueChanges({idField: 'id'});
 
     //this.deleteMultiple(this.MATERIALS, 'a')
     return orders.pipe(
@@ -208,9 +240,9 @@ export class FirebaseService {
               ...clientObservable,
               ...statusObservable,
               ...usersObservable,
-              this.afs.collection(this.MATERIALS, ref => ref.orderBy('name', 'asc')).valueChanges({ idField: 'id' })
+              this.afs.collection(this.MATERIALS, ref => ref.orderBy('name', 'asc')).valueChanges({idField: 'id'})
           )
-              .pipe( map((...clients) => {
+              .pipe(map((...clients) => {
                     const materials = clients[0].pop();
                     const third = Math.ceil(clients[0].length / 3);
                     const status = clients[0].splice(third, third);
@@ -228,14 +260,12 @@ export class FirebaseService {
                       order['status'] = status[index];
                       order['user'] = users[index];
 
-                      if(order['status']){
+                      if (order['status']) {
                         order['status'].hex = order['status'].color.substring(1);
                       }
 
-                      for(const item of order['items'])
-                      {
-                        if(item.material)
-                        {
+                      for (const item of order['items']) {
+                        if (item.material) {
                           item.material = materials.find(m => m.id === item.material);
                         }
                       }
@@ -274,15 +304,13 @@ export class FirebaseService {
               clientObservable,
               statusObservable,
               usersObservable,
-              this.afs.collection(this.MATERIALS, ref => ref.orderBy('name', 'asc')).valueChanges({ idField: 'id' })
+              this.afs.collection(this.MATERIALS, ref => ref.orderBy('name', 'asc')).valueChanges({idField: 'id'})
           )
-              .pipe( map(([clients, status, user, materials]) =>
-                  {
+              .pipe(map(([clients, status, user, materials]) => {
                     clients['id'] = idClient;
                     user['id'] = idUser;
 
-                    if(status)
-                    {
+                    if (status) {
                       status['id'] = idStatus;
                     }
 
@@ -292,14 +320,12 @@ export class FirebaseService {
                     ordersCollection['status'] = status;
                     ordersCollection['user'] = user;
 
-                    if(ordersCollection['status']){
+                    if (ordersCollection['status']) {
                       ordersCollection['status'].hex = ordersCollection['status'].color.substring(1);
                     }
 
-                    for(const item of ordersCollection['items'])
-                    {
-                      if(item.material)
-                      {
+                    for (const item of ordersCollection['items']) {
+                      if (item.material) {
                         item.material = materials.find(m => m.id === item.material);
                       }
                     }
@@ -317,26 +343,16 @@ export class FirebaseService {
     return this.delete(this.ORDERS, id);
   }
 
-  // FIREBASE CALLS
-  private get timestamp() {
-    return firebase.firestore.FieldValue.serverTimestamp();
-  }
-
-  private getCurrentUser() {
-    return this.afAuth.auth.currentUser;
-  }
-
-  async getUserId()
-  {
+  async getUserId() {
     const user = await this.getCurrentUser();
     console.log('*** ', user);
-    return this.afs.collection(this.USERS, ref => ref.where('adminID','==', user.uid))
+    return this.afs.collection(this.USERS, ref => ref.where('adminID', '==', user.uid))
         .get()
         .toPromise()
         .then(data => {
           let resp = {};
 
-          for(const d of data.docs) {
+          for (const d of data.docs) {
             resp = d.data();
           }
 
@@ -344,8 +360,28 @@ export class FirebaseService {
         });
   }
 
-  private getLastRecord(collection , field = 'autoincrement')
-  {
+  // Notification
+  private async checkNotificationExist(orderID) {
+    return this.afs.collection(this.NOTIFICATION, ref => ref.where('order.id', '==', orderID))
+        .get()
+        .toPromise()
+        .then(data => {
+          let resp = {};
+
+          for (const d of data.docs) {
+            resp = d.data();
+            resp['id'] = d.id;
+          }
+
+          return resp;
+        });
+  }
+
+  private getCurrentUser() {
+    return this.afAuth.auth.currentUser;
+  }
+
+  private getLastRecord(collection, field = 'autoincrement') {
     return this.afs.collection(collection, ref => ref.orderBy(field, 'desc').limit(1))
         .get()
         .toPromise()
@@ -353,7 +389,7 @@ export class FirebaseService {
           console.log('DATA ', data);
           let resp = {};
 
-          for(const d of data.docs) {
+          for (const d of data.docs) {
             resp = d.data();
           }
 
@@ -371,7 +407,7 @@ export class FirebaseService {
     value['createdBy'] = current.email;
     value['autoincrement'] = autoincrement;
     value['updatedAt'] = timestamp;
-    value['createAt']  = timestamp;
+    value['createAt'] = timestamp;
 
     this.afs.collection(collection).add(value);
 
@@ -384,10 +420,9 @@ export class FirebaseService {
         .delete();
   }
 
-  private deleteMultiple(collection, search)
-  {
-    this.afs.collection(collection, ref => ref.where('name','==', search).limit(500)).get()
-        .subscribe( querySnapshot =>{
+  private deleteMultiple(collection, search) {
+    this.afs.collection(collection, ref => ref.where('name', '==', search).limit(500)).get()
+        .subscribe(querySnapshot => {
           console.log('querySnapshot ', querySnapshot);
 
           const batch = this.afs.firestore.batch();
@@ -415,19 +450,17 @@ export class FirebaseService {
 
   private getAll(collection) {
     let field = 'name';
-    if(collection === this.NOTIFICATION)
-    {
+    if (collection === this.SCHEDULE) {
       field = 'autoincrement';
     }
-    return this.afs.collection(collection, ref => ref.orderBy(field, 'asc')).valueChanges({ idField: 'id' });
+    return this.afs.collection(collection, ref => ref.orderBy(field, 'asc')).valueChanges({idField: 'id'});
   }
 
   private async update(collection, value) {
     const id = value.id;
-    delete( value.id);
+    delete (value.id);
 
-    if(!value.autoincrement)
-    {
+    if (!value.autoincrement) {
       const last = await this.getLastRecord(collection);
       const autoincrement = last && last['autoincrement'] ? last['autoincrement'] += 1 : 1;
       value['autoincrement'] = autoincrement;
@@ -438,7 +471,7 @@ export class FirebaseService {
     value['updatedAt'] = timestamp;
     value['updatedBy'] = current.email;
 
-    if(!value['createdAt']){
+    if (!value['createdAt']) {
       value['createdAt'] = timestamp;
     }
 

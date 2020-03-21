@@ -1,0 +1,26 @@
+.rowStaff{
+  width: 100%;
+}
+
+staff-hour {
+  width: 100%;
+
+  .day{
+    font-family: Montserrat;
+    font-size: 26.3px;
+    font-weight: 800;
+    color: #5b5b5f;
+
+    ion-list,
+    ion-item{
+      height: 45px;
+      margin-bottom: 0;
+    }
+
+    ion-label{
+      font-size: 26.3px;
+      font-weight: 800;
+      color: #5b5b5f;
+    }
+  }
+}

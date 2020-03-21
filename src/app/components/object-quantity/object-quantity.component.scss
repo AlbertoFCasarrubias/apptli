@@ -1,0 +1,139 @@
+@import "src/global.scss";
+
+.btnAgregar{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 30px;
+  width: 40px;
+  float: right;
+  padding: 0 10px;
+
+  img{
+    width: auto;
+    height: 20px;
+  }
+}
+
+.elementName{
+  width: auto;
+  height: 30px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  padding-right:10px;
+  float: left;
+}
+
+.btnBorrar {
+  border-radius: 40px;
+  box-shadow: 0px 9.5px 13.5px 0 rgba(1, 0, 2, 0.07);
+  background-image: linear-gradient(180deg, $lightRed, $red);
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  height: 30px;
+  width: 120px;
+  float: right;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 600;
+
+  border-radius: 5px;
+
+  img {
+    width: auto;
+    height: 20px;
+  }
+}
+
+.borderBottom{
+  border-bottom: solid 2.5px #d1d1d1;
+}
+
+ion-label{
+  font-family: Montserrat;
+  font-size: 20px;
+  font-weight: 300;
+  height: 30px;
+  color: white;
+  border-radius: 30px;
+  padding-left: 20px;
+  line-height: 30px;
+  background-image: linear-gradient(180deg, $lightRed, $red);
+  box-shadow: 0px 9.5px 13.5px 0 rgba(1, 0, 2, 0.07);
+
+  span{
+    color: #fff;
+    font-weight: normal;
+  }
+
+  &.red{
+    color: $red;
+  }
+}
+
+.noQuantity{
+  margin: 5px 0;
+
+}
+
+.header-cantidad{
+  font-family: Montserrat;
+  font-size: 15px;
+  font-weight: 800;
+  color: $red;
+  height: 50px;
+  line-height: 50px;
+  text-transform: lowercase;
+  text-align: center;
+}
+
+.bd-cantidad{
+  font-family: Montserrat;
+  font-size: 12.5px;
+  font-weight: bold;
+  color: #d1d1d1;
+  height: 60px;
+  line-height: 60px;
+  display: flex;
+  align-items: center;
+
+  &.end{
+    justify-content: flex-end;
+  }
+}
+
+.item-ios {
+  height: 54px;
+  padding-left: 16px;
+  padding-left: 16px;
+  border-radius: 0;
+  position: relative;
+  font-size: 1.7rem;
+  color: #000;
+  background-color: #fff;
+  border-bottom: none;
+
+  .text-input{
+    font-size: 15px !important;
+  }
+}
+
+@media only screen
+and (max-device-width: 425px)
+and (orientation: portrait){
+
+  .elementName{
+    padding-left: 0;
+    width: calc(100% - 35px);
+  }
+
+  .btnBorrar {
+    width: 30px;
+
+    span{
+      display: none;
+    }
+  }
+}

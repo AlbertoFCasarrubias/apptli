@@ -24,3 +24,52 @@
 @import "~@ionic/angular/css/text-alignment.css";
 @import "~@ionic/angular/css/text-transformation.css";
 @import "~@ionic/angular/css/flex-utils.css";
+
+object-quantity,
+staff-hour{
+  width: 100%;
+}
+
+$lightRed : #e8797b;
+$red: rgb(232,89,91);
+$darkBlue: rgb(40,56,94);
+$grey: rgb(91,91,95);
+$green: rgb(67,197,174);
+
+body{
+  font-family: 'Montserrat' !important;
+}
+
+.btnForm{
+  border-radius: 40px;
+  box-shadow: 0px 9.5px 13.5px 0 rgba(1, 0, 2, 0.07);
+  background-image: linear-gradient(180deg, $lightRed, $red);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 160px;
+  height: 40px;
+  float: left;
+  font-size: 20px;
+  font-weight: 600;
+  color: #fff;
+  margin: auto;
+}
+
+.bd-list{
+  width: 70%;
+  margin: 100px auto 0 auto;
+  font-family: Montserrat;
+
+  &.left-green-bar{
+    border-left: $green 6px solid;
+    padding-left: 20px;
+  }
+
+  &.left-red-bar{
+    border-left: $red 6px solid;
+    padding-left: 20px;
+  }
+}
+
+

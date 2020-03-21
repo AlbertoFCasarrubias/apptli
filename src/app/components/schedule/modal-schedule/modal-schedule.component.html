@@ -1,0 +1,101 @@
+<ion-content padding>
+  <div ion-fixed>
+    <button type="button" class="btnClose" (click)="close()">
+      <img src="assets/images/btn.add.png">
+    </button>
+  </div>
+  <div class="bd-list left-green-bar">
+    <div class="title">
+      Evento {{title}}
+    </div>
+    <form [formGroup]="form" (ngSubmit)="submitForm(form.value)">
+      <ion-grid>
+        <ion-row justify-content-center>
+          <ion-col col-12>
+            <ion-list>
+
+              <ion-item lines="none">
+                <span class="aviso"> *Favor de llenar todos los campos.</span>
+              </ion-item>
+
+              <!-- SERVICES >
+              <ion-item>
+                <object-quantity
+                        [data]="services"
+                        [title]="'Servicios'"
+                        [initial]="selectedServices"
+                        [showQuantity] = "false"
+                        (change)="setSelected('servicio',$event)">
+                </object-quantity>
+              </ion-item>
+              <ion-item  (click)="goToPage('services')" *ngIf="clients.length==0">
+                Favor dar de alta servicios para poder asignarlos al servicio.
+              </ion-item-->
+
+              <!-- CLIENTS >
+              <ion-item>
+                <object-quantity
+                        [data]="clients"
+                        [title]="'Clientes'"
+                        [initial]="selectedClients"
+                        [showQuantity] = "false"
+                        (change)="setSelected('clientes',$event)">
+                </object-quantity>
+              </ion-item>
+              <ion-item  (click)="goToPage('clients')" *ngIf="clients.length==0">
+                Favor dar de alta clientes para poder asignarlos al servicio.
+              </ion-item-->
+
+              <!-- USERS -->
+              <ion-item lines="none">
+                <object-quantity
+                        [data]="users"
+                        [title]="'Doctor'"
+                        [initial]="selectedUsers"
+                        [showQuantity] = "false"
+                        (change)="setSelected('users',$event)">
+                </object-quantity>
+              </ion-item>
+              <ion-item (click)="goToPage('staff')" *ngIf="users.length==0">
+                Favor dar de alta doctores para poder asignarlos a la consulta.
+              </ion-item>
+
+              <!-- CABINA >
+              <ion-item>
+                <object-quantity
+                        [data]="stalls"
+                        [title]="'Cabina'"
+                        [initial]="selectedStall"
+                        [showQuantity] = "false"
+                        (change)="setSelected('cabina',$event)">
+                </object-quantity>
+              </ion-item>
+              <ion-item  (click)="goToPage('stall')" *ngIf="stalls.length==0">
+                Favor dar de alta cabinas para poder asignarlos al servicio.
+              </ion-item-->
+
+              <!-- DURACION >
+              <ion-item>
+                <ion-label floating>Duración <span class="porcentaje">(minutos)</span></ion-label>
+                <ion-input type="floating" [formControl]="form.controls['duracion']" ></ion-input>
+              </ion-item-->
+
+              <!-- COMENTARIOS -->
+              <ion-item >
+                <ion-textarea class="bela-textarea" [formControl]="form.controls['comments']" >Comentarios</ion-textarea>
+              </ion-item>
+
+              <ion-item lines="none" class="center">
+                <button ion-button class="btnForm" [disabled]="!form.valid">
+                  <span>Guardar</span>
+                </button>
+              </ion-item>
+
+
+            </ion-list>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </form>
+  </div>
+</ion-content>

@@ -1,0 +1,253 @@
+$size:40px;
+
+.schedule{
+  width: 100%;
+  min-height: 70vh;
+  border-radius: 15px;
+  box-shadow: 0px 9.5px 13.5px 0 rgba(1, 0, 2, 0.07);
+  background-color: #f7f7f8;
+  height: calc(100vh - 56px);
+  overflow: hidden;
+  position: relative;
+}
+
+.header-title{
+  font-family: Montserrat;
+  font-size: 30px;
+  font-weight: 500;
+  color: #5b5b5f;
+  float: left;
+  width: 100%;
+  text-align: center;
+}
+
+.header-week{
+  font-family: Montserrat;
+  font-size: 20px;
+  font-weight: 800;
+  color: #5b5b5f;
+  float: left;
+  width: 100%;
+  text-align: center;
+}
+
+.header-button{
+  width: 100%;
+  height: 70px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+}
+
+schedule {
+  float: left;
+  position: relative;
+  width: 100%;
+  height: auto;
+
+  .container{
+    div{
+      background: #ccc;
+      padding: 10px;
+      margin: 5px;
+    }
+  }
+
+  .dates{
+    float: left;
+    width: 100%;
+    height: 100px;
+  }
+
+  .time{
+    position: absolute;
+    width: 100%;
+    height: 2px;
+    background: #f53d3d;
+    left: 0;
+    top: 0;
+    z-index: 90;
+    margin-top: 40px;
+    display: none;
+  }
+
+
+
+
+}
+
+.scheduler {
+  float: left;
+  width: 100%;
+  height: calc(100vh - 220px);
+  position: relative;
+  overflow: auto;
+
+  .hourColumn{
+    width: 60px;
+    font-size: 10px;
+    color: #aaaaaa;
+    height: 100px;
+    position: absolute;
+    padding: 5px;
+    top:40px;
+
+    .hour{
+      float: left;
+      width: 100%;
+      height: 80px;
+      font-family: Montserrat;
+      font-size: 10px;
+      font-weight: 500;
+      color: #e8595b;
+      position: relative;
+      z-index: 999;
+
+    }
+  }
+
+
+
+  .week{
+    width:100%;
+    position: relative;
+    float: left;
+    height: auto;
+
+    .flex{
+      float: left;
+      width: 100%;
+      height: auto;
+      display: flex;
+      justify-content: space-evenly;
+
+
+      .dayname{
+        width: $size;
+        height: $size;
+        text-align: center;
+        line-height: $size;
+        margin: 0 5px;
+        font-size: 20px;
+
+      }
+
+      .day{
+        width: $size;
+        height: $size;
+        background: #4197B5;
+        border-radius: $size;
+        color: #fff;
+        text-align: center;
+        line-height: $size;
+        margin: 0 5px;
+        font-size: 20px;
+      }
+
+      .columns{
+        min-height: 500px;
+        height: auto;
+        width:11%;
+        border-radius: 15px;
+        box-shadow: 0px 9.5px 13.5px 0 rgba(1, 0, 2, 0.07);
+        background-color: #ededed;
+
+        &:first-child{
+          margin-left: 50px;
+        }
+
+        .hour{
+
+          display: flex;
+          justify-content: center;
+          padding-top: 2px;
+          float: left;
+          width: 100%;
+          height: 80px;
+          position: relative;
+          z-index: 80;
+
+          .consulta{
+            z-index: 90;
+            position: relative;
+            background: #4197B5;
+            color: #fff;
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 0 2px;
+            width: 100%;
+            font-family: Montserrat;
+            font-size: 12px;
+            position: relative;
+
+            span{
+              text-align: center;
+              margin-bottom: 5px;
+              width: 100%;
+              height: auto;
+            }
+          }
+        }
+      }
+    }
+
+
+
+
+  }
+
+
+}
+
+.days{
+  float: left;
+  width: 100%;
+  height: 50px;
+  display: flex;
+  justify-content: space-evenly;
+  line-height: 40px;
+
+  .day{
+    width:11%;
+    text-align: center;
+
+    .dayLetters{
+      float: left;
+      width: 100%;
+      height: 15px;
+      text-align: center;
+      font-size: 13.5px;
+      font-weight: 500;
+      color: #75dccd;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+    }
+
+    .dayNumber{
+      float: left;
+      width: 100%;
+      height: 20px;
+      text-align: center;
+      font-size: 18.3px;
+      font-weight: 500;
+      color: #5b5b5f;
+      margin-bottom: 5px;
+    }
+
+    &.today{
+      span{
+        font-size: 20px;
+        font-weight: 800 !important;
+        color: var(--ion-color-danger) !important;
+      }
+    }
+
+    &:first-child{
+      margin-left: 50px;
+    }
+  }
+}

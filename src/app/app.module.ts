@@ -1,4 +1,4 @@
-import {LOCALE_ID, NgModule} from '@angular/core';
+import {CUSTOM_ELEMENTS_SCHEMA, LOCALE_ID, NgModule} from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
 
@@ -16,6 +16,7 @@ import {AngularFireModule} from '@angular/fire';
 import {registerLocaleData} from '@angular/common';
 import localeEs from '@angular/common/locales/es-MX';
 import {AngularFireAuthModule} from '@angular/fire/auth';
+import {DragulaModule, DragulaService} from 'ng2-dragula';
 
 registerLocaleData(localeEs);
 
@@ -24,6 +25,7 @@ registerLocaleData(localeEs);
   entryComponents: [],
   imports: [
     BrowserModule,
+    DragulaModule,
     AppRoutingModule,
     IonicModule.forRoot(),
     AngularFireAuthModule,
@@ -34,9 +36,11 @@ registerLocaleData(localeEs);
   providers: [
     StatusBar,
     SplashScreen,
+    DragulaService,
     { provide: LOCALE_ID, useValue: 'es-MX'},
     { provide: RouteReuseStrategy, useClass: IonicRouteStrategy }
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 })
 export class AppModule {}

@@ -1,0 +1,98 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="goBack()" >
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>
+      Usuario
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form class="form" [formGroup]="form" (ngSubmit)="submit(form.value)">
+    <ion-list>
+      <ion-item>
+        <ion-label position="stacked">Nombre</ion-label>
+        <ion-input formControlName="name"></ion-input>
+      </ion-item>
+      <ion-item *ngIf="form.controls.name.hasError('required') && (form.controls.name.dirty || form.controls.name.touched)">
+        El nombre es obligatorio.
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Correo electrónico</ion-label>
+        <ion-input formControlName="mail"type="email"></ion-input>
+      </ion-item>
+      <ion-item *ngIf="form.controls.mail.hasError('required') && (form.controls.mail.dirty || form.controls.mail.touched)">
+        El correo electrónico es obligatorio.
+      </ion-item>
+      <ion-item *ngIf="form.controls.mail.hasError('email') && (form.controls.mail.dirty || form.controls.mail.touched)">
+        No es un correo electrónico.
+      </ion-item>
+      <ion-item >
+        <ion-list lines="none" style="width: 100%;">
+          <ion-radio-group formControlName="doctor">
+            <ion-list-header>
+              <ion-label>
+                Doctor
+              </ion-label>
+            </ion-list-header>
+
+            <ion-item>
+              <ion-label>Sí</ion-label>
+              <ion-radio value="true"></ion-radio>
+            </ion-item>
+
+            <ion-item>
+              <ion-label>No</ion-label>
+              <ion-radio value="false"></ion-radio>
+            </ion-item>
+
+          </ion-radio-group>
+        </ion-list>
+      </ion-item>
+      <ion-item-divider color="light">Horario</ion-item-divider>
+      <ion-item>
+        <staff-hour day="lunes" class="staffHour"
+                    [init]="this.workingHours['lunes']"
+                    (change)="getStaffHour($event)"></staff-hour>
+      </ion-item>
+      <ion-item>
+        <staff-hour day="martes"
+                    [init]="this.workingHours['martes']"
+                    (change)="getStaffHour($event)"></staff-hour>
+      </ion-item>
+      <ion-item>
+        <staff-hour day="miércoles"
+                    [init]="this.workingHours['miércoles']"
+                    (change)="getStaffHour($event)"></staff-hour>
+      </ion-item>
+      <ion-item>
+        <staff-hour day="jueves"
+                    [init]="this.workingHours['jueves']"
+                    (change)="getStaffHour($event)"></staff-hour>
+      </ion-item>
+      <ion-item>
+        <staff-hour day="viernes"
+                    [init]="this.workingHours['viernes']"
+                    (change)="getStaffHour($event)"></staff-hour>
+      </ion-item>
+      <ion-item>
+        <staff-hour day="sábado"
+                    [init]="this.workingHours['sábado']"
+                    (change)="getStaffHour($event)"></staff-hour>
+      </ion-item>
+      <ion-item>
+        <staff-hour day="domingo"
+                    [init]="this.workingHours['domingo']"
+                    (change)="getStaffHour($event)"></staff-hour>
+      </ion-item>
+      <ion-item lines="none" class="ion-text-center">
+        <ion-button expand="block" type="submit" [disabled]="!form.valid">Guardar</ion-button>
+      </ion-item>
+
+    </ion-list>
+  </form>
+</ion-content>

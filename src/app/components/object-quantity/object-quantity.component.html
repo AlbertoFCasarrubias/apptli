@@ -1,0 +1,50 @@
+<ion-label class="{{color}}" (click)="showData()">
+  <span *ngIf="devWidth < 425">{{title.toLowerCase()}}</span>
+  <span *ngIf="devWidth >= 425">seleccionar {{title.toLowerCase()}}</span>
+  <div class="btnAgregar" (click)="showData()">
+    <img src="assets/images/btn.add.png">
+  </div>
+</ion-label>
+<ion-grid no-padding *ngIf="response.length>0">
+  <ion-row class="borderBottom" *ngIf="showQuantity">
+    <ion-col class="header-cantidad" col-4>
+      Nombre
+    </ion-col>
+    <ion-col class="header-cantidad" col-4>
+      Cantidad
+    </ion-col>
+    <ion-col class="header-cantidad" col-4>
+      Eliminar
+    </ion-col>
+  </ion-row>
+  <div  *ngIf="showQuantity">
+    <ion-row  class="borderBottom" *ngFor="let obj of response">
+      <ion-col class="bd-cantidad" col-4>
+        {{obj.nombre}}
+      </ion-col>
+      <ion-col class="bd-cantidad" col-4 >
+        <ion-item>
+          <ion-input type="number" placeholder="Piezas" [value]="obj.quantity"
+                     (ionChange)="updateQuantity($event,obj)"></ion-input>
+        </ion-item>
+      </ion-col>
+      <ion-col class="bd-cantidad end" col-4  >
+        <button class="btnBorrar" type="button" (click)="removeItem(obj)">
+          <img src="assets/images/trash.icon.png"> <span>eliminar</span>
+        </button>
+      </ion-col>
+    </ion-row>
+  </div>
+  <div  *ngIf="!showQuantity">
+    <ion-row class="borderBottom" *ngFor="let obj of response">
+      <ion-col size="12" class="noQuantity" (click)="removeItem(obj)">
+        <div class="elementName">
+          {{obj.name}}
+        </div>
+        <button class="btnBorrar" type="button" >
+          <img src="assets/images/trash.icon.png"> <span>eliminar</span>
+        </button>
+      </ion-col>
+    </ion-row>
+  </div>
+</ion-grid>

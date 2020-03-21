@@ -1,19 +1,19 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 import { IonicModule } from '@ionic/angular';
 
-import { SchedulePage } from './schedule.page';
+import { ModalObjectQuantityComponent } from './modal-object-quantity.component';
 
-describe('SchedulePage', () => {
-  let component: SchedulePage;
-  let fixture: ComponentFixture<SchedulePage>;
+describe('ModalObjectQuantityComponent', () => {
+  let component: ModalObjectQuantityComponent;
+  let fixture: ComponentFixture<ModalObjectQuantityComponent>;
 
   beforeEach(async(() => {
     TestBed.configureTestingModule({
-      declarations: [ SchedulePage ],
+      declarations: [ ModalObjectQuantityComponent ],
       imports: [IonicModule.forRoot()]
     }).compileComponents();
 
-    fixture = TestBed.createComponent(SchedulePage);
+    fixture = TestBed.createComponent(ModalObjectQuantityComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   }));
