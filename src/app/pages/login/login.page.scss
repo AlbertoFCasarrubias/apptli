@@ -1,0 +1,53 @@
+.error-message
+{
+  color: var(--ion-color-danger);
+  padding-left: 13px;
+  padding-top: 5px;
+}
+
+.go-to-register
+{
+  text-align: center;
+  margin-top: 20px;
+}
+
+.submit-btn
+{
+  margin-top: 40px;
+}
+
+.imageLogo{
+  float: left;
+  width: 100%;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo{
+  width: 100%;
+  height: auto;
+  margin-top: 10%;
+  max-width: 300px;
+}
+
+.center{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.verticalCenter{
+  display: flex;
+  align-items: center;
+
+}
+
+.formPos{
+  display: block;
+  width: 100%;
+  height: 600px;
+  max-width: 400px;
+  margin: auto;
+}
