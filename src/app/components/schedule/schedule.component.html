@@ -49,8 +49,10 @@
         <div class="columns" *ngFor="let day of schedule; let i  = index;">
           <div class="hour"
                *ngFor="let hour of day.day.horas"
+               drop
                dragula="EVENTS"
                id = "{{day.id}}@{{hour.id}}"
+               [ngClass]="changeDrop(day.id+'@'+hour.id)"
                (click)="chooseAction(day.id, hour.id, hour.events)">
 
             <!-- (press)="drag($event)" -->

@@ -4,7 +4,7 @@ import {AngularFireAuth} from '@angular/fire/auth';
 import * as firebase from 'firebase/app';
 import 'firebase/storage';
 // import * as admin from 'firebase-admin';
-import {combineAll, first, map, mergeAll, switchMap} from 'rxjs/operators';
+import {combineAll, first, flatMap, map, mergeAll, switchMap} from 'rxjs/operators';
 import {combineLatest, forkJoin, zip} from 'rxjs';
 
 @Injectable({
@@ -32,7 +32,7 @@ export class FirebaseService {
   async createNotification(value) {
     const exist = await this.checkNotificationExist(value.order.id);
     if (!exist['order']) {
-      value.userRequest = await this.getUserId();
+     // value.userRequest = await this.getUserId();
       value.ready = false;
       return this.create(this.NOTIFICATION, value);
     }
@@ -115,6 +115,12 @@ export class FirebaseService {
         })
     );
   }
+
+ getSchedulesByDoctor(idDoctor) {
+    return this.afs.collection(this.SCHEDULE, ref => ref.where('users', 'array-contains', idDoctor))
+        .valueChanges({idField: 'id'})
+        .pipe(map(events => events));
+    }
 
   getSchedule(id) {
     return this.getById(this.SCHEDULE, id);
@@ -343,21 +349,12 @@ export class FirebaseService {
     return this.delete(this.ORDERS, id);
   }
 
-  async getUserId() {
+  async getUserByAuthId() {
+    console.log('getUserByAuthId ');
     const user = await this.getCurrentUser();
-    console.log('*** ', user);
-    return this.afs.collection(this.USERS, ref => ref.where('adminID', '==', user.uid))
-        .get()
-        .toPromise()
-        .then(data => {
-          let resp = {};
-
-          for (const d of data.docs) {
-            resp = d.data();
-          }
-
-          return resp;
-        });
+    return this.afs.collection(this.USERS, ref => ref.where('adminID', '==', user.uid).limit(1))
+    .valueChanges({idField: 'id'})
+    .pipe(flatMap(users => users));
   }
 
   // Notification
@@ -386,7 +383,6 @@ export class FirebaseService {
         .get()
         .toPromise()
         .then(data => {
-          console.log('DATA ', data);
           let resp = {};
 
           for (const d of data.docs) {

@@ -1,4 +1,4 @@
-import {Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
+import {AfterContentChecked, Component, EventEmitter, Input, OnChanges, OnInit, Output, SimpleChanges} from '@angular/core';
 import {AlertController, ModalController, Platform} from '@ionic/angular';
 import {ModalObjectQuantityComponent} from './modal-object-quantity/modal-object-quantity.component';
 import {ModalScheduleComponent} from '../schedule/modal-schedule/modal-schedule.component';
@@ -8,7 +8,7 @@ import {ModalScheduleComponent} from '../schedule/modal-schedule/modal-schedule.
   templateUrl: './object-quantity.component.html',
   styleUrls: ['./object-quantity.component.scss'],
 })
-export class ObjectQuantityComponent implements OnChanges {
+export class ObjectQuantityComponent implements AfterContentChecked {
   @Input() initial: any = ''; //Valores iniciales que deben estar cargados en el componente
   @Input() data: any = '';    //Valores totales, ejemplo: todos los productos del catálogo
   @Input() title: any = '';
@@ -26,16 +26,12 @@ export class ObjectQuantityComponent implements OnChanges {
               public alertCtrl: AlertController,
               public platform: Platform) {}
 
-  ngOnChanges(changes: SimpleChanges)
+  ngAfterContentChecked()
   {
-    if(changes.initial && changes.initial.currentValue)
-    {
-      this.response = changes.initial.currentValue;
-    }
-
     this.devWidth = this.platform.width();
-    console.log('ObjectQuantityComponent changes ', changes);
-    console.log('ObjectQuantityComponent data  ', this.data);
+    if (this.initial) {
+      this.response = this.initial;
+    }
   }
 
   async showData() {

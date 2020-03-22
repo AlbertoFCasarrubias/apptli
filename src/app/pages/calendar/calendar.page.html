@@ -6,10 +6,14 @@
       </ion-button>
     </ion-buttons>
     <ion-title>
-      Apptli
+      Agenda
     </ion-title>
   </ion-toolbar>
 </ion-header>
+
 <ion-content>
-  hola
+  <schedule
+          [data]="scheduleData"
+          [title]="'Cargando agenda...'"
+          [titleAddAlert]="'Agregar servicio'"></schedule>
 </ion-content>

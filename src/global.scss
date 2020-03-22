@@ -30,6 +30,53 @@ staff-hour{
   width: 100%;
 }
 
+
+
+/* in-flight clone */
+.gu-mirror {
+  position: relative !important;
+  margin: 0 !important;
+  z-index: 9999 !important;
+  opacity: 0.8;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=80)";
+  filter: alpha(opacity=80);
+  pointer-events: none;
+  width: auto !important;
+  height: auto !important;
+
+  &.consulta{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    font-size: 12px;
+    color: #fff;
+    width: 60px !important;
+    height: auto !important;
+    margin-top: 80% !important;
+    margin-left: 50% !important;
+    padding: 0 20px;
+  }
+
+}
+/* high-performance display:none; helper */
+.gu-hide {
+  left: -9999px !important;
+}
+/* added to mirrorContainer (default = body) while dragging */
+.gu-unselectable {
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+}
+/* added to the source element while its mirror is dragged */
+.gu-transit {
+  /*opacity: 0.2;
+  -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=20)";
+  filter: alpha(opacity=20);*/
+}
+
 $lightRed : #e8797b;
 $red: rgb(232,89,91);
 $darkBlue: rgb(40,56,94);

@@ -25,7 +25,7 @@ export class UsersPage implements OnInit {
         .subscribe(
             data => {
               this.users = data;
-              console.log('USERS ' , data);
+              //console.log('USERS ' , data);
               this.dismissLoading();
             },
             err => console.error('error get users ', err));
@@ -44,7 +44,6 @@ export class UsersPage implements OnInit {
 
   dismissLoading() {
     if (this.loading) {
-      console.log('dismiss');
       this.loading.dismiss();
     }
   }

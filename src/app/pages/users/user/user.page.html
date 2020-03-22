@@ -53,42 +53,46 @@
           </ion-radio-group>
         </ion-list>
       </ion-item>
-      <ion-item-divider color="light">Horario</ion-item-divider>
-      <ion-item>
-        <staff-hour day="lunes" class="staffHour"
-                    [init]="this.workingHours['lunes']"
-                    (change)="getStaffHour($event)"></staff-hour>
-      </ion-item>
-      <ion-item>
-        <staff-hour day="martes"
-                    [init]="this.workingHours['martes']"
-                    (change)="getStaffHour($event)"></staff-hour>
-      </ion-item>
-      <ion-item>
-        <staff-hour day="miércoles"
-                    [init]="this.workingHours['miércoles']"
-                    (change)="getStaffHour($event)"></staff-hour>
-      </ion-item>
-      <ion-item>
-        <staff-hour day="jueves"
-                    [init]="this.workingHours['jueves']"
-                    (change)="getStaffHour($event)"></staff-hour>
-      </ion-item>
-      <ion-item>
-        <staff-hour day="viernes"
-                    [init]="this.workingHours['viernes']"
-                    (change)="getStaffHour($event)"></staff-hour>
-      </ion-item>
-      <ion-item>
-        <staff-hour day="sábado"
-                    [init]="this.workingHours['sábado']"
-                    (change)="getStaffHour($event)"></staff-hour>
-      </ion-item>
-      <ion-item>
-        <staff-hour day="domingo"
-                    [init]="this.workingHours['domingo']"
-                    (change)="getStaffHour($event)"></staff-hour>
-      </ion-item>
+      <div *ngIf="form.controls.doctor.value == 'true'">
+        <ion-item-divider color="light">
+          Horario {{form.controls.doctor.value}}
+        </ion-item-divider>
+        <ion-item>
+          <staff-hour day="lunes" class="staffHour"
+                      [init]="this.workingHours['lunes']"
+                      (change)="getStaffHour($event)"></staff-hour>
+        </ion-item>
+        <ion-item>
+          <staff-hour day="martes"
+                      [init]="this.workingHours['martes']"
+                      (change)="getStaffHour($event)"></staff-hour>
+        </ion-item>
+        <ion-item>
+          <staff-hour day="miércoles"
+                      [init]="this.workingHours['miércoles']"
+                      (change)="getStaffHour($event)"></staff-hour>
+        </ion-item>
+        <ion-item>
+          <staff-hour day="jueves"
+                      [init]="this.workingHours['jueves']"
+                      (change)="getStaffHour($event)"></staff-hour>
+        </ion-item>
+        <ion-item>
+          <staff-hour day="viernes"
+                      [init]="this.workingHours['viernes']"
+                      (change)="getStaffHour($event)"></staff-hour>
+        </ion-item>
+        <ion-item>
+          <staff-hour day="sábado"
+                      [init]="this.workingHours['sábado']"
+                      (change)="getStaffHour($event)"></staff-hour>
+        </ion-item>
+        <ion-item>
+          <staff-hour day="domingo"
+                      [init]="this.workingHours['domingo']"
+                      (change)="getStaffHour($event)"></staff-hour>
+        </ion-item>
+      </div>
       <ion-item lines="none" class="ion-text-center">
         <ion-button expand="block" type="submit" [disabled]="!form.valid">Guardar</ion-button>
       </ion-item>

@@ -45,7 +45,7 @@ export class UserPage implements OnInit {
       mail: new FormControl('', Validators.compose([Validators.required, Validators.email])),
       schedule:    [this.workingHours],
       admin: new FormControl(true),
-      doctor: new FormControl(false)
+      doctor: new FormControl('true')
     });
 
     const id = this.activatedRoute.snapshot.paramMap.get('id');
@@ -104,6 +104,9 @@ export class UserPage implements OnInit {
     this.firebaseService.getUser(id).subscribe(
         data => {
           this.user = data;
+
+          console.log('this.user ', this.user);
+
           this.form.controls.name.patchValue(this.user.name);
           this.form.controls.mail.patchValue(this.user.mail);
           this.form.controls.admin.patchValue(this.user.admin);
@@ -159,8 +162,8 @@ export class UserPage implements OnInit {
   }
 
   createUser(value) {
-    value.doctor = Boolean(value.doctor);
-    value.admin = Boolean(value.admin);
+    value.doctor = value.doctor === 'true' ? true : false;
+    value.admin = value.admin === 'true' ? true : false;
 
     this.firebaseService
         .createUser(value)
@@ -169,8 +172,10 @@ export class UserPage implements OnInit {
   }
 
   updateUser(value) {
-    value.doctor = Boolean(value.doctor);
-    value.admin = Boolean(value.admin);
+    value.doctor = value.doctor === 'true' ? true : false;
+    value.admin = value.admin === 'true' ? true : false;
+
+    console.log('updateUser value ', value);
 
     this.firebaseService
         .updateUser(value)
@@ -193,9 +198,7 @@ export class UserPage implements OnInit {
 
   // HOURS
   getStaffHour($event) {
-    console.log('event ', $event);
     const json = JSON.parse($event);
-    console.log('json ', json);
 
     if (json.start) {
       if (json.day.toLowerCase() == 'lunes') {

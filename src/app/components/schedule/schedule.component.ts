@@ -1,4 +1,8 @@
-import {AfterContentChecked, Component, Input, OnInit} from '@angular/core';
+import {
+  AfterContentChecked,
+  Component,
+  Input, OnDestroy,Renderer2
+} from '@angular/core';
 import {AlertController, LoadingController, ModalController, NavController} from '@ionic/angular';
 import { FormBuilder } from '@angular/forms';
 
@@ -6,13 +10,15 @@ import * as moment from 'moment/moment';
 import {DragulaService} from 'ng2-dragula';
 import {Subscription} from 'rxjs';
 import {ModalScheduleComponent} from './modal-schedule/modal-schedule.component';
+import {FirebaseService} from '../../services/firebase/firebase.service';
+import {ScheduleHourDirective} from '../../directives/schedule-hour.directive';
 
 @Component({
   selector: 'schedule',
   templateUrl: './schedule.component.html',
   styleUrls: ['./schedule.component.scss'],
 })
-export class ScheduleComponent implements OnInit, AfterContentChecked {
+export class ScheduleComponent implements AfterContentChecked, OnDestroy {
   @Input('data') data: any;
   @Input('title') title: any;
   @Input('titleAddAlert') titleAddAlert: any;
@@ -23,7 +29,11 @@ export class ScheduleComponent implements OnInit, AfterContentChecked {
   }
   EVENT_STATUS   = {
     pay: 'pay',
-    cancelled: 'cancelled'
+    cancelled: 'cancelled',
+    requestByDoctor: 'requestByDoctor',
+    requestByPatient: 'requestByPatient',
+    approved: 'approved',
+    unpay: 'unpay',
   }
   interval: any;
   initialTime = moment();
@@ -43,6 +53,9 @@ export class ScheduleComponent implements OnInit, AfterContentChecked {
   hours: any = [];
   text: string;
   subs = new Subscription();
+  dropId: any;
+
+  printDataCall = false;
 
 
   constructor(public navCtrl: NavController,
@@ -50,7 +63,9 @@ export class ScheduleComponent implements OnInit, AfterContentChecked {
               public modalController: ModalController,
               public loadingController: LoadingController,
               public fb: FormBuilder,
-              private alertCtrl: AlertController) {
+              private renderer: Renderer2,
+              private alertCtrl: AlertController,
+              private firebaseService: FirebaseService) {
     this.user       = JSON.parse(localStorage.getItem('usr'));
 
     if (typeof this.user === 'string') {
@@ -69,25 +84,33 @@ export class ScheduleComponent implements OnInit, AfterContentChecked {
     this.weekShown = moment(startOfPeriod).locale('es').subtract(daysToSubtract, 'd');
 
     // You can also get all events, not limited to a particular group
+    this.subs.add(this.dragulaService.over()
+        .subscribe(({ el, container, source }) => {
+          this.dropId = container.id;
+        })
+    );
+
     this.subs.add(this.dragulaService.drop()
         .subscribe(({ name, el, target, source, sibling }) => {
-          /*console.log('DROP ');
-          console.log('NAME ', name);
-          console.log('el ', el);
-          console.log('target ', target);
-          console.log('source ', source);
-          console.log('sibling ', sibling);
-          console.log('sourceModel ', sourceModel);
-          console.log('targetModel ', targetModel);
-          console.log('item ', item);
-          console.log(' ');*/
-
+          this.dropId = null;
           this.updateDateEvent(el, target);
         })
     );
   }
 
+  changeDrop(id){
+    if(id === this.dropId){
+      return 'hourDrag';
+    }
+    else{
+      return '';
+    }
 
+  }
+
+  ngOnDestroy() {
+    this.subs.unsubscribe();
+  }
 
   async presentLoading() {
     if (this.loading) {
@@ -117,27 +140,13 @@ export class ScheduleComponent implements OnInit, AfterContentChecked {
     return array;
   }
 
-  ngAfterContentChecked(){
+  ngAfterContentChecked() {
     this.presentLoading();
-    if (this.data.events && this.data.users) {
-
-      console.log('this.data.events ', this.data.events);
+    if (this.data.events && this.data.users && this.data.user && !this.printDataCall) {
       this.dismisLoading();
-      this.initTime();
       this.printData();
-
-      if (this.interval) {
-        clearInterval(this.interval);
-      }
-
-      this.interval = setInterval(() => {
-        this.initTime();
-      }, 1000 * 60);
+      this.printDataCall = true;
     }
-  }
-
-  ngOnInit(): void {
-    this.printData();
   }
 
   initTime() {
@@ -200,8 +209,6 @@ export class ScheduleComponent implements OnInit, AfterContentChecked {
     if(this.data.events){
       this.printEvents();
     }
-
-
   }
 
   addWeek() {
@@ -263,13 +270,27 @@ export class ScheduleComponent implements OnInit, AfterContentChecked {
   }
 
   setStyle(event) {
-    const color = '#4197B5';
+    let color = '#4197B5';
+    switch(event.data.status)
+    {
+      case this.EVENT_STATUS.pay:
+        color = `linear-gradient(to bottom, ${color} 50%,#75dccd 100%)`;
+        break;
+
+      case this.EVENT_STATUS.cancelled:
+        color = `linear-gradient(to bottom, ${color} 50%,#e8595b 100%)`;
+        break;
+
+      default:
+        color = color;
+        break;
+    }
 
     return {
-      'height.px'       : event.data.duracion * 100 / 80,
+      'height.px'       : event.data.duration * 100 / 80,
       background        : color,
-      'justify-content' : event.data.duracion > 60 ? 'flex-start' : 'center',
-      'padding-top'     : event.data.duracion > 60 ? '10px' : '0'
+      'justify-content' : event.data.duration > 60 ? 'flex-start' : 'center',
+      'padding-top'     : event.data.duration > 60 ? '10px' : '0'
     };
 
 
@@ -277,31 +298,34 @@ export class ScheduleComponent implements OnInit, AfterContentChecked {
   }
 
   async goToEvent(event, day, hour) {
-
-    console.log('goToEvent', event);
     const date     = moment(`${day} ${hour}:00`, 'YYYY-MM-DD HH:00').locale('es');
+    const data = {
+      data: this.data,
+      status: this.EVENT_STATUS,
+      date,
+      event
+    };
 
     const modal = await this.modalController.create({
       component: ModalScheduleComponent,
-      componentProps: {
-        data: this.data,
-        date ,
-        event: event.data
-      }
+      componentProps: data
     });
-    return await modal.present();
 
-    /*
-    modal.onDidDismiss(() => {
-      this.scheduleProvider.get()
-          .then(data => {
-            this.data.events = data;
-            this.printData();
-          })
-          .catch(err => {
-            console.log('get err ', err);
-          });
-    });*/
+    this.modalController.dismiss()
+        .then(modalData => {
+          console.log('dismiss update ', modalData);
+          if(modalData.toString() === 'update')
+          {
+            console.log('get all schedules');
+            this.firebaseService.getSchedules()
+                .subscribe(sData => {
+                  this.data.events = sData;
+                  this.printData();
+                });
+          }
+        });
+
+    return await modal.present();
 
 
   }
@@ -312,27 +336,29 @@ export class ScheduleComponent implements OnInit, AfterContentChecked {
       component: ModalScheduleComponent,
       componentProps: {
         data: this.data,
+        status: this.EVENT_STATUS,
         date
       }
     });
-    return await modal.present();
-    /*
-    modal.onDidDismiss(() => {
 
-      this.scheduleProvider.get()
-          .then(data => {
-            this.data.events = data;
-            this.printData();
-          })
-          .catch(err => {
-            console.log('get err ', err);
-          });
-    });*/
+    modal.onWillDismiss()
+        .then(dismissData => {
+          if(dismissData.data.action !== 'close')
+          {
+            this.firebaseService.getSchedules()
+                .subscribe(data => {
+                  this.data.events = data;
+                  this.printData();
+                });
+          }
+
+        })
+        .catch(err => console.error(err));
+
+    return await modal.present();
   }
 
   async chooseAction(day, hour , events , event = false) {
-    console.log('events ', events);
-
     if (events.length > 0) {
       const alert = await this.alertCtrl.create({
         header: 'Agenda',
@@ -341,19 +367,13 @@ export class ScheduleComponent implements OnInit, AfterContentChecked {
         {
           text: 'Ver evento',
           handler: () => {
-            this.goToEvent(event, day, hour);
-          }
-        },
-        {
-          text: 'Terminado',
-          handler: () => {
-            this.payEvent(event);
+            this.goToEvent(events[0].data, day, hour);
           }
         },
         {
           text: 'Cancelado',
           handler: () => {
-            this.cancelEvent(event);
+            this.cancelEvent(events[0].data);
           }
         },
         {
@@ -413,12 +433,10 @@ export class ScheduleComponent implements OnInit, AfterContentChecked {
   }
 
   updateDateEvent(el, date) {
-    console.log(this.data);
-
     let dateHour = date.attributes.id.nodeValue;
     dateHour     = dateHour.split('@');
 
-    const event   = this.data.events.find( e => e._id == el.attributes.id.nodeValue);
+    const event   = this.data.events.find( e => e.id == el.attributes.id.nodeValue);
     const newDate = dateHour[0];
     const newHour = dateHour[1];
     const horaIni = moment(newDate);
@@ -426,30 +444,26 @@ export class ScheduleComponent implements OnInit, AfterContentChecked {
 
     const horaFin = moment(newDate);
     horaFin.hour(newHour);
-    horaFin.add(event.duracion, 'm');
+    horaFin.add(event.duration, 'm');
 
-    const payload = {
-      staff:    event.staff.map(el => el._id),
-      clientes: event.clientes.map(el => el._id),
-      cabina:   event.cabina.map(el => el._id),
-      servicio: event.servicio.map(el => el._id),
-      duracion: event.duracion,
-      start:    horaIni.toISOString(),
-      end:      horaFin.toISOString(),
-      horaIni:  horaIni.format('HH:mm'),
-      horaFin:  horaFin.format('HH:mm')
-    };
+    event.start     = horaIni.toISOString();
+    event.end       = horaFin.toISOString();
+    event.hourStart = horaIni.format('HH:mm');
+    event.hourEnd   = horaFin.format('HH:mm');
+    event.users     = event.users.map(usr => usr.id);
 
-    /*
-    this.scheduleProvider.editService(event._id, payload)
-        .then(data => {
-          console.log('DATA ', data);
-        })
-        .catch(err => {
-          console.log('ERR ', err);
-        });
+    if(event.id){
+      this.firebaseService.updateSchedule(event)
+          .then(() => {
+            this.firebaseService.getSchedules()
+                .subscribe(data => {
+                  this.data.events = data;
+                  this.printData();
+                });
+          })
+          .catch(err => console.error(err));
+    }
 
-     */
 
   }
 
@@ -460,7 +474,15 @@ export class ScheduleComponent implements OnInit, AfterContentChecked {
   }
 
   cancelEvent(event) {
-    //this.scheduleProvider.editServiceStatus(event.id, EVENT_STATUS.cancelled);
+    event.status = this.EVENT_STATUS.cancelled;
+    event.users  = event.users.map(usr => usr.id);
+
+    console.log('cancel ', event);
+    if (event.id) {
+      this.firebaseService.updateSchedule(event)
+          .then(() => console.log('cancel ok'))
+          .catch(err => console.error(err));
+    }
   }
 
 }

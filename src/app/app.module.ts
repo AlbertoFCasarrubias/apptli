@@ -25,7 +25,7 @@ registerLocaleData(localeEs);
   entryComponents: [],
   imports: [
     BrowserModule,
-    DragulaModule,
+    DragulaModule.forRoot(),
     AppRoutingModule,
     IonicModule.forRoot(),
     AngularFireAuthModule,

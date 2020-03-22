@@ -14,9 +14,14 @@ import {Router} from '@angular/router';
 export class AppComponent {
   public appPages = [
         {
-            title: 'Agenda',
+            title: 'Inicio',
             url: '/home',
             icon: 'home'
+        },
+        {
+            title: 'Agenda',
+            url: '/calendar',
+            icon: 'calendar'
         },
         {
             title: 'Usuarios',
@@ -65,7 +70,6 @@ export class AppComponent {
         if (obj.title === 'Logout') {
             this.afAuth.auth.signOut()
                 .then(() => {
-                    console.log('logout');
                     this.router.navigate(['/login']);
                 })
                 .catch(err => console.log('Error logout ', err));
