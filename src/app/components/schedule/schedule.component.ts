@@ -12,6 +12,7 @@ import {Subscription} from 'rxjs';
 import {ModalScheduleComponent} from './modal-schedule/modal-schedule.component';
 import {FirebaseService} from '../../services/firebase/firebase.service';
 import {ScheduleHourDirective} from '../../directives/schedule-hour.directive';
+import {ActivatedRoute} from '@angular/router';
 
 @Component({
   selector: 'schedule',
@@ -56,6 +57,7 @@ export class ScheduleComponent implements AfterContentChecked, OnDestroy {
   dropId: any;
 
   printDataCall = false;
+  showEventCall = false;
 
 
   constructor(public navCtrl: NavController,
@@ -110,6 +112,8 @@ export class ScheduleComponent implements AfterContentChecked, OnDestroy {
 
   ngOnDestroy() {
     this.subs.unsubscribe();
+    this.printDataCall = false;
+    this.showEventCall = false;
   }
 
   async presentLoading() {
@@ -142,10 +146,16 @@ export class ScheduleComponent implements AfterContentChecked, OnDestroy {
 
   ngAfterContentChecked() {
     this.presentLoading();
-    if (this.data.events && this.data.users && this.data.user && !this.printDataCall) {
+    if (this.data.events && this.data.users && this.data.user && this.data.showEvent && !this.printDataCall) {
       this.dismisLoading();
       this.printData();
       this.printDataCall = true;
+      this.showEventCall = true;
+
+      console.log('this.data.showEvent ', this.data.showEvent);
+      if(this.data.showEvent === 'notEvent') {
+        this.showEventCall = true;
+      }
     }
   }
 
@@ -209,6 +219,21 @@ export class ScheduleComponent implements AfterContentChecked, OnDestroy {
     if(this.data.events){
       this.printEvents();
     }
+
+    if(!this.showEventCall){
+      this.showEvent();
+    }
+  }
+
+  showEvent(){
+    this.fistDayWeek = this.weekShown;
+    const diff = moment.duration(moment(this.data.showEvent.start).diff(this.fistDayWeek));
+    console.log('DIFF ', diff.asWeeks() , Math.ceil(diff.asWeeks()));
+
+    this.weekShown.add(7 *  Math.ceil(diff.asWeeks()), 'd');
+    this.fistDayWeek = this.weekShown;
+    this.showEventCall = true;
+    this.printData();
   }
 
   addWeek() {
@@ -238,6 +263,8 @@ export class ScheduleComponent implements AfterContentChecked, OnDestroy {
   }
 
   printEvents() {
+    console.log('printEvents this.data.events ', this.data.events);
+
     for (const event of this.data.events) {
       const nombre = 'consulta';
 
@@ -251,17 +278,21 @@ export class ScheduleComponent implements AfterContentChecked, OnDestroy {
           let dia = this.schedule.filter(x => x.id === start.format('YYYY-MM-DD'));
           dia     = dia[0];
 
+
+
           if (dia) {
             let hora = dia.day.horas.filter(x => x.id === Number(start.format('H')));
             hora     = hora[0];
 
-            const tmp = {
-                  id          : event.id,
-                  nombre,
-                  start       : start.locale('es').format('dd DD MMM HH:mm'),
-                  data        : event
-                };
-            hora.events.push(tmp);
+            if(hora){
+              const tmp = {
+                id          : event.id,
+                nombre,
+                start       : start.locale('es').format('dd DD MMM HH:mm'),
+                data        : event
+              };
+              hora.events.push(tmp);
+            }
           }
         }
       }

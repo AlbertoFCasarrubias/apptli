@@ -15,6 +15,7 @@ export class ModalScheduleComponent implements OnInit {
   title = 'Agregar';
   id: any;
   status: any;
+  today = moment().format('YYYY-MM-DD');
 
   submitAttempt: any = false;
   form: any;
@@ -75,6 +76,13 @@ export class ModalScheduleComponent implements OnInit {
     this.modalController.dismiss({
       action: 'close'
     });
+  }
+
+  changeDate(){
+    console.log(this.form.value.start);
+    const start = moment(this.form.value.start);
+    const end = start.add(1, 'h');
+    this.form.controls.end.patchValue(end.toISOString());
   }
 
   async showAlert(title, subtitle) {
@@ -160,7 +168,7 @@ export class ModalScheduleComponent implements OnInit {
 
   addEvent(value) {
     value.users    = value.users.map(el => el.id);
-    console.log('addEvent ', this.user);
+    console.log('addEvent ', value);
     if(!this.user.doctor)
     {
       value.status = this.status.requestByPatient;

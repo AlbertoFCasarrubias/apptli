@@ -11,5 +11,31 @@
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  hola
+  <ion-list>
+    <ion-item *ngFor="let event of events" [ngClass]="event.status">
+      <div class="event" >
+        {{event.start | date:'medium'}}
+        <div class="patient">
+          {{event.status | scheduleStatus}}
+        </div>
+        <div class="patient">
+          {{event.patient.name}} {{event.patient.mail}}
+        </div>
+        <div class="patient">
+          {{event.comments}}
+        </div>
+      </div>
+      <div class="buttons" >
+        <ion-button class="btnRound" shape="round" (click)="confirmEvent(event)">
+          <ion-icon slot="icon-only" name="checkmark"></ion-icon>
+        </ion-button>
+        <ion-button class="btnRound" shape="round" (click)="goToCalendar(event)">
+          <ion-icon slot="icon-only" name="calendar"></ion-icon>
+        </ion-button>
+        <ion-button class="btnRound" shape="round" (click)="cancelEvent(event)" color="danger">
+          <ion-icon slot="icon-only" name="close"></ion-icon>
+        </ion-button>
+      </div>
+    </ion-item>
+  </ion-list>
 </ion-content>

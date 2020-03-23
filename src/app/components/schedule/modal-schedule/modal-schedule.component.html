@@ -18,34 +18,6 @@
                 <span class="aviso"> *Favor de llenar todos los campos.</span>
               </ion-item>
 
-              <!-- SERVICES >
-              <ion-item>
-                <object-quantity
-                        [data]="services"
-                        [title]="'Servicios'"
-                        [initial]="selectedServices"
-                        [showQuantity] = "false"
-                        (change)="setSelected('servicio',$event)">
-                </object-quantity>
-              </ion-item>
-              <ion-item  (click)="goToPage('services')" *ngIf="clients.length==0">
-                Favor dar de alta servicios para poder asignarlos al servicio.
-              </ion-item-->
-
-              <!-- CLIENTS >
-              <ion-item>
-                <object-quantity
-                        [data]="clients"
-                        [title]="'Clientes'"
-                        [initial]="selectedClients"
-                        [showQuantity] = "false"
-                        (change)="setSelected('clientes',$event)">
-                </object-quantity>
-              </ion-item>
-              <ion-item  (click)="goToPage('clients')" *ngIf="clients.length==0">
-                Favor dar de alta clientes para poder asignarlos al servicio.
-              </ion-item-->
-
               <!-- USERS -->
               <ion-item lines="none">
                 <object-quantity
@@ -60,29 +32,16 @@
                 Favor dar de alta doctores para poder asignarlos a la consulta.
               </ion-item>
 
-              <!-- CABINA >
-              <ion-item>
-                <object-quantity
-                        [data]="stalls"
-                        [title]="'Cabina'"
-                        [initial]="selectedStall"
-                        [showQuantity] = "false"
-                        (change)="setSelected('cabina',$event)">
-                </object-quantity>
-              </ion-item>
-              <ion-item  (click)="goToPage('stall')" *ngIf="stalls.length==0">
-                Favor dar de alta cabinas para poder asignarlos al servicio.
-              </ion-item-->
-
-              <!-- DURACION >
-              <ion-item>
-                <ion-label floating>Duración <span class="porcentaje">(minutos)</span></ion-label>
-                <ion-input type="floating" [formControl]="form.controls['duracion']" ></ion-input>
-              </ion-item-->
-
               <!-- COMENTARIOS -->
               <ion-item >
                 <ion-textarea class="bela-textarea" [formControl]="form.controls['comments']" >Comentarios</ion-textarea>
+              </ion-item>
+
+              <ion-item >
+                <ion-datetime [formControl]="form.controls['start']"
+                              [min]="today"
+                              (ionChange)="changeDate()"
+                              displayFormat="DD MMM YYYY" pickerFormat="DD MMM YYYY"></ion-datetime>
               </ion-item>
 
               <ion-item lines="none" class="center">

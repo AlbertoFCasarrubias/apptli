@@ -17,6 +17,9 @@ import {registerLocaleData} from '@angular/common';
 import localeEs from '@angular/common/locales/es-MX';
 import {AngularFireAuthModule} from '@angular/fire/auth';
 import {DragulaModule, DragulaService} from 'ng2-dragula';
+import {PipesModule} from './pipes/pipes.module';
+
+
 
 registerLocaleData(localeEs);
 
@@ -25,6 +28,7 @@ registerLocaleData(localeEs);
   entryComponents: [],
   imports: [
     BrowserModule,
+    PipesModule,
     DragulaModule.forRoot(),
     AppRoutingModule,
     IonicModule.forRoot(),

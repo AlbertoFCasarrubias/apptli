@@ -117,9 +117,49 @@ export class FirebaseService {
   }
 
  getSchedulesByDoctor(idDoctor) {
-    return this.afs.collection(this.SCHEDULE, ref => ref.where('users', 'array-contains', idDoctor))
-        .valueChanges({idField: 'id'})
-        .pipe(map(events => events));
+    const events = this.afs.collection(this.SCHEDULE, ref => ref.where('users', 'array-contains', idDoctor))
+        .valueChanges({idField: 'id'});
+
+     return events.pipe(
+         switchMap(eventsCollection => {
+             const usersObservable = eventsCollection.map(
+                 event => {
+                     return this.afs.doc(`${this.USERS}/${event['users'][0]}`)
+                         .valueChanges()
+                         .pipe(first());
+                 });
+
+             const patientsObservable = eventsCollection.map(
+                 event => {
+                     return this.afs.doc(`${this.USERS}/${event['patient']}`)
+                         .valueChanges()
+                         .pipe(first());
+                 });
+
+             return combineLatest(
+                 ...usersObservable,
+                 ...patientsObservable
+             )
+                 .pipe(map((...data) => {
+                         const half = Math.ceil(data[0].length / 2);
+                         const patients = data[0].splice(half, half);
+                         const users = data[0];
+
+                         eventsCollection.forEach((event, index) => {
+                             const userId = event['users'][0];
+                             const patientId = event['patient'];
+
+                             users[index]['id'] = userId;
+                             patients[index]['id'] = patientId;
+
+                             event['users'][0] = users[index];
+                             event['patient']  = patients[index];
+                         });
+                         return eventsCollection;
+                     })
+                 );
+         })
+     );
     }
 
   getSchedule(id) {
@@ -350,7 +390,6 @@ export class FirebaseService {
   }
 
   async getUserByAuthId() {
-    console.log('getUserByAuthId ');
     const user = await this.getCurrentUser();
     return this.afs.collection(this.USERS, ref => ref.where('adminID', '==', user.uid).limit(1))
     .valueChanges({idField: 'id'})

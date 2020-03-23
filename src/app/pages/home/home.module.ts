@@ -4,6 +4,7 @@ import { IonicModule } from '@ionic/angular';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { HomePage } from './home.page';
+import {PipesModule} from '../../pipes/pipes.module';
 
 @NgModule({
   imports: [
@@ -16,7 +17,8 @@ import { HomePage } from './home.page';
         path: '',
         component: HomePage
       }
-    ])
+    ]),
+    PipesModule
   ],
   entryComponents: [],
   declarations: [HomePage],

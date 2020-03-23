@@ -77,11 +77,13 @@ staff-hour{
   filter: alpha(opacity=20);*/
 }
 
-$lightRed : #e8797b;
+$lightRed : rgba(232,89,91,.1);
 $red: rgb(232,89,91);
 $darkBlue: rgb(40,56,94);
+$lightBlue: rgba(0,0,255, .1);
 $grey: rgb(91,91,95);
 $green: rgb(67,197,174);
+$lightGreen: rgba(67,197,174, .1);
 
 body{
   font-family: 'Montserrat' !important;
@@ -117,6 +119,23 @@ body{
     border-left: $red 6px solid;
     padding-left: 20px;
   }
+}
+
+.requestByDoctor,
+.requestByPatient{
+  --background: none;
+  background: linear-gradient(to bottom, #ffffff 30%, #dddddd 100%);
+}
+
+.cancelled{
+  --background: none;
+  background: linear-gradient(to bottom, #ffffff 30%, $lightRed 100%);
+}
+
+.approved{
+  --background: none;
+  //background: $lightGreen;
+  background: linear-gradient(to bottom, #ffffff 30%, $lightGreen 100%);
 }
 
 

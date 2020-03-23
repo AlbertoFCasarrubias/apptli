@@ -1,3 +1,5 @@
+@import "src/global.scss";
+
 #container {
   text-align: center;
 
@@ -28,4 +30,30 @@
 
 ion-content ion-toolbar {
   --background: translucent;
+}
+
+.event{
+  float: left;
+  width: calc(100% - 130px);
+  height: auto;
+}
+
+.buttons{
+  float: left;
+  width: 130px;
+  height: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+
+  .btnRound{
+    width: 40px;
+    height: 40px;
+  }
+}
+
+.patient{
+  float: left;
+  width: 100%;
+  height: auto;
 }
