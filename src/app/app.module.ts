@@ -18,6 +18,7 @@ import localeEs from '@angular/common/locales/es-MX';
 import {AngularFireAuthModule} from '@angular/fire/auth';
 import {DragulaModule, DragulaService} from 'ng2-dragula';
 import {PipesModule} from './pipes/pipes.module';
+import {NgxAgoraModule} from 'ngx-agora';
 
 
 
@@ -36,6 +37,7 @@ registerLocaleData(localeEs);
     AngularFirestoreModule,
     AngularFireStorageModule,
     AngularFireModule.initializeApp(environment.firebase),
+    NgxAgoraModule.forRoot({ AppID: environment.agora.appId }),
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })],
   providers: [
     StatusBar,

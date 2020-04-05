@@ -30,6 +30,10 @@ const routes: Routes = [
     loadChildren: () => import('./pages/calendar/calendar.module').then(m => m.CalendarPageModule),
     canActivate: [AuthGuard]
   },
+  {
+    path: 'videocall',
+    loadChildren: () => import('./pages/videocall/videocall.module').then( m => m.VideocallPageModule)
+  },
 ];
 
 @NgModule({

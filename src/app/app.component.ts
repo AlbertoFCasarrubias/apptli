@@ -24,6 +24,11 @@ export class AppComponent {
             icon: 'calendar'
         },
         {
+            title: 'Llamada',
+            url: '/videocall',
+            icon: 'videocam'
+        },
+        {
             title: 'Usuarios',
             url: '/users',
             icon: 'people'

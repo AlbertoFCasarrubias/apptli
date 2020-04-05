@@ -55,3 +55,8 @@ package.json scripts that help
 "lighthouse": "lighthouse http://localhost:8888 --view",
 "dist": "ionic build --prod -- --base-href /apptli/"
 ```
+
+# Agora
+```
+ng add ngx-agora
+```
