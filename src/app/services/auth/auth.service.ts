@@ -24,29 +24,15 @@ export class AuthService {
     });
   }
 
-  doLogin(value){
-    return new Promise<any>((resolve, reject) => {
-      firebase.auth().signInWithEmailAndPassword(value.email, value.password)
-          .then(
-              res => resolve(res),
-              err => reject(err))
-    });
+  doLogin(value) {
+    return firebase.auth().signInWithEmailAndPassword(value.email, value.password);
   }
 
-  doLogout(){
-    return new Promise((resolve, reject) => {
-      this.afAuth.auth.signOut()
-          .then(() => {
-            // this.firebaseService.unsubscribeOnLogOut();
-            resolve();
-          }).catch((error) => {
-        reject();
-      });
-    })
+  doLogout() {
+    return this.afAuth.auth.signOut();
   }
 
-  doChangePassword()
-  {
+  doChangePassword() {
     return new Promise<any>((resolve, reject) => {
       firebase.auth().sendPasswordResetEmail('alberto@chukan.net')
           .then(

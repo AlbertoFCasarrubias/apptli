@@ -4,6 +4,9 @@ import {FirebaseService} from '../../services/firebase/firebase.service';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {ActivatedRoute} from '@angular/router';
 import {switchMap} from 'rxjs/operators';
+import {Store} from '@ngxs/store';
+import {UsersState} from '../../store/states/users.state';
+import {EventsState} from '../../store/states/events.state';
 
 @Component({
   selector: 'app-calendar',
@@ -15,6 +18,7 @@ export class CalendarPage implements OnInit {
 
   constructor(public menuCtrl: MenuController,
               private route: ActivatedRoute,
+              private store: Store,
               private firebaseService: FirebaseService) {}
 
   toggleMenu() {
@@ -40,9 +44,10 @@ export class CalendarPage implements OnInit {
               .subscribe(user => this.scheduleData.user = user, error => console.error(error));
         });
 
-    this.firebaseService.getSchedules()
+    this.store.select(EventsState.schedule)
         .subscribe(data => this.scheduleData.events = data, error => console.error(error));
-    this.firebaseService.getUsers()
+
+    this.store.select(UsersState.users)
         .subscribe( data => this.scheduleData.users = data, error => console.error(error));
 
   }

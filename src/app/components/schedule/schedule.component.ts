@@ -1,7 +1,7 @@
 import {
   AfterContentChecked,
   Component,
-  Input, OnDestroy,Renderer2
+  Input, OnChanges, OnDestroy, Renderer2, SimpleChanges
 } from '@angular/core';
 import {AlertController, LoadingController, ModalController, NavController} from '@ionic/angular';
 import { FormBuilder } from '@angular/forms';
@@ -19,7 +19,7 @@ import {ActivatedRoute} from '@angular/router';
   templateUrl: './schedule.component.html',
   styleUrls: ['./schedule.component.scss'],
 })
-export class ScheduleComponent implements AfterContentChecked, OnDestroy {
+export class ScheduleComponent implements AfterContentChecked, OnDestroy, OnChanges {
   @Input('data') data: any;
   @Input('title') title: any;
   @Input('titleAddAlert') titleAddAlert: any;
@@ -100,14 +100,47 @@ export class ScheduleComponent implements AfterContentChecked, OnDestroy {
     );
   }
 
-  changeDrop(id){
-    if(id === this.dropId){
-      return 'hourDrag';
-    }
-    else{
+  changeDrop(id) {
+    const cols = id.split('@');
+    const date = moment(id, 'YYYY-MM-DD@HH').locale('es');
+    const hour = cols[1];
+    const doctors = this.data.users.filter(u => u.doctor);
+    const doctorsAvailable = doctors.filter( user => {
+      let userAvailable = false;
+      const dayKey = date.format('dddd').toLowerCase();
+
+      if (user.schedule[dayKey]) {
+        const day         = dayKey.toLowerCase();
+        const hours       = user.schedule[dayKey] ? user.schedule[dayKey].split('#') : ['00:00', '00:00'];
+        const initialHour = moment(`${date.format('YYYY-MM-DD')} ${hours[0]}` , 'YYYY-MM-DD HH:mm').locale('es');
+        let endHour       = moment(`${date.format('YYYY-MM-DD')} ${hours[1]}` , 'YYYY-MM-DD HH:mm').locale('es');
+
+        const checkEndHour = hours[1].split(':');
+        if(checkEndHour[0] === '00')
+        {
+          endHour = endHour.add(1, 'd');
+        }
+
+        if (day === date.format('dddd').toLowerCase()
+            && date.isBetween(initialHour, endHour, null, '[)')
+        ) {
+          userAvailable = true;
+        } else {
+          userAvailable = false;
+        }
+      }
+      return userAvailable;
+    });
+
+    if (doctorsAvailable.length > 0) {
+      if (id === this.dropId) {
+        return 'hourDrag';
+      }
+
       return '';
     }
 
+    return 'disable';
   }
 
   ngOnDestroy() {
@@ -144,18 +177,33 @@ export class ScheduleComponent implements AfterContentChecked, OnDestroy {
     return array;
   }
 
+  ngOnChanges(changes: SimpleChanges) {
+    this.presentLoading();
+    console.log('CHANGES ', changes);
+
+    if (changes.data.currentValue.events
+        && changes.data.currentValue.users
+        && changes.data.currentValue.showEvent) {
+      this.dismisLoading();
+      this.drawSchedule();
+    }
+  }
+
   ngAfterContentChecked() {
     this.presentLoading();
     if (this.data.events && this.data.users && this.data.user && this.data.showEvent && !this.printDataCall) {
       this.dismisLoading();
-      this.printData();
-      this.printDataCall = true;
-      this.showEventCall = true;
+      this.drawSchedule();
+    }
+  }
 
-      console.log('this.data.showEvent ', this.data.showEvent);
-      if(this.data.showEvent === 'notEvent') {
-        this.showEventCall = true;
-      }
+  drawSchedule(){
+    this.printData();
+    this.printDataCall = true;
+    this.showEventCall = true;
+
+    if(this.data.showEvent === 'notEvent') {
+      this.showEventCall = true;
     }
   }
 
@@ -263,7 +311,7 @@ export class ScheduleComponent implements AfterContentChecked, OnDestroy {
   }
 
   printEvents() {
-    console.log('printEvents this.data.events ', this.data.events);
+    //console.log('printEvents this.data.events ', this.data.events);
 
     for (const event of this.data.events) {
       const nombre = 'consulta';

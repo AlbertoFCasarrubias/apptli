@@ -2,6 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import {AlertController, LoadingController, NavController} from '@ionic/angular';
 import {FirebaseService} from '../../services/firebase/firebase.service';
 import {Router} from '@angular/router';
+import {Store} from '@ngxs/store';
+import {GetUsers} from '../../store/actions/users.action';
+import {UsersState} from '../../store/states/users.state';
 
 @Component({
   selector: 'app-user',
@@ -16,16 +19,17 @@ export class UsersPage implements OnInit {
   constructor(public alertController: AlertController,
               public loadingController: LoadingController,
               public firebaseService: FirebaseService,
+              private store: Store,
               private nav: NavController,
               private router: Router) { }
 
   async ngOnInit() {
-    const load = await this.presentLoading();
-    this.firebaseService.getUsers()
+    await this.presentLoading();
+
+    this.store.select(UsersState.users)
         .subscribe(
             data => {
               this.users = data;
-              //console.log('USERS ' , data);
               this.dismissLoading();
             },
             err => console.error('error get users ', err));

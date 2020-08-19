@@ -1,9 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
-import {AlertController} from '@ionic/angular';
+import {AlertController, MenuController} from '@ionic/angular';
 import {AuthService} from '../../services/auth/auth.service';
 import {AngularFireAuth} from '@angular/fire/auth';
+import {Store} from '@ngxs/store';
+import {Login, SetUser} from '../../store/actions/app.action';
+import {GetUsers} from '../../store/actions/users.action';
+import {GetEvents} from '../../store/actions/events.action';
 
 @Component({
   selector: 'app-login',
@@ -28,8 +32,18 @@ export class LoginPage implements OnInit {
 
   constructor(private alertController: AlertController,
               public afAuth: AngularFireAuth,
+              public menuCtrl: MenuController,
               private formBuilder: FormBuilder,
+              private store: Store,
               private router: Router) {
+  }
+
+  ionViewWillEnter() {
+    this.menuCtrl.enable(false);
+  }
+
+  ionViewDidLeave() {
+    this.menuCtrl.enable(true);
   }
 
   ngOnInit() {
@@ -40,14 +54,17 @@ export class LoginPage implements OnInit {
     });
   }
 
-  tryLogin(value){
-    this.afAuth.auth.signInWithEmailAndPassword(value.email, value.password)
-        .then(res => {
-          this.router.navigate(['/home']);
-        }, err => {
-          this.errorMessage = err.message;
-          console.log(err);
-        });
+  tryLogin(value) {
+    this.store.dispatch(new Login(value)).subscribe(res => {
+      console.log('RES ', res);
+      this.store.dispatch(new SetUser(res));
+      this.store.dispatch(new GetUsers());
+      this.store.dispatch(new GetEvents());
+      this.router.navigate(['/home']);
+    }, err => {
+      this.errorMessage = err.message;
+      console.log(err);
+    });
   }
 
   goRegisterPage(){

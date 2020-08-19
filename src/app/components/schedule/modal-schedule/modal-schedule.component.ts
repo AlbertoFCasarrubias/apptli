@@ -168,12 +168,13 @@ export class ModalScheduleComponent implements OnInit {
 
   addEvent(value) {
     value.users    = value.users.map(el => el.id);
-    console.log('addEvent ', value);
+    console.log('addEvent ', value, this.user);
+    /*
     if(!this.user.doctor)
     {
       value.status = this.status.requestByPatient;
       value.patient = this.user.id;
-    }
+    }*/
 
     this.firebaseService.createSchedule(value)
         .then(data => {
