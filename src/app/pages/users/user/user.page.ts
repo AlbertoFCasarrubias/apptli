@@ -5,6 +5,10 @@ import {FirebaseService} from '../../../services/firebase/firebase.service';
 import {ActivatedRoute, Router} from '@angular/router';
 import {AuthService} from '../../../services/auth/auth.service';
 import {RoutingService} from '../../../services/routing/routing.service';
+import {Store} from '@ngxs/store';
+import {AppState} from '../../../store/states/app.state';
+import {AddUser} from '../../../store/actions/users.action';
+import { AngularFireFunctions } from '@angular/fire/functions';
 
 @Component({
   selector: 'app-user',
@@ -12,7 +16,7 @@ import {RoutingService} from '../../../services/routing/routing.service';
   styleUrls: ['./user.page.scss'],
 })
 export class UserPage implements OnInit {
-
+  appUser: any;
   user: any;
   form: FormGroup;
   loading: any;
@@ -28,6 +32,7 @@ export class UserPage implements OnInit {
   };
 
   constructor(
+      private store: Store,
       private formBuilder: FormBuilder,
       public alertController: AlertController,
       public loadingController: LoadingController,
@@ -40,12 +45,15 @@ export class UserPage implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.appUser = this.store.selectSnapshot(AppState.user);
+    console.log('this.appUser ', this.appUser);
     this.form = this.formBuilder.group({
       name: new FormControl('', Validators.compose([Validators.required])),
       mail: new FormControl('', Validators.compose([Validators.required, Validators.email])),
-      schedule:    [this.workingHours],
+      schedule: [this.workingHours],
       admin: new FormControl(true),
-      doctor: new FormControl('true')
+      doctor: new FormControl('false'),
+      patient: new FormControl(this.appUser.id)
     });
 
     const id = this.activatedRoute.snapshot.paramMap.get('id');
@@ -154,8 +162,9 @@ export class UserPage implements OnInit {
 
         this.authService.doRegister(reg)
             .then(register => {
-              value.adminID = register.user.uid;
-              this.createUser(value);
+              console.log('REGISTER ', register);
+              //value.adminID = register.user.uid;
+              //this.createUser(value);
             });
       }
     }
@@ -165,10 +174,10 @@ export class UserPage implements OnInit {
     value.doctor = value.doctor === 'true' ? true : false;
     value.admin = value.admin === 'true' ? true : false;
 
-    this.firebaseService
-        .createUser(value)
-        .then(data => this.savedOK(data))
-        .catch(err => this.saveError(err));
+    this.store.dispatch(new AddUser(value))
+        .subscribe(data => this.savedOK(data),
+            err => this.saveError(err));
+
   }
 
   updateUser(value) {

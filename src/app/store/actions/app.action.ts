@@ -12,6 +12,11 @@ export class SetUser {
     constructor(public payload: object) {}
 }
 
+export class GetUserByMail {
+    static readonly type = '[User] get user by mail';
+    constructor(public mail: string) {}
+}
+
 export class Logout {
     static readonly type = '[User] Logout';
 }

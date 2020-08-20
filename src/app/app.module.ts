@@ -23,7 +23,11 @@ import {AppState} from './store/states/app.state';
 import {NgxsReduxDevtoolsPluginModule} from '@ngxs/devtools-plugin';
 import {UsersState} from './store/states/users.state';
 import {EventsState} from './store/states/events.state';
+import {AgoraConfig, NgxAgoraModule} from 'ngx-agora';
 
+const agoraConfig: AgoraConfig = {
+    AppID: 'c7d5f3bc5f4345fcaa57bba1fc1e5f6d',
+};
 
 registerLocaleData(localeEs);
 
@@ -50,6 +54,7 @@ registerLocaleData(localeEs);
         NgxsReduxDevtoolsPluginModule.forRoot({
             disabled: environment.production,
         }),
+        NgxAgoraModule.forRoot(agoraConfig),
         ServiceWorkerModule.register('ngsw-worker.js', {enabled: environment.production})],
     providers: [
         StatusBar,

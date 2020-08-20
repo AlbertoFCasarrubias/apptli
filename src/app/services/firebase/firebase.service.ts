@@ -188,8 +188,18 @@ export class FirebaseService {
         return this.getById(this.USERS, id);
     }
 
+    getUserByMail(mail) {
+        return this.afs.collection(this.USERS, ref => ref.where('mail', '==', mail))
+            .valueChanges({idField: 'id'});
+    }
+
     deleteUser(id) {
         return this.delete(this.USERS, id);
+    }
+
+    getPatients(doctorID) {
+        return this.afs.collection(this.USERS, ref => ref.where('patient', '==', doctorID))
+            .valueChanges({idField: 'id'});
     }
 
     getAdminUsers() {

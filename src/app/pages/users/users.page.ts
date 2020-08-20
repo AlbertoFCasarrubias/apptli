@@ -26,7 +26,7 @@ export class UsersPage implements OnInit {
   async ngOnInit() {
     await this.presentLoading();
 
-    this.store.select(UsersState.users)
+    this.store.select(UsersState.patients)
         .subscribe(
             data => {
               this.users = data;

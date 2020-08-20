@@ -30,6 +30,10 @@ const routes: Routes = [
     loadChildren: () => import('./pages/calendar/calendar.module').then(m => m.CalendarPageModule),
     canActivate: [AuthGuard]
   },
+  {
+    path: 'call',
+    loadChildren: () => import('./pages/call/call.module').then(m => m.CallPageModule)
+  },
 ];
 
 @NgModule({

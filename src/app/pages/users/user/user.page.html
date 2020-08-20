@@ -31,7 +31,8 @@
       <ion-item *ngIf="form.controls.mail.hasError('email') && (form.controls.mail.dirty || form.controls.mail.touched)">
         No es un correo electrónico.
       </ion-item>
-      <ion-item >
+
+      <ion-item *ngIf="appUser.admin">
         <ion-list lines="none" style="width: 100%;">
           <ion-radio-group formControlName="doctor">
             <ion-list-header>
@@ -93,6 +94,7 @@
                       (change)="getStaffHour($event)"></staff-hour>
         </ion-item>
       </div>
+
       <ion-item lines="none" class="ion-text-center">
         <ion-button expand="block" type="submit" [disabled]="!form.valid">Guardar</ion-button>
       </ion-item>

@@ -21,6 +21,9 @@ export const environment = {
     requestByPatient: 'requestByPatient',
     approved: 'approved',
     unpay: 'unpay',
+  },
+  agora: {
+    appId: 'c7d5f3bc5f4345fcaa57bba1fc1e5f6d'
   }
 };
 

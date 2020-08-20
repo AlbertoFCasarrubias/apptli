@@ -1,7 +1,8 @@
 import {Action, Selector, State, StateContext} from '@ngxs/store';
 import {Injectable} from '@angular/core';
-import {AppStateModel, Login, Logout, SetUser} from '../actions/app.action';
+import {AppStateModel, GetUserByMail, Login, Logout, SetUser} from '../actions/app.action';
 import {AuthService} from '../../services/auth/auth.service';
+import {FirebaseService} from '../../services/firebase/firebase.service';
 
 @State<AppStateModel>({
     name: 'user',
@@ -12,7 +13,7 @@ import {AuthService} from '../../services/auth/auth.service';
 @Injectable()
 export class AppState {
     @Selector()
-    static user(state: AppStateModel): object | null | string{
+    static user(state: AppStateModel): object | null | string {
         return state.user;
     }
 
@@ -21,7 +22,8 @@ export class AppState {
         return !!state.user;
     }
 
-    constructor(private authService: AuthService) {}
+    constructor(private authService: AuthService,
+                private firebaseService: FirebaseService) {}
 
     @Action(Login)
     login(ctx: StateContext<AppStateModel>, action: Login) {
@@ -33,6 +35,16 @@ export class AppState {
                 });
             })
             .catch(err => console.error(err));
+    }
+
+    @Action(GetUserByMail)
+    getUserByUID(ctx: StateContext<AppStateModel>, action: GetUserByMail) {
+        return this.firebaseService.getUserByMail(action.mail)
+            .subscribe( data => {
+                ctx.patchState({
+                    user: data[0]
+                });
+            });
     }
 
     @Action(Logout)
