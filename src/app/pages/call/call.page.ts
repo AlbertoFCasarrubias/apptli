@@ -2,6 +2,7 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {AgoraClient, AgoraConfig, ClientConfig, ClientEvent, NgxAgoraService, Stream, StreamEvent} from 'ngx-agora';
 import {FormControl} from '@angular/forms';
 import {environment} from '../../../environments/environment';
+import {MenuController} from '@ionic/angular';
 
 @Component({
   selector: 'app-call',
@@ -38,7 +39,8 @@ export class CallPage implements OnInit, OnDestroy {
    */
   published = false;
 
-  constructor(private agoraService: NgxAgoraService) {
+  constructor(private agoraService: NgxAgoraService,
+              public menuCtrl: MenuController) {
     this.uid = Math.floor(Math.random() * 100);
 
     this.client = this.agoraService.createClient({ mode: 'rtc', codec: 'h264' });
@@ -51,6 +53,10 @@ export class CallPage implements OnInit, OnDestroy {
 
   ngOnDestroy() {
 
+  }
+
+  toggleMenu() {
+    this.menuCtrl.toggle();
   }
 
   join(): void {

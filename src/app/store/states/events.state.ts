@@ -6,7 +6,7 @@ import {GetUser, GetUsers, UsersStateModel} from '../actions/users.action';
 import {FirebaseService} from '../../services/firebase/firebase.service';
 import {catchError, map, tap} from 'rxjs/operators';
 import {of} from 'rxjs';
-import {EventsStateModel, GetEvents} from '../actions/events.action';
+import {AddEvent, EventsStateModel, GetEvents, UpdateEvent} from '../actions/events.action';
 
 @State<EventsStateModel>({
     name: 'schedule',
@@ -41,6 +41,28 @@ export class EventsState {
                     console.log('DATA ', data);
                 })
             );
+    }
+
+    @Action(AddEvent)
+    addEvent(ctx: StateContext<EventsStateModel>, action: AddEvent) {
+        return new Promise((resolve, reject) => {
+            this.firebaseService.createSchedule(action.payload)
+                .then(data => {
+                    resolve(action.payload);
+                })
+                .catch(err => reject(err));
+        });
+    }
+
+    @Action(UpdateEvent)
+    updateEvent(ctx: StateContext<EventsStateModel>, action: UpdateEvent) {
+        return new Promise((resolve, reject) => {
+            this.firebaseService.updateSchedule(action.payload)
+                .then(data => {
+                    resolve(action.payload);
+                })
+                .catch(err => reject(err));
+        });
     }
 
 }

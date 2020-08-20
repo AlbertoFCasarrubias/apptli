@@ -24,6 +24,7 @@ import {NgxsReduxDevtoolsPluginModule} from '@ngxs/devtools-plugin';
 import {UsersState} from './store/states/users.state';
 import {EventsState} from './store/states/events.state';
 import {AgoraConfig, NgxAgoraModule} from 'ngx-agora';
+import {AngularFireFunctionsModule} from '@angular/fire/functions';
 
 const agoraConfig: AgoraConfig = {
     AppID: 'c7d5f3bc5f4345fcaa57bba1fc1e5f6d',
@@ -43,6 +44,7 @@ registerLocaleData(localeEs);
         AngularFireAuthModule,
         AngularFirestoreModule,
         AngularFireStorageModule,
+        AngularFireFunctionsModule,
         AngularFireModule.initializeApp(environment.firebase),
         NgxsModule.forRoot([
             AppState,

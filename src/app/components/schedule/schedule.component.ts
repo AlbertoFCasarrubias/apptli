@@ -13,6 +13,10 @@ import {ModalScheduleComponent} from './modal-schedule/modal-schedule.component'
 import {FirebaseService} from '../../services/firebase/firebase.service';
 import {ScheduleHourDirective} from '../../directives/schedule-hour.directive';
 import {ActivatedRoute} from '@angular/router';
+import {Store} from '@ngxs/store';
+import {AppState} from '../../store/states/app.state';
+import {UpdateEvent} from '../../store/actions/events.action';
+import {EventsState} from '../../store/states/events.state';
 
 @Component({
   selector: 'schedule',
@@ -66,13 +70,10 @@ export class ScheduleComponent implements AfterContentChecked, OnDestroy, OnChan
               public loadingController: LoadingController,
               public fb: FormBuilder,
               private renderer: Renderer2,
+              private store: Store,
               private alertCtrl: AlertController,
               private firebaseService: FirebaseService) {
-    this.user       = JSON.parse(localStorage.getItem('usr'));
-
-    if (typeof this.user === 'string') {
-      this.user = JSON.parse(this.user);
-    }
+    this.user       = this.store.selectSnapshot(AppState.user);
 
     const myIsoWeekDay = 1; // say our weeks start on tuesday, for monday you would type 1, etc.
     const startOfPeriod = moment();
@@ -98,49 +99,72 @@ export class ScheduleComponent implements AfterContentChecked, OnDestroy, OnChan
           this.updateDateEvent(el, target);
         })
     );
+
+    this.store.select(EventsState.schedule).subscribe(events => {
+      if (events && this.data && this.data.events) {
+        this.data.events = Object.keys(events).map((k) => events[k]).filter(e => {
+          const find = e.users.find(u => u.id === this.data.user.id);
+          if (find) {
+            return true;
+          }
+          return false;
+        });
+
+        console.log('/*/*/*/*/ 11111');
+        this.printData();
+      }
+    });
   }
 
   changeDrop(id) {
-    const cols = id.split('@');
-    const date = moment(id, 'YYYY-MM-DD@HH').locale('es');
-    const hour = cols[1];
-    const doctors = this.data.users.filter(u => u.doctor);
-    const doctorsAvailable = doctors.filter( user => {
-      let userAvailable = false;
-      const dayKey = date.format('dddd').toLowerCase();
+    if (this.user.doctor) {
+      this.changeDropStyle(id);
+    } else {
+      const cols = id.split('@');
+      const date = moment(id, 'YYYY-MM-DD@HH').locale('es');
+      const hour = cols[1];
+      const doctors = this.data.users.filter(u => u.doctor);
+      const doctorsAvailable = doctors.filter( user => {
+        let userAvailable = false;
+        const dayKey = date.format('dddd').toLowerCase();
 
-      if (user.schedule[dayKey]) {
-        const day         = dayKey.toLowerCase();
-        const hours       = user.schedule[dayKey] ? user.schedule[dayKey].split('#') : ['00:00', '00:00'];
-        const initialHour = moment(`${date.format('YYYY-MM-DD')} ${hours[0]}` , 'YYYY-MM-DD HH:mm').locale('es');
-        let endHour       = moment(`${date.format('YYYY-MM-DD')} ${hours[1]}` , 'YYYY-MM-DD HH:mm').locale('es');
+        if (user.schedule[dayKey]) {
+          const day         = dayKey.toLowerCase();
+          const hours       = user.schedule[dayKey] ? user.schedule[dayKey].split('#') : ['00:00', '00:00'];
+          const initialHour = moment(`${date.format('YYYY-MM-DD')} ${hours[0]}` , 'YYYY-MM-DD HH:mm').locale('es');
+          let endHour       = moment(`${date.format('YYYY-MM-DD')} ${hours[1]}` , 'YYYY-MM-DD HH:mm').locale('es');
 
-        const checkEndHour = hours[1].split(':');
-        if(checkEndHour[0] === '00')
-        {
-          endHour = endHour.add(1, 'd');
+          const checkEndHour = hours[1].split(':');
+          if(checkEndHour[0] === '00')
+          {
+            endHour = endHour.add(1, 'd');
+          }
+
+          if (day === date.format('dddd').toLowerCase()
+              && date.isBetween(initialHour, endHour, null, '[)')
+          ) {
+            userAvailable = true;
+          } else {
+            userAvailable = false;
+          }
         }
+        return userAvailable;
+      });
 
-        if (day === date.format('dddd').toLowerCase()
-            && date.isBetween(initialHour, endHour, null, '[)')
-        ) {
-          userAvailable = true;
-        } else {
-          userAvailable = false;
-        }
-      }
-      return userAvailable;
-    });
-
-    if (doctorsAvailable.length > 0) {
-      if (id === this.dropId) {
-        return 'hourDrag';
+      if (doctorsAvailable.length > 0) {
+        return this.changeDropStyle(id);
       }
 
-      return '';
+      return 'disable';
+    }
+  }
+
+  changeDropStyle(id){
+    if (id === this.dropId) {
+      return 'hourDrag';
     }
 
-    return 'disable';
+    return '';
   }
 
   ngOnDestroy() {
@@ -179,7 +203,6 @@ export class ScheduleComponent implements AfterContentChecked, OnDestroy, OnChan
 
   ngOnChanges(changes: SimpleChanges) {
     this.presentLoading();
-    console.log('CHANGES ', changes);
 
     if (changes.data.currentValue.events
         && changes.data.currentValue.users
@@ -198,6 +221,7 @@ export class ScheduleComponent implements AfterContentChecked, OnDestroy, OnChan
   }
 
   drawSchedule(){
+    console.log('/*/*/*/*/ 2222222');
     this.printData();
     this.printDataCall = true;
     this.showEventCall = true;
@@ -239,6 +263,8 @@ export class ScheduleComponent implements AfterContentChecked, OnDestroy, OnChan
     // subtract days from start of period
     this.weekMoment = moment(startOfPeriod).locale('es').subtract(daysToSubtract, 'd');
 
+    console.log('this.weekMoment ', this.weekMoment);
+
     for (let i = 0; i < 7; i++) {
       if (i !== 0) {
         this.week.push(moment(this.weekMoment).locale('es').add(i, 'd'));
@@ -268,19 +294,21 @@ export class ScheduleComponent implements AfterContentChecked, OnDestroy, OnChan
       this.printEvents();
     }
 
+    /*
     if(!this.showEventCall){
       this.showEvent();
-    }
+    }*/
   }
 
   showEvent(){
     this.fistDayWeek = this.weekShown;
     const diff = moment.duration(moment(this.data.showEvent.start).diff(this.fistDayWeek));
-    console.log('DIFF ', diff.asWeeks() , Math.ceil(diff.asWeeks()));
+    // console.log('DIFF ', diff.asWeeks() , Math.ceil(diff.asWeeks()));
 
     this.weekShown.add(7 *  Math.ceil(diff.asWeeks()), 'd');
     this.fistDayWeek = this.weekShown;
     this.showEventCall = true;
+    console.log('/*/*/*/*/ 3333');
     this.printData();
   }
 
@@ -294,6 +322,7 @@ export class ScheduleComponent implements AfterContentChecked, OnDestroy, OnChan
   substractWeek() {
     this.weekShown.subtract(7, 'd');
     this.fistDayWeek = this.weekShown;
+
     this.printData();
   }
 
@@ -515,7 +544,8 @@ export class ScheduleComponent implements AfterContentChecked, OnDestroy, OnChan
     let dateHour = date.attributes.id.nodeValue;
     dateHour     = dateHour.split('@');
 
-    const event   = this.data.events.find( e => e.id == el.attributes.id.nodeValue);
+    const eventFind = this.data.events.find( e => e.id == el.attributes.id.nodeValue);
+    const event = Object.assign({}, eventFind);
     const newDate = dateHour[0];
     const newHour = dateHour[1];
     const horaIni = moment(newDate);
@@ -531,16 +561,8 @@ export class ScheduleComponent implements AfterContentChecked, OnDestroy, OnChan
     event.hourEnd   = horaFin.format('HH:mm');
     event.users     = event.users.map(usr => usr.id);
 
-    if(event.id){
-      this.firebaseService.updateSchedule(event)
-          .then(() => {
-            this.firebaseService.getSchedules()
-                .subscribe(data => {
-                  this.data.events = data;
-                  this.printData();
-                });
-          })
-          .catch(err => console.error(err));
+    if(event.id) {
+      this.store.dispatch(new UpdateEvent(event));
     }
 
 

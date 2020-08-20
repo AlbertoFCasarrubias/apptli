@@ -4,6 +4,8 @@ import {AlertController, ModalController, NavController, NavParams, ToastControl
 
 import * as moment from 'moment/moment';
 import {FirebaseService} from '../../../services/firebase/firebase.service';
+import {Store} from '@ngxs/store';
+import {AddEvent, UpdateEvent} from '../../../store/actions/events.action';
 
 @Component({
   selector: 'modal-schedule',
@@ -29,7 +31,7 @@ export class ModalScheduleComponent implements OnInit {
               private formBuilder: FormBuilder,
               public alertCtrl: AlertController,
               public toastCtrl: ToastController,
-              public firebaseService: FirebaseService,
+              private store: Store,
               public navParams: NavParams) {
     this.form = this.formBuilder.group(
         {
@@ -167,17 +169,19 @@ export class ModalScheduleComponent implements OnInit {
   }
 
   addEvent(value) {
-    value.users    = value.users.map(el => el.id);
+    value.users = value.users.map(el => el.id);
+    value.patient = this.user.id;
+
     console.log('addEvent ', value, this.user);
     /*
     if(!this.user.doctor)
     {
       value.status = this.status.requestByPatient;
-      value.patient = this.user.id;
+
     }*/
 
-    this.firebaseService.createSchedule(value)
-        .then(data => {
+    this.store.dispatch(new AddEvent(value)).toPromise()
+        .then(() => {
           this.showAlert('Agenda', 'Evento guardado correctamente.');
           this.modalController.dismiss({
             action: 'add'
@@ -189,7 +193,7 @@ export class ModalScheduleComponent implements OnInit {
   editEvent(value) {
     value.id = this.id;
 
-    this.firebaseService.updateSchedule(value)
+    this.store.dispatch(new UpdateEvent(value)).toPromise()
         .then(() => {
           this.showAlert('Agenda', 'Evento guardado correctamente.');
           this.modalController.dismiss({

@@ -60,7 +60,8 @@
                  [ngStyle]="setStyle(event)"
                  id = "{{event.id}}"
                  *ngFor="let event of hour.events">
-              <span *ngIf="event.data.users[0]">{{event.data.users[0].name}}</span>
+              <span *ngIf="!user.doctor && event.data.users[0]">{{event.data.users[0].name}}</span>
+              <span *ngIf="user.doctor && event.data.patient">{{event.data.patient.name}}</span>
               <span *ngIf="hour.events.length<=2">{{event.nombre}}</span>
               <span *ngIf="hour.events.length>2">{{event.nombre.substring(0,1)}}</span>
               <span *ngIf="event.data.estatus == 'pay'">Pagado</span>

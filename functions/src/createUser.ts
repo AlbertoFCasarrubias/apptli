@@ -8,7 +8,6 @@ const createUser = functions.https.onCall((data) => {
         .then(function(userRecord) {
             // See the UserRecord reference doc for the contents of userRecord.
             console.log('Successfully created new user:', userRecord.uid);
-            return userRecord;
         })
         .catch((error) => {
             throw new functions.https.HttpsError('internal', error.message)

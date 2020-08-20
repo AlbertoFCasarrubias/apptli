@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {MenuController} from '@ionic/angular';
 import {FirebaseService} from '../../services/firebase/firebase.service';
 import {AngularFireAuth} from '@angular/fire/auth';
@@ -7,49 +7,58 @@ import {switchMap} from 'rxjs/operators';
 import {Store} from '@ngxs/store';
 import {UsersState} from '../../store/states/users.state';
 import {EventsState} from '../../store/states/events.state';
+import {AppState} from '../../store/states/app.state';
 
 @Component({
-  selector: 'app-calendar',
-  templateUrl: './calendar.page.html',
-  styleUrls: ['./calendar.page.scss'],
+    selector: 'app-calendar',
+    templateUrl: './calendar.page.html',
+    styleUrls: ['./calendar.page.scss'],
 })
 export class CalendarPage implements OnInit {
-  scheduleData: any = {};
+    scheduleData: any = {};
 
-  constructor(public menuCtrl: MenuController,
-              private route: ActivatedRoute,
-              private store: Store,
-              private firebaseService: FirebaseService) {}
+    constructor(public menuCtrl: MenuController,
+                private route: ActivatedRoute,
+                private store: Store) {
+    }
 
-  toggleMenu() {
-    this.menuCtrl.toggle();
-  }
+    toggleMenu() {
+        this.menuCtrl.toggle();
+    }
 
-  ngOnInit(): void {
-    this.route.paramMap.subscribe(
-        params => {
-          if(params['params'].event)
-          {
-            this.scheduleData.showEvent = JSON.parse(params['params'].event);
-          }
-          else{
-              this.scheduleData.showEvent = 'notEvent';
-          }
-        });
+    ngOnInit(): void {
+        this.route.paramMap.subscribe(
+            params => {
+                if (params['params'].event) {
+                    this.scheduleData.showEvent = JSON.parse(params['params'].event);
+                } else {
+                    this.scheduleData.showEvent = 'notEvent';
+                }
+            });
 
+        this.scheduleData.user = this.store.selectSnapshot(AppState.user);
+        const events = this.store.selectSnapshot(EventsState.schedule);
+        let eventsArray = [];
+        if (events) {
+          eventsArray = Object.keys(events).map((k) => events[k]);
+        }
 
-    this.firebaseService.getUserByAuthId()
-        .then(userData => {
-          userData
-              .subscribe(user => this.scheduleData.user = user, error => console.error(error));
-        });
+        if (this.scheduleData.user.doctor) {
+            this.scheduleData.users = this.store.selectSnapshot(UsersState.patients);
+            this.scheduleData.events = eventsArray.filter(e => {
+                const find = e.users.find(u => u.id === this.scheduleData.user.id);
+                if (find) {
+                    return true;
+                }
 
-    this.store.select(EventsState.schedule)
-        .subscribe(data => this.scheduleData.events = data, error => console.error(error));
+                return false;
+            });
+        } else {
+            this.scheduleData.events = eventsArray;
+            this.scheduleData.users = this.store.selectSnapshot(UsersState.users);
+        }
 
-    this.store.select(UsersState.users)
-        .subscribe( data => this.scheduleData.users = data, error => console.error(error));
-
-  }
+        console.log('this.scheduleData ', this.scheduleData);
+    }
 
 }

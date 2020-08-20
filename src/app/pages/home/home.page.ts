@@ -4,6 +4,9 @@ import {FirebaseService} from '../../services/firebase/firebase.service';
 import * as moment from 'moment/moment';
 import {environment} from '../../../environments/environment';
 import {Router} from '@angular/router';
+import {AngularFireFunctions} from '@angular/fire/functions';
+import {AppState} from '../../store/states/app.state';
+import {Store} from '@ngxs/store';
 
 @Component({
     selector: 'app-home',
@@ -14,28 +17,30 @@ export class HomePage implements OnInit {
     events: any = [];
     user: any;
     status = environment.EVENT_STATUS;
+    data$;
 
     constructor(public menuCtrl: MenuController,
                 private router: Router,
+                private store: Store,
                 public alertController: AlertController,
-                private firebaseService: FirebaseService) {
-    }
+                private firebaseService: FirebaseService) {}
 
     toggleMenu() {
         this.menuCtrl.toggle();
     }
 
-    ngOnInit(): void {
+    ngOnInit() {
+        /*
         this.firebaseService.getUserByAuthId()
             .then(userData => {
                 userData
                     .subscribe(user => this.init(user), error => console.error(error));
-            });
+            });*/
     }
 
     init(user) {
         this.user = user;
-        this.getEvents();
+        //this.getEvents();
     }
 
     getEvents() {

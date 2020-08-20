@@ -57,27 +57,6 @@ export class FirebaseService {
         return this.delete(this.NOTIFICATION, id);
     }
 
-    // Materials
-    createMaterial(value) {
-        return this.create(this.MATERIALS, value);
-    }
-
-    updateMaterial(value) {
-        return this.update(this.MATERIALS, value);
-    }
-
-    getMaterials() {
-        return this.getAll(this.MATERIALS);
-    }
-
-    getMaterial(id) {
-        return this.getById(this.MATERIALS, id);
-    }
-
-    deleteMaterial(id) {
-        return this.delete(this.MATERIALS, id);
-    }
-
     // Schedule
     createSchedule(value) {
         return this.create(this.SCHEDULE, value);
@@ -100,18 +79,34 @@ export class FirebaseService {
                             .pipe(first());
                     });
 
+                const patientObservable = eventsCollection.map(
+                    event => {
+                        return this.afs.doc(`${this.USERS}/${event['patient']}`)
+                            .valueChanges()
+                            .pipe(first());
+                    });
+
                 return combineLatest(
-                    ...usersObservable
-                )
-                    .pipe(map((...users) => {
-                            eventsCollection.forEach((event, index) => {
-                                const userId = event['users'][0];
-                                users[0][index]['id'] = userId;
-                                event['users'][0] = users[0][index];
-                            });
-                            return eventsCollection;
-                        })
-                    );
+                    ...usersObservable,
+                    ...patientObservable
+                ).pipe(map((...combine) => {
+                        const users = combine[0].slice(0, combine[0].length / 2);
+                        const patients = combine[0].slice(combine[0].length / 2);
+
+                        eventsCollection.forEach((event, index) => {
+                            const userId = event['users'][0];
+                            users[index]['id'] = userId;
+                            event['users'][0] = users[index];
+
+                            if(patients[index]){
+                                const patientId = event['patient'];
+                                patients[index]['id'] = patientId;
+                                event['patient'] = patients[index];
+                            }
+                        });
+                        return eventsCollection;
+                    })
+                );
             })
         );
     }
@@ -181,7 +176,8 @@ export class FirebaseService {
     }
 
     getUsers() {
-        return this.getAll(this.USERS);;
+        return this.getAll(this.USERS);
+        ;
     }
 
     getUser(id) {

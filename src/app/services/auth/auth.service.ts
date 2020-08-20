@@ -3,23 +3,28 @@ import * as firebase from 'firebase/app';
 import { auth } from 'firebase/app';
 import { AngularFireAuth } from '@angular/fire/auth';
 import {FirebaseService} from '../firebase/firebase.service';
+import {AngularFireFunctions} from '@angular/fire/functions';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
+  cloudFunction$;
+  callable;
 
   constructor(private firebaseService: FirebaseService,
-              public afAuth: AngularFireAuth) { }
+              private fns: AngularFireFunctions,
+              public afAuth: AngularFireAuth) {
+    this.callable = fns.httpsCallable('default');
+  }
 
-  doRegister(value)
-  {
+  doRegister(value) {
     return new Promise<any>((resolve, reject) => {
-      firebase.auth()
-          .createUserWithEmailAndPassword(value.email, value.password)
-          .then(
-              res => resolve(res),
-              err => reject(err));
+      this.cloudFunction$ = this.callable(value);
+      this.cloudFunction$.subscribe(
+          res => resolve(res),
+          err => reject(err)
+      );
     });
   }
 

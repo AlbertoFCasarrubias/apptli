@@ -52,8 +52,8 @@ export class UserPage implements OnInit {
       mail: new FormControl('', Validators.compose([Validators.required, Validators.email])),
       schedule: [this.workingHours],
       admin: new FormControl(true),
-      doctor: new FormControl('false'),
-      patient: new FormControl(this.appUser.id)
+      doctor: new FormControl(this.appUser.admin ? 'true' : 'false'),
+      patient: new FormControl(this.appUser.adminID)
     });
 
     const id = this.activatedRoute.snapshot.paramMap.get('id');
@@ -163,8 +163,8 @@ export class UserPage implements OnInit {
         this.authService.doRegister(reg)
             .then(register => {
               console.log('REGISTER ', register);
-              //value.adminID = register.user.uid;
-              //this.createUser(value);
+              value.adminID = register.uid;
+              this.createUser(value);
             });
       }
     }
@@ -175,7 +175,7 @@ export class UserPage implements OnInit {
     value.admin = value.admin === 'true' ? true : false;
 
     this.store.dispatch(new AddUser(value))
-        .subscribe(data => this.savedOK(data),
+        .subscribe(data => this.savedOK(value, true),
             err => this.saveError(err));
 
   }
@@ -192,9 +192,9 @@ export class UserPage implements OnInit {
         .catch(err => this.saveError(err));
   }
 
-  savedOK(value) {
+  savedOK(value, showPassword = false) {
     console.log('VALUE SAVED OK ', value);
-    const message = value.admin === 'true' ? ' La contraseña temporal es 12341234' : '';
+    const message = !showPassword ? ' La contraseña temporal es 12341234' : '';
     this.dismissLoading();
     this.presentAlert('Usuario', value.name + ' guardado correctamente.' + message);
   }
