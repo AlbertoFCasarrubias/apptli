@@ -55,3 +55,18 @@ package.json scripts that help
 "lighthouse": "lighthouse http://localhost:8888 --view",
 "dist": "ionic build --prod -- --base-href /apptli/"
 ```
+
+```
+curl -X POST \
+  https://fcm.googleapis.com/fcm/send \
+  -H 'Authorization: key=AAAAZHticEY:APA91bG-Sc3nVvk9eMt-rmqU7pfo9sE2HcUIdJHy5pzc6jIROCm8H5nk_TtTeZan-oGpN9DWpnznQAAwGhGErGTnSYsdn--njH7d2mwwkg8ZOspZCuR_GcKj7xNMnoN4tonQsZXPQxND' \
+  -H 'Content-Type: application/json' \
+  -d '{
+ "notification": {
+  "title": "Hello World",
+  "body": "This is Message from Admin"
+ },
+ "to" : "czrQ1qGWb7U2L6b4ckg6l3:APA91bHFKM4uimciQpnTYJA5-7UhT9nzCtK9tuyUokQ--dIn4SDa9kV4RERFqgs7fpqs67Cwa0XDlX_5ulcjUJeOG-t91HBOTaTyVSK0NoAx6hRxiGykM4NnY7yT-7k7XnP7phksq1J8"
+}'
+
+```

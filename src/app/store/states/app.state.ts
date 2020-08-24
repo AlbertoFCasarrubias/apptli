@@ -1,19 +1,21 @@
 import {Action, Selector, State, StateContext} from '@ngxs/store';
 import {Injectable} from '@angular/core';
-import {GetUserByMail, Login, Logout, SetCurrentCall, SetUser} from '../actions/app.action';
+import {GetUserByMail, Login, Logout, SetCurrentCall, SetToken, SetUser, UpdateUser} from '../actions/app.action';
 import {AuthService} from '../../services/auth/auth.service';
 import {FirebaseService} from '../../services/firebase/firebase.service';
 
 export interface AppStateModel {
     user: object | null | string;
     currentCall: null | object;
+    token: null | string;
 }
 
 @State<AppStateModel>({
     name: 'user',
     defaults: {
         user: null,
-        currentCall: null
+        currentCall: null,
+        token: null
     }
 })
 @Injectable()
@@ -21,6 +23,11 @@ export class AppState {
     @Selector()
     static user(state: AppStateModel): object | null | string {
         return state.user;
+    }
+
+    @Selector()
+    static token(state: AppStateModel):  null | string {
+        return state.token;
     }
 
     @Selector()
@@ -92,5 +99,27 @@ export class AppState {
         ctx.patchState({
             currentCall: action.currentCall
         });
+    }
+
+    @Action(SetToken)
+    setToken(ctx: StateContext<AppStateModel>, action: SetToken) {
+        ctx.patchState({
+            token: action.token
+        });
+    }
+
+    @Action(UpdateUser)
+    updateUser(ctx: StateContext<AppStateModel>, action: UpdateUser) {
+        return this.firebaseService.updateUser(action.payload)
+            .then(data => {
+
+                const {user} = ctx.getState();
+                //patients.push(data);
+                console.log('DATA ', data, user);
+/*
+                ctx.patchState({
+                    patients
+                });*/
+            });
     }
 }

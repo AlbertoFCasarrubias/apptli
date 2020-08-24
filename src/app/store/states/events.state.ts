@@ -6,6 +6,7 @@ import {GetUser, GetUsers, UsersStateModel} from '../actions/users.action';
 import {FirebaseService} from '../../services/firebase/firebase.service';
 import {catchError, map, tap} from 'rxjs/operators';
 import {of} from 'rxjs';
+import * as moment from 'moment';
 import {AddEvent, EventsStateModel, GetEvents, UpdateEvent} from '../actions/events.action';
 
 @State<EventsStateModel>({

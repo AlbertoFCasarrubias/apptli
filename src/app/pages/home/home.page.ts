@@ -53,14 +53,14 @@ export class HomePage implements OnInit, OnDestroy {
 
         this.store.select(EventsState.schedule).subscribe(events => {
             if (events) {
-                this.events = events;
+                const filter = Object.keys(events).map((k) => events[k]).filter(e => moment(e.start).format('MM-DD') >= moment().format('MM-DD'));
+                this.events = filter;
                 this.eventsApproved = this.events.filter(e => e.status === this.status.approved);
                 this.eventsNotApproved = this.events.filter(e => e.status !== this.status.approved && e.status !== this.status.cancelled);
                 this.eventsCancelled = this.events.filter(e => e.status === this.status.cancelled);
 
                 this.now = moment();
                 this.findCurrentEvent();
-                console.log('events ', this.events);
             }
 
         });

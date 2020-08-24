@@ -1,16 +1,19 @@
 import {Component} from '@angular/core';
 
-import {Platform} from '@ionic/angular';
+import {Platform, ToastController} from '@ionic/angular';
 import {SplashScreen} from '@ionic-native/splash-screen/ngx';
 import {StatusBar} from '@ionic-native/status-bar/ngx';
 import {AngularFireAuth} from '@angular/fire/auth';
 import {Router} from '@angular/router';
 import {Store} from '@ngxs/store';
-import {GetUserByMail, SetUser} from './store/actions/app.action';
+import {GetUserByMail, SetToken, SetUser, UpdateUser} from './store/actions/app.action';
 import {GetPatients, GetUsers} from './store/actions/users.action';
 import {GetEvents} from './store/actions/events.action';
 import {AppState} from './store/states/app.state';
 import {UsersState} from './store/states/users.state';
+import {AngularFireMessaging} from '@angular/fire/messaging';
+import {mergeMapTo} from 'rxjs/operators';
+import {AngularFireFunctions} from '@angular/fire/functions';
 
 @Component({
     selector: 'app-root',
@@ -66,10 +69,12 @@ export class AppComponent {
 
     constructor(
         private platform: Platform,
+        public toastController: ToastController,
         private splashScreen: SplashScreen,
         private statusBar: StatusBar,
         private router: Router,
         public afAuth: AngularFireAuth,
+        private afMessaging: AngularFireMessaging,
         private store: Store
     ) {
         this.initializeApp();
@@ -117,12 +122,39 @@ export class AppComponent {
                 () => {
                     this.splashScreen.hide();
                 });
+
+            this.afMessaging.requestToken
+                .subscribe(
+                    (token) => {
+                        console.log(token, this.user, '****');
+                        this.store.dispatch(new SetToken(token));
+                        const interval = setInterval(() => {
+                            console.log('this.user ', this.user);
+                            if (this.user) {
+                                clearInterval(interval);
+
+                                if(this.user.token !== token) {
+                                    const payload = Object.assign({}, this.user);
+                                    payload.token = token;
+                                    this.store.dispatch(new UpdateUser(payload));
+                                }
+                            }
+                        }, 500);
+                        },
+                    (error) => { console.error(error); }
+                );
+
+            this.afMessaging.messages
+                .subscribe((message) => {
+                    this.presentToast(message);
+                });
         });
     }
 
     async initStore(user) {
         this.store.dispatch(new GetUserByMail(user.email)).toPromise().then(() => {
             this.user = this.store.selectSnapshot(AppState.user);
+
         });
         this.store.dispatch(new GetUsers()).toPromise().then(() => {
             const users = this.store.selectSnapshot(UsersState.users);
@@ -140,5 +172,22 @@ export class AppComponent {
                 })
                 .catch(err => console.log('Error logout ', err));
         }
+    }
+
+    async presentToast(message) {
+        console.log('**** ', message);
+        let notification;
+        if (message.data) {
+            notification = JSON.parse(message.data.notification);
+        } else{
+            notification = message.notification;
+        }
+
+        console.log('MESSAGE ', message, notification);
+        const toast = await this.toastController.create({
+            message: notification.body,
+            duration: 2000
+        });
+        toast.present();
     }
 }

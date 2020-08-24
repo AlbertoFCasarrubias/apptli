@@ -15,7 +15,7 @@ export class AuthService {
   constructor(private firebaseService: FirebaseService,
               private fns: AngularFireFunctions,
               public afAuth: AngularFireAuth) {
-    this.callable = fns.httpsCallable('default');
+    this.callable = fns.httpsCallable('createUser');
   }
 
   doRegister(value) {

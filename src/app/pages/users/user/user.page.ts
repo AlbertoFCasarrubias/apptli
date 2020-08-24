@@ -8,7 +8,6 @@ import {RoutingService} from '../../../services/routing/routing.service';
 import {Store} from '@ngxs/store';
 import {AppState} from '../../../store/states/app.state';
 import {AddUser} from '../../../store/actions/users.action';
-import { AngularFireFunctions } from '@angular/fire/functions';
 
 @Component({
   selector: 'app-user',

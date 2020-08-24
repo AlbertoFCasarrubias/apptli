@@ -1,10 +1,8 @@
 import {Action, Selector, State, StateContext} from '@ngxs/store';
 import {Injectable} from '@angular/core';
-import {Login, Logout, SetUser} from '../actions/app.action';
-import {AuthService} from '../../services/auth/auth.service';
 import {AddUser, GetPatients, GetUser, GetUsers, UsersStateModel} from '../actions/users.action';
 import {FirebaseService} from '../../services/firebase/firebase.service';
-import {catchError, map, tap} from 'rxjs/operators';
+import {tap} from 'rxjs/operators';
 
 
 @State<UsersStateModel>({
@@ -78,5 +76,4 @@ export class UsersState {
                 });
             });
     }
-
 }

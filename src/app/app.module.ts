@@ -25,6 +25,7 @@ import {UsersState} from './store/states/users.state';
 import {EventsState} from './store/states/events.state';
 import {AgoraConfig, NgxAgoraModule} from 'ngx-agora';
 import {AngularFireFunctionsModule} from '@angular/fire/functions';
+import {AngularFireMessagingModule} from '@angular/fire/messaging';
 
 const agoraConfig: AgoraConfig = {
     AppID: 'c7d5f3bc5f4345fcaa57bba1fc1e5f6d',
@@ -45,6 +46,7 @@ registerLocaleData(localeEs);
         AngularFirestoreModule,
         AngularFireStorageModule,
         AngularFireFunctionsModule,
+        AngularFireMessagingModule,
         AngularFireModule.initializeApp(environment.firebase),
         NgxsModule.forRoot([
             AppState,
@@ -57,7 +59,7 @@ registerLocaleData(localeEs);
             disabled: environment.production,
         }),
         NgxAgoraModule.forRoot(agoraConfig),
-        ServiceWorkerModule.register('ngsw-worker.js', {enabled: environment.production})],
+        ServiceWorkerModule.register('combined-sw.js', {enabled: environment.production})],
     providers: [
         StatusBar,
         SplashScreen,
