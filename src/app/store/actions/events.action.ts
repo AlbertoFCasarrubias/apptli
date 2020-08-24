@@ -4,12 +4,12 @@ export interface EventsStateModel {
 
 export class GetEvents {
     static readonly type = '[Schedule] get all events';
+    constructor(public users: object) {}
 }
 
 export class AddEvent {
     static readonly type = '[Schedule] add event';
-    constructor(public payload: object) {
-    }
+    constructor(public payload: object) {}
 }
 
 export class UpdateEvent {

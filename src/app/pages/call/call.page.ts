@@ -3,6 +3,11 @@ import {AgoraClient, AgoraConfig, ClientConfig, ClientEvent, NgxAgoraService, St
 import {FormControl} from '@angular/forms';
 import {environment} from '../../../environments/environment';
 import {MenuController} from '@ionic/angular';
+import * as moment from 'moment/moment';
+import {AppState} from '../../store/states/app.state';
+import {EventsState} from '../../store/states/events.state';
+import {Store} from '@ngxs/store';
+import {SetCurrentCall} from '../../store/actions/app.action';
 
 @Component({
   selector: 'app-call',
@@ -39,7 +44,14 @@ export class CallPage implements OnInit, OnDestroy {
    */
   published = false;
 
+  interval;
+  now;
+  events;
+  user;
+  currentEvent = [];
+
   constructor(private agoraService: NgxAgoraService,
+              private store: Store,
               public menuCtrl: MenuController) {
     this.uid = Math.floor(Math.random() * 100);
 
@@ -48,11 +60,23 @@ export class CallPage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    /*
+    this.interval = setInterval(() => {
+      this.now = moment();
+
+      if(this.events.length > 0){
+        this.findCurrentEvent();
+      }
+    }, 30000);*/
+
+    this.user = this.store.selectSnapshot(AppState.user);
+    this.events = this.store.selectSnapshot(AppState.currentCall);
+
     this.client.init(this.appId.value, () => console.log('Initialized successfully'), () => console.log('Could not initialize'));
   }
 
   ngOnDestroy() {
-
+    //clearInterval(this.interval);
   }
 
   toggleMenu() {
@@ -68,7 +92,11 @@ export class CallPage implements OnInit, OnDestroy {
   }
 
   publish(): void {
-    this.client.publish(this.localStream, err => console.log('Publish local stream error: ' + err));
+    this.join();
+    setTimeout(() =>{
+      this.client.publish(this.localStream, err => console.log('Publish local stream error: ' + err));
+    }, 1000);
+
   }
 
   unpublish(): void {
@@ -84,11 +112,16 @@ export class CallPage implements OnInit, OnDestroy {
             this.connected = false;
             this.published = false;
             this.remoteCalls = [];
+            //this.localStream.close();
           },
           err => {
             console.log('Leave channel failed');
           }
       );
+
+      setTimeout(() =>{
+        this.unpublish();
+      }, 1000);
     } else {
       this.agoraService.AgoraRTC.Logger.warning('Local client is not connected to channel.');
     }

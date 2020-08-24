@@ -6,7 +6,7 @@
       </ion-button>
     </ion-buttons>
     <ion-title>
-      LLamada
+      Llamada
     </ion-title>
   </ion-toolbar>
 </ion-header>
@@ -15,15 +15,18 @@
   <section class="container">
 
     <article class="row">
-      <input matInput [formControl]="appId">
-
-      <input matInput [formControl]="channel">
+      <!--input matInput [formControl]="appId">
+      <input matInput [formControl]="channel" -->
 
 
       <div class="col-6">
         <div class="row h-100">
           <div class="col-12">
-            <button color="primary" (click)="join()">Join Channel</button>
+
+            <!--ion-button shape="round" (click)="join()"><ion-icon slot="icon-only" name="star"></ion-icon></ion-button-->
+            <ion-button shape="round" (click)="publish()"><ion-icon slot="icon-only" name="call"></ion-icon></ion-button>
+            <ion-button shape="round" (click)="leave()" color="danger"><ion-icon slot="icon-only" name="call"></ion-icon></ion-button>
+            <!--ion-button shape="round" (click)="leave()"><ion-icon slot="icon-only" name="star"></ion-icon></ion-button-->
             <button color="primary" (click)="publish()">Publish Local Stream</button>
             <button color="primary" (click)="unpublish()">Unpublish Local Stream</button>
             <button color="accent" (click)="leave()">Leave</button>

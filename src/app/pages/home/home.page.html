@@ -6,36 +6,122 @@
       </ion-button>
     </ion-buttons>
     <ion-title>
-      Apptli{{user ? ': ' + user.name : ''}}
+      Apptli
     </ion-title>
   </ion-toolbar>
 </ion-header>
 <ion-content>
-  <ion-list>
-    <ion-item *ngFor="let event of events" [ngClass]="event.status">
-      <div class="event" >
-        {{event.start | date:'medium'}}
-        <div class="patient">
-          {{event.status | scheduleStatus}}
+  <ion-list *ngIf="events && events.length > 0">
+    <ion-item-group>
+      <ion-item-divider>
+        Consultas en este momento
+      </ion-item-divider>
+      <ion-item *ngFor="let event of currentEvent">
+        <div class="event" >
+          {{event.start | date:'medium'}} - {{event.end | date:'medium'}}
+          <!--div class="patient">
+            {{event.status | scheduleStatus}}
+          </div-->
+          <div class="patient" *ngFor="let patient of event.patient">
+            {{patient.name}} {{patient.mail}}
+          </div>
+          <div class="patient">
+            {{event.comments}}
+          </div>
         </div>
-        <div class="patient">
-          {{event.patient.name}} {{event.patient.mail}}
+        <div class="buttons" >
+          <ion-button class="btnRound" shape="round" (click)="goToCall(event)">
+            <ion-icon slot="icon-only" name="call"></ion-icon>
+          </ion-button>
         </div>
-        <div class="patient">
-          {{event.comments}}
+      </ion-item>
+    </ion-item-group>
+    <ion-item-group>
+      <ion-item-divider>
+        Consultas confirmadas
+      </ion-item-divider>
+      <ion-item *ngFor="let event of eventsApproved" [ngClass]="event.status">
+        <div class="event" >
+          {{event.start | date:'medium'}}
+          <!--div class="patient">
+            {{event.status | scheduleStatus}}
+          </div-->
+          <div class="patient" *ngFor="let patient of event.patient">
+            {{patient.name}} {{patient.mail}}
+          </div>
+          <div class="patient">
+            {{event.comments}}
+          </div>
         </div>
-      </div>
-      <div class="buttons" >
-        <ion-button class="btnRound" shape="round" (click)="confirmEvent(event)">
-          <ion-icon slot="icon-only" name="checkmark"></ion-icon>
-        </ion-button>
-        <ion-button class="btnRound" shape="round" (click)="goToCalendar(event)">
-          <ion-icon slot="icon-only" name="calendar"></ion-icon>
-        </ion-button>
-        <ion-button class="btnRound" shape="round" (click)="cancelEvent(event)" color="danger">
-          <ion-icon slot="icon-only" name="close"></ion-icon>
-        </ion-button>
-      </div>
-    </ion-item>
+        <div class="buttons" >
+          <ion-button class="btnRound" shape="round" (click)="goToCalendar(event)">
+            <ion-icon slot="icon-only" name="calendar"></ion-icon>
+          </ion-button>
+          <ion-button class="btnRound" shape="round" (click)="cancelEvent(event)" color="danger">
+            <ion-icon slot="icon-only" name="close"></ion-icon>
+          </ion-button>
+        </div>
+      </ion-item>
+    </ion-item-group>
+    <ion-item-group>
+      <ion-item-divider>
+        Consultas sin confirmar
+      </ion-item-divider>
+      <ion-item *ngFor="let event of eventsNotApproved" [ngClass]="event.status">
+        <div class="event" >
+          {{event.start | date:'medium'}}
+          <!--div class="patient">
+            {{event.status | scheduleStatus}}
+          </div-->
+          <div class="patient" *ngFor="let patient of event.patient">
+            {{patient.name}} {{patient.mail}}
+          </div>
+          <div class="patient">
+            {{event.comments}}
+          </div>
+        </div>
+        <div class="buttons" >
+          <ion-button class="btnRound" shape="round" (click)="confirmEvent(event)">
+            <ion-icon slot="icon-only" name="checkmark"></ion-icon>
+          </ion-button>
+          <ion-button class="btnRound" shape="round" (click)="goToCalendar(event)">
+            <ion-icon slot="icon-only" name="calendar"></ion-icon>
+          </ion-button>
+          <ion-button class="btnRound" shape="round" (click)="cancelEvent(event)" color="danger">
+            <ion-icon slot="icon-only" name="close"></ion-icon>
+          </ion-button>
+        </div>
+      </ion-item>
+    </ion-item-group>
+    <ion-item-group>
+      <ion-item-divider>
+        Consultas canceladas
+      </ion-item-divider>
+      <ion-item *ngFor="let event of eventsCancelled" [ngClass]="event.status">
+        <div class="event" >
+          {{event.start | date:'medium'}}
+          <!--div class="patient">
+            {{event.status | scheduleStatus}}
+          </div-->
+          <div class="patient" *ngFor="let patient of event.patient">
+            {{patient.name}} {{patient.mail}}
+          </div>
+          <div class="patient">
+            {{event.comments}}
+          </div>
+        </div>
+        <div class="buttons" >
+          <ion-button class="btnRound" shape="round" (click)="confirmEvent(event)">
+            <ion-icon slot="icon-only" name="checkmark"></ion-icon>
+          </ion-button>
+          <ion-button class="btnRound" shape="round" (click)="goToCalendar(event)">
+            <ion-icon slot="icon-only" name="calendar"></ion-icon>
+          </ion-button>
+          <ion-button class="btnRound" shape="round" (click)="cancelEvent(event)" color="danger">
+            <ion-icon slot="icon-only" name="close"></ion-icon>
+          </ion-button>
+        </div>
+      </ion-item>
+    </ion-item-group>
   </ion-list>
 </ion-content>

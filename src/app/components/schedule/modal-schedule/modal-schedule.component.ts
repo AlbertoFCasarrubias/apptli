@@ -53,7 +53,13 @@ export class ModalScheduleComponent implements OnInit {
     this.user     = this.navParams.data.data.user;
     this.date     = this.navParams.data.date;
     this.status   = this.navParams.data.status;
-    this.users    = this.filterUserSchedule(this.navParams.data.date, this.navParams.data.data.users);
+
+    if (this.user.doctor) {
+      this.users    = this.navParams.data.data.users;
+    } else {
+      this.users    = this.getAvailableDoctors(this.navParams.data.date, this.navParams.data.data.users);
+    }
+
 
     this.addMinutes(60);
 
@@ -111,7 +117,7 @@ export class ModalScheduleComponent implements OnInit {
     this.form.controls.hourEnd.patchValue(horaFin.format('HH:mm'));
   }
 
-  filterUserSchedule(eventDate , initialUsers) {
+  getAvailableDoctors(eventDate , initialUsers) {
     const date = eventDate;
     initialUsers = initialUsers.filter(u => u.doctor);
 
@@ -165,20 +171,24 @@ export class ModalScheduleComponent implements OnInit {
   }
 
   setSelected(control, response) {
+    this.selectedUsers = response;
     this.form.controls[control].patchValue(response);
   }
 
+  deleteSelected($event) {
+
+  }
+
   addEvent(value) {
-    value.users = value.users.map(el => el.id);
-    value.patient = this.user.id;
+    if (!this.user.doctor) {
+      value.users = value.users.map(el => el.id);
+      value.patient = [this.user.id];
+    } else {
+      value.patient = value.users.map(el => el.id);
+      value.users = [this.user.id];
+    }
 
     console.log('addEvent ', value, this.user);
-    /*
-    if(!this.user.doctor)
-    {
-      value.status = this.status.requestByPatient;
-
-    }*/
 
     this.store.dispatch(new AddEvent(value)).toPromise()
         .then(() => {

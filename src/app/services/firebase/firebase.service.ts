@@ -3,9 +3,10 @@ import {AngularFirestore} from '@angular/fire/firestore';
 import {AngularFireAuth} from '@angular/fire/auth';
 import * as firebase from 'firebase/app';
 import 'firebase/storage';
-// import * as admin from 'firebase-admin';
 import {combineAll, first, flatMap, map, mergeAll, switchMap} from 'rxjs/operators';
-import {combineLatest, forkJoin, zip} from 'rxjs';
+import {combineLatest, forkJoin, of, zip} from 'rxjs';
+import {Store} from '@ngxs/store';
+import {UsersState} from '../../store/states/users.state';
 
 @Injectable({
     providedIn: 'root'
@@ -21,6 +22,7 @@ export class FirebaseService {
     private NOTIFICATION = 'notification';
 
     constructor(private afs: AngularFirestore,
+                private store: Store,
                 private afAuth: AngularFireAuth) {
     }
 
@@ -66,49 +68,78 @@ export class FirebaseService {
         return this.update(this.SCHEDULE, value);
     }
 
-    getSchedules() {
+    getSchedules(usersInitial = null) {
         const events = this.afs.collection(this.SCHEDULE, ref => ref.orderBy('autoincrement', 'asc'))
             .valueChanges({idField: 'id'});
 
-        return events.pipe(
-            switchMap(eventsCollection => {
-                const usersObservable = eventsCollection.map(
-                    event => {
-                        return this.afs.doc(`${this.USERS}/${event['users'][0]}`)
-                            .valueChanges()
-                            .pipe(first());
-                    });
+        if (usersInitial) {
+            return events.pipe(
+                switchMap(eventsCollection => {
+                    return combineLatest(of(usersInitial)).pipe(
+                        map(users => {
+                            return this.updateEventUsers(eventsCollection, usersInitial);
+                        })
+                    );
+                })
+            );
+        } else {
+            return events.pipe(
+                switchMap(eventsCollection => {
+                    let usersIDs = [];
+                    for(const event of eventsCollection) {
+                        // @ts-ignore
+                        for(const user of event.users){
+                            usersIDs.push(user);
+                        }
 
-                const patientObservable = eventsCollection.map(
-                    event => {
-                        return this.afs.doc(`${this.USERS}/${event['patient']}`)
-                            .valueChanges()
-                            .pipe(first());
-                    });
+                        // @ts-ignore
+                        for(const user of event.patient) {
+                            usersIDs.push(user);
+                        }
+                    }
 
-                return combineLatest(
-                    ...usersObservable,
-                    ...patientObservable
-                ).pipe(map((...combine) => {
-                        const users = combine[0].slice(0, combine[0].length / 2);
-                        const patients = combine[0].slice(combine[0].length / 2);
+                    usersIDs = usersIDs.splice(0, usersIDs.length, ...(new Set(usersIDs))); //remove duplicates
 
-                        eventsCollection.forEach((event, index) => {
-                            const userId = event['users'][0];
-                            users[index]['id'] = userId;
-                            event['users'][0] = users[index];
-
-                            if(patients[index]){
-                                const patientId = event['patient'];
-                                patients[index]['id'] = patientId;
-                                event['patient'] = patients[index];
-                            }
+                    const usersObservable = usersIDs.map(
+                        user => {
+                            return this.afs.doc(`${this.USERS}/${user}`)
+                                .valueChanges()
+                                .pipe(
+                                    map(u =>{
+                                        // @ts-ignore
+                                        u.id = user;
+                                        return u;
+                                    })
+                                );
                         });
-                        return eventsCollection;
-                    })
-                );
-            })
-        );
+
+                    return combineLatest(usersObservable).pipe(
+                        map(users => {
+                            return this.updateEventUsers(eventsCollection, users);
+                        })
+                    );
+                })
+            );
+        }
+    }
+
+    private updateEventUsers(eventsCollection, users) {
+        eventsCollection.forEach((event, i) => {
+            // @ts-ignore
+            event.users.forEach((user, j) =>{
+                // @ts-ignore
+                eventsCollection[i].users[j] = users.find( u => u.id == user);
+            });
+
+            // @ts-ignore
+            event.patient.forEach((user, j) =>{
+                // @ts-ignore
+                eventsCollection[i].patient[j] = users.find( u => u.id == user);
+            });
+
+        });
+
+        return eventsCollection;
     }
 
     getSchedulesByDoctor(idDoctor) {

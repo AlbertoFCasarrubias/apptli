@@ -24,13 +24,16 @@ export class EventsState {
     constructor(private firebaseService: FirebaseService) {}
 
     @Action(GetEvents)
-    getEvents(ctx: StateContext<EventsStateModel>) {
-        this.firebaseService.getSchedules()
-            .subscribe( data => {
-                ctx.patchState({
-                    schedule: data
-                });
-            }, error => console.error(error));
+    getEvents(ctx: StateContext<EventsStateModel>, action: GetEvents) {
+        return new Promise((resolve, reject) => {
+            this.firebaseService.getSchedules(action.users)
+                .subscribe( data => {
+                    ctx.patchState({
+                        schedule: data
+                    });
+                    resolve(data);
+                }, error => reject(error));
+        });
     }
 
     @Action(GetUser)

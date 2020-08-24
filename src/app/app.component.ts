@@ -10,6 +10,7 @@ import {GetUserByMail, SetUser} from './store/actions/app.action';
 import {GetPatients, GetUsers} from './store/actions/users.action';
 import {GetEvents} from './store/actions/events.action';
 import {AppState} from './store/states/app.state';
+import {UsersState} from './store/states/users.state';
 
 @Component({
     selector: 'app-root',
@@ -23,28 +24,32 @@ export class AppComponent {
             url: '/home',
             icon: 'home',
             doctor: true,
-            patient: true
+            patient: true,
+            show: true
         },
         {
             title: 'Agenda',
             url: '/calendar',
             icon: 'calendar',
             doctor: true,
-            patient: true
+            patient: true,
+            show: true
         },
         {
             title: 'Usuarios',
             url: '/users',
             icon: 'people',
             doctor: true,
-            patient: false
+            patient: false,
+            show: true
         },
         {
             title: 'Llamada',
             url: '/call',
             icon: 'videocam',
             doctor: true,
-            patient: true
+            patient: true,
+            show: false
         },
         {
             title: 'Logout',
@@ -52,10 +57,12 @@ export class AppComponent {
             icon: 'log-out',
             doctor: true,
             patient: true,
+            show: true,
             function: true
         }
     ];
     public appPages = [];
+    user: any;
 
     constructor(
         private platform: Platform,
@@ -84,6 +91,19 @@ export class AppComponent {
                 }
             });
 
+            this.store.select(AppState.currentCall).subscribe(currentCall => {
+                let show = false;
+                if (currentCall) {
+                    show = true;
+                }
+
+                this.appPages.forEach(menu => {
+                    if (menu.title === 'Llamada') {
+                        menu.show = show;
+                    }
+                });
+            });
+
             this.afAuth.user.subscribe(user => {
                     if (user) {
                         this.initStore(user);
@@ -100,16 +120,19 @@ export class AppComponent {
         });
     }
 
-    initStore(user) {
-        console.log('USER ', user);
-        this.store.dispatch(new GetUserByMail(user.email));
-        this.store.dispatch(new GetUsers());
+    async initStore(user) {
+        this.store.dispatch(new GetUserByMail(user.email)).toPromise().then(() => {
+            this.user = this.store.selectSnapshot(AppState.user);
+        });
+        this.store.dispatch(new GetUsers()).toPromise().then(() => {
+            const users = this.store.selectSnapshot(UsersState.users);
+            this.store.dispatch(new GetEvents(users));
+        });
         this.store.dispatch(new GetPatients(user.uid));
-        this.store.dispatch(new GetEvents());
+
     }
 
     callFunction(obj) {
-        console.log('OBJ ', obj);
         if (obj.title === 'Logout') {
             this.afAuth.auth.signOut()
                 .then(() => {

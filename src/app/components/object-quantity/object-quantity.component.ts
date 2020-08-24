@@ -47,8 +47,6 @@ export class ObjectQuantityComponent implements AfterContentChecked {
 
     modal.onDidDismiss()
         .then(response => {
-          console.log('dismiss response ', response);
-          console.log('dismiss this.response ', this.response);
 
           if(response)
           {
@@ -75,10 +73,7 @@ export class ObjectQuantityComponent implements AfterContentChecked {
             });
 
             this.response = usersMap;
-            this.response = usersMap;
           }
-
-          console.log('dismiss this.response ', this.response);
           this.emit();
 
         });
@@ -92,7 +87,7 @@ export class ObjectQuantityComponent implements AfterContentChecked {
 
   async showConfirm(obj) {
     const alert = await this.alertCtrl.create({
-      header: `¿Quieres eliminar ${obj.nombre}?`,
+      header: `¿Quieres eliminar ${obj.name}?`,
       buttons: [
         {
           text: 'Cancelar'
@@ -101,8 +96,11 @@ export class ObjectQuantityComponent implements AfterContentChecked {
           text: 'Aceptar',
           handler: () =>
           {
+            console.log('RESPONSE ', this.response);
             this.deleteData.push(obj);
-            this.response = this.response.filter(el => el._id != obj._id);
+            this.response = this.response.filter(el => el.id !== obj.id);
+
+            console.log('RESPONSE ', this.response);
 
             this.delete.emit(this.deleteData);
             this.emit();
@@ -117,7 +115,7 @@ export class ObjectQuantityComponent implements AfterContentChecked {
   {
     this.response = this.response.map(el =>
     {
-      if(el._id == obj._id)
+      if(el.id == obj.id)
       {
         el.quantity = $event.value;
       }

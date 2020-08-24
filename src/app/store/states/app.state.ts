@@ -1,13 +1,19 @@
 import {Action, Selector, State, StateContext} from '@ngxs/store';
 import {Injectable} from '@angular/core';
-import {AppStateModel, GetUserByMail, Login, Logout, SetUser} from '../actions/app.action';
+import {GetUserByMail, Login, Logout, SetCurrentCall, SetUser} from '../actions/app.action';
 import {AuthService} from '../../services/auth/auth.service';
 import {FirebaseService} from '../../services/firebase/firebase.service';
+
+export interface AppStateModel {
+    user: object | null | string;
+    currentCall: null | object;
+}
 
 @State<AppStateModel>({
     name: 'user',
     defaults: {
-        user: null
+        user: null,
+        currentCall: null
     }
 })
 @Injectable()
@@ -15,6 +21,11 @@ export class AppState {
     @Selector()
     static user(state: AppStateModel): object | null | string {
         return state.user;
+    }
+
+    @Selector()
+    static currentCall(state: AppStateModel): object | null  {
+        return state.currentCall;
     }
 
     @Selector()
@@ -38,13 +49,18 @@ export class AppState {
     }
 
     @Action(GetUserByMail)
-    getUserByUID(ctx: StateContext<AppStateModel>, action: GetUserByMail) {
-        return this.firebaseService.getUserByMail(action.mail)
-            .subscribe( data => {
-                ctx.patchState({
-                    user: data[0]
+    getUserByMail(ctx: StateContext<AppStateModel>, action: GetUserByMail) {
+        return new Promise(resolve =>{
+            this.firebaseService.getUserByMail(action.mail)
+                .subscribe( data => {
+                    ctx.patchState({
+                        user: data[0]
+                    });
+
+                    resolve(data[0]);
                 });
-            });
+        });
+
     }
 
     @Action(Logout)
@@ -68,6 +84,13 @@ export class AppState {
     setUser(ctx: StateContext<AppStateModel>, action: SetUser) {
         ctx.patchState({
             user: action.payload['email']
+        });
+    }
+
+    @Action(SetCurrentCall)
+    setCurrentCall(ctx: StateContext<AppStateModel>, action: SetCurrentCall) {
+        ctx.patchState({
+            currentCall: action.currentCall
         });
     }
 }

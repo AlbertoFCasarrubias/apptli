@@ -31,23 +31,13 @@ export class UsersPage implements OnInit {
     this.appUser = this.store.selectSnapshot(AppState.user);
     console.log('this.appUser ', this.appUser);
 
-    if(this.appUser.admin){
-      this.store.select(UsersState.users)
-          .subscribe(
-              data => {
-                this.users = data;
-                this.dismissLoading();
-              },
-              err => console.error('error get users ', err));
+    if (this.appUser.admin) {
+      this.users = this.store.selectSnapshot(UsersState.users);
+      this.dismissLoading();
     }
     else {
-      this.store.select(UsersState.patients)
-          .subscribe(
-              data => {
-                this.users = data;
-                this.dismissLoading();
-              },
-              err => console.error('error get users ', err));
+      this.users = this.store.selectSnapshot(UsersState.patients);
+      this.dismissLoading();
     }
   }
 

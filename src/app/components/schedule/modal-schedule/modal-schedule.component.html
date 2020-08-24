@@ -18,19 +18,40 @@
                 <span class="aviso"> *Favor de llenar todos los campos.</span>
               </ion-item>
 
-              <!-- USERS -->
-              <ion-item lines="none">
-                <object-quantity
-                        [data]="users"
-                        [title]="'Doctor'"
-                        [initial]="selectedUsers"
-                        [showQuantity] = "false"
-                        (change)="setSelected('users',$event)">
-                </object-quantity>
-              </ion-item>
-              <ion-item (click)="goToPage('staff')" *ngIf="users.length==0">
-                Favor dar de alta doctores para poder asignarlos a la consulta.
-              </ion-item>
+              <!-- PACIENTE PARA SELECCIONAR DOCTORES -->
+              <div *ngIf="user && !user.doctor">
+                <ion-item lines="none">
+                  <object-quantity
+                          [data]="users"
+                          [title]="'Doctor'"
+                          [initial]="selectedUsers"
+                          [showQuantity] = "false"
+                          (change)="setSelected('users',$event)"
+                          (delete)="deleteSelected($event)">>
+                  </object-quantity>
+                </ion-item>
+                <ion-item (click)="goToPage('staff')" *ngIf="users.length==0">
+                  Favor dar de alta doctores para poder asignarlos a la consulta.
+                </ion-item>
+              </div>
+
+              <!-- DOCTOR PARA SELECCIONAR PACIENTES -->
+              <div *ngIf="user && user.doctor">
+                <ion-item lines="none">
+                  <object-quantity
+                          [data]="users"
+                          [title]="'Pacientes'"
+                          [initial]="selectedUsers"
+                          [showQuantity] = "false"
+                          (change)="setSelected('users',$event)"
+                          (delete)="deleteSelected($event)">
+                  </object-quantity>
+                </ion-item>
+                <ion-item (click)="goToPage('staff')" *ngIf="users.length==0">
+                  Favor dar de alta pacientes para poder asignarlos a la consulta.
+                </ion-item>
+              </div>
+
 
               <!-- COMENTARIOS -->
               <ion-item >

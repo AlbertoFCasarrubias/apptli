@@ -30,22 +30,28 @@ export class UsersState {
 
     @Action(GetUsers)
     getUsers(ctx: StateContext<UsersStateModel>) {
-        this.firebaseService.getUsers()
-            .subscribe( data => {
-                ctx.patchState({
-                    users: data
-                });
-            }, error => console.error(error));
+        return new Promise((resolve, reject) =>{
+            this.firebaseService.getUsers()
+                .subscribe( data => {
+                    ctx.patchState({
+                        users: data
+                    });
+                    resolve(data);
+                }, error => reject(error));
+        });
     }
 
     @Action(GetPatients)
     getPatients(ctx: StateContext<UsersStateModel>, payload: GetPatients) {
-        this.firebaseService.getPatients(payload.id)
-            .subscribe( data => {
-                ctx.patchState({
-                    patients: data
-                });
-            }, error => console.error(error));
+        return new Promise((resolve, reject) =>{
+            this.firebaseService.getPatients(payload.id)
+                .subscribe( data => {
+                    ctx.patchState({
+                        patients: data
+                    });
+                    resolve(data);
+                }, error => reject(error));
+        });
     }
 
     @Action(GetUser)

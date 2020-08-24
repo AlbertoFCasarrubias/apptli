@@ -95,6 +95,12 @@ export class ScheduleComponent implements AfterContentChecked, OnDestroy, OnChan
 
     this.subs.add(this.dragulaService.drop()
         .subscribe(({ name, el, target, source, sibling }) => {
+          // @ts-ignore
+          const eventFind = this.data.events.find( e => e.id == el.attributes.id.nodeValue);
+          if (eventFind.status === this.EVENT_STATUS.approved || eventFind.status === this.EVENT_STATUS.cancelled){
+            this.dragulaService.find('EVENTS').drake.cancel(true);
+          }
+
           this.dropId = null;
           this.updateDateEvent(el, target);
         })
@@ -110,7 +116,6 @@ export class ScheduleComponent implements AfterContentChecked, OnDestroy, OnChan
           return false;
         });
 
-        console.log('/*/*/*/*/ 11111');
         this.printData();
       }
     });
@@ -159,7 +164,7 @@ export class ScheduleComponent implements AfterContentChecked, OnDestroy, OnChan
     }
   }
 
-  changeDropStyle(id){
+  changeDropStyle(id) {
     if (id === this.dropId) {
       return 'hourDrag';
     }
@@ -221,7 +226,6 @@ export class ScheduleComponent implements AfterContentChecked, OnDestroy, OnChan
   }
 
   drawSchedule(){
-    console.log('/*/*/*/*/ 2222222');
     this.printData();
     this.printDataCall = true;
     this.showEventCall = true;
@@ -262,8 +266,6 @@ export class ScheduleComponent implements AfterContentChecked, OnDestroy, OnChan
 
     // subtract days from start of period
     this.weekMoment = moment(startOfPeriod).locale('es').subtract(daysToSubtract, 'd');
-
-    console.log('this.weekMoment ', this.weekMoment);
 
     for (let i = 0; i < 7; i++) {
       if (i !== 0) {
@@ -540,32 +542,57 @@ export class ScheduleComponent implements AfterContentChecked, OnDestroy, OnChan
         });*/
   }
 
-  updateDateEvent(el, date) {
+  async updateDateEvent(el, date) {
     let dateHour = date.attributes.id.nodeValue;
     dateHour     = dateHour.split('@');
 
     const eventFind = this.data.events.find( e => e.id == el.attributes.id.nodeValue);
     const event = Object.assign({}, eventFind);
-    const newDate = dateHour[0];
-    const newHour = dateHour[1];
-    const horaIni = moment(newDate);
-    horaIni.hour(newHour);
 
-    const horaFin = moment(newDate);
-    horaFin.hour(newHour);
-    horaFin.add(event.duration, 'm');
+    if(event.status === this.EVENT_STATUS.approved || event.status === this.EVENT_STATUS.cancelled) {
+      let status = '';
+      switch (event.status) {
+        case this.EVENT_STATUS.approved:
+          status = 'confirmada';
+          break;
 
-    event.start     = horaIni.toISOString();
-    event.end       = horaFin.toISOString();
-    event.hourStart = horaIni.format('HH:mm');
-    event.hourEnd   = horaFin.format('HH:mm');
-    event.users     = event.users.map(usr => usr.id);
+        case this.EVENT_STATUS.cancelled:
+          status = 'cancelada';
+          break;
+      }
 
-    if(event.id) {
-      this.store.dispatch(new UpdateEvent(event));
+      const alert = await this.alertCtrl.create({
+        header: 'Agenda',
+        message: `No se puede editar una consulta ${status}.`,
+        buttons: [
+          {
+            text: 'Aceptar'
+          }
+        ]
+      });
+      await alert.present();
     }
+    else {
+      const newDate = dateHour[0];
+      const newHour = dateHour[1];
+      const horaIni = moment(newDate);
+      horaIni.hour(newHour);
 
+      const horaFin = moment(newDate);
+      horaFin.hour(newHour);
+      horaFin.add(event.duration, 'm');
 
+      event.start     = horaIni.toISOString();
+      event.end       = horaFin.toISOString();
+      event.hourStart = horaIni.format('HH:mm');
+      event.hourEnd   = horaFin.format('HH:mm');
+      event.users     = event.users.map(usr => usr.id);
+      event.patient   = event.patient.map(usr => usr.id);
+
+      if (event.id) {
+        this.store.dispatch(new UpdateEvent(event));
+      }
+    }
   }
 
   payEvent(event) {

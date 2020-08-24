@@ -8,6 +8,7 @@ import {Store} from '@ngxs/store';
 import {Login, SetUser} from '../../store/actions/app.action';
 import {GetUsers} from '../../store/actions/users.action';
 import {GetEvents} from '../../store/actions/events.action';
+import {UsersState} from '../../store/states/users.state';
 
 @Component({
   selector: 'app-login',
@@ -58,8 +59,11 @@ export class LoginPage implements OnInit {
     this.store.dispatch(new Login(value)).subscribe(res => {
       console.log('RES ', res);
       this.store.dispatch(new SetUser(res));
-      this.store.dispatch(new GetUsers());
-      this.store.dispatch(new GetEvents());
+      this.store.dispatch(new GetUsers()).toPromise().then(() => {
+        const users = this.store.selectSnapshot(UsersState.users);
+        this.store.dispatch(new GetEvents(users));
+      });
+
       this.router.navigate(['/home']);
     }, err => {
       this.errorMessage = err.message;

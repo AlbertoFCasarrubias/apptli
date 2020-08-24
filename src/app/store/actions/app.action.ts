@@ -1,7 +1,3 @@
-export interface AppStateModel {
-    user: object | null | string;
-}
-
 export class Login {
     static readonly type = '[User] Login';
     constructor(public payload: { username: string; password: string }) {}
@@ -21,3 +17,7 @@ export class Logout {
     static readonly type = '[User] Logout';
 }
 
+export class SetCurrentCall {
+    static readonly type = '[Schedule] set current call';
+    constructor(public currentCall: object) {}
+}

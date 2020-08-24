@@ -10,19 +10,29 @@
       </ion-header>
       <ion-content>
         <ion-list>
-          <ion-menu-toggle auto-hide="false" *ngFor="let p of appPages">
-            <ion-item [routerDirection]="'forward'" [routerLink]="[p.url]" *ngIf="!p.function">
-              <ion-icon slot="start" [name]="p.icon"></ion-icon>
-              <ion-label>
-                {{p.title}}
-              </ion-label>
+          <ion-menu-toggle auto-hide="false" >
+            <ion-item *ngIf="user">
+              <div class="profile">
+                <div class="name">{{user.name}}</div>
+                <div class="name">{{user.mail}}</div>
+                <div class="name">doctor: {{user.doctor}}</div>
+                <div class="name">admin: {{user.admin}}</div>
+              </div>
             </ion-item>
-            <ion-item [routerDirection]="'root'" *ngIf="p.function" (click)="callFunction(p)">
-              <ion-icon slot="start" [name]="p.icon"></ion-icon>
-              <ion-label>
-                {{p.title}}
-              </ion-label>
-            </ion-item>
+            <div *ngFor="let p of appPages">
+              <ion-item [routerDirection]="'forward'" [routerLink]="[p.url]" *ngIf="!p.function && p.show">
+                <ion-icon slot="start" [name]="p.icon"></ion-icon>
+                <ion-label>
+                  {{p.title}}
+                </ion-label>
+              </ion-item>
+              <ion-item [routerDirection]="'root'" *ngIf="p.function && p.show" (click)="callFunction(p)">
+                <ion-icon slot="start" [name]="p.icon"></ion-icon>
+                <ion-label>
+                  {{p.title}}
+                </ion-label>
+              </ion-item>
+            </div>
           </ion-menu-toggle>
         </ion-list>
       </ion-content>
