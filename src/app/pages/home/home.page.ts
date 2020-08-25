@@ -17,15 +17,15 @@ import {SetCurrentCall} from '../../store/actions/app.action';
     styleUrls: ['home.page.scss'],
 })
 export class HomePage implements OnInit, OnDestroy {
-    events: any = [];
-    eventsApproved = [];
-    eventsNotApproved = [];
-    eventsCancelled = [];
-    currentEvent = [];
-    user: any;
-    status = environment.EVENT_STATUS;
     now;
     interval;
+    user: any;
+    events: any = [];
+    currentEvent = [];
+    eventsApproved = [];
+    eventsCancelled = [];
+    eventsNotApproved = [];
+    status = environment.EVENT_STATUS;
 
     constructor(public menuCtrl: MenuController,
                 private router: Router,
@@ -37,14 +37,6 @@ export class HomePage implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.interval = setInterval(() => {
-            this.now = moment();
-
-            if(this.events.length > 0){
-                this.findCurrentEvent();
-            }
-        }, 30000);
-
         this.store.select(AppState.user).subscribe(user => {
             if (user) {
                 this.user = user;
@@ -53,7 +45,23 @@ export class HomePage implements OnInit, OnDestroy {
 
         this.store.select(EventsState.schedule).subscribe(events => {
             if (events) {
-                const filter = Object.keys(events).map((k) => events[k]).filter(e => moment(e.start).format('MM-DD') >= moment().format('MM-DD'));
+                console.log('THIS USER ', this.user);
+                let filter;
+                if(this.user.doctor){
+                    filter = Object.keys(events).map((k) => events[k]).filter(e => moment(e.start).format('MM-DD') >= moment().format('MM-DD'));
+                } else {
+                    filter = Object.keys(events).map((k) => events[k]).filter(e => {
+                        let userEvent = false;
+                        e.patient.forEach(u => {
+                            if (u.id === this.user.id && moment(e.start).format('MM-DD') >= moment().format('MM-DD')) {
+                                userEvent = true;
+                            }
+                        });
+
+                        return userEvent;
+                    });
+                }
+
                 this.events = filter;
                 this.eventsApproved = this.events.filter(e => e.status === this.status.approved);
                 this.eventsNotApproved = this.events.filter(e => e.status !== this.status.approved && e.status !== this.status.cancelled);
@@ -61,6 +69,14 @@ export class HomePage implements OnInit, OnDestroy {
 
                 this.now = moment();
                 this.findCurrentEvent();
+
+                this.interval = setInterval(() => {
+                    this.now = moment();
+
+                    if(this.events.length > 0){
+                        this.findCurrentEvent();
+                    }
+                }, 30000);
             }
 
         });

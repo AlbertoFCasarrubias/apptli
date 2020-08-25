@@ -12,53 +12,16 @@
 </ion-header>
 
 <ion-content>
-  <section class="container">
+  <div class="bigCall" [ngClass]="{'connected': connected}">
+    <div class="remote_calls" [id]="remoteCalls[0]" class="remote"></div>
+  </div>
+  <div class="buttons">
+    <ion-button shape="round" (click)="publish()"><ion-icon slot="icon-only" name="call"></ion-icon></ion-button>
+    <ion-button shape="round" (click)="leave()" color="danger"><ion-icon slot="icon-only" name="call"></ion-icon></ion-button>
+  </div>
+  <div class="smallCall">
+    <div id="agora_local" class="local"></div>
+  </div>
 
-    <article class="row">
-      <!--input matInput [formControl]="appId">
-      <input matInput [formControl]="channel" -->
 
-
-      <div class="col-6">
-        <div class="row h-100">
-          <div class="col-12">
-
-            <!--ion-button shape="round" (click)="join()"><ion-icon slot="icon-only" name="star"></ion-icon></ion-button-->
-            <ion-button shape="round" (click)="publish()"><ion-icon slot="icon-only" name="call"></ion-icon></ion-button>
-            <ion-button shape="round" (click)="leave()" color="danger"><ion-icon slot="icon-only" name="call"></ion-icon></ion-button>
-            <!--ion-button shape="round" (click)="leave()"><ion-icon slot="icon-only" name="star"></ion-icon></ion-button-->
-            <button color="primary" (click)="publish()">Publish Local Stream</button>
-            <button color="primary" (click)="unpublish()">Unpublish Local Stream</button>
-            <button color="accent" (click)="leave()">Leave</button>
-          </div>
-          <div class="col-12">
-            User id: {{ uid }}
-          </div>
-        </div>
-      </div>
-
-      <div class="col-6">
-        <div class="row">
-          <h2 class="col-12">Connected: {{ connected }}</h2>
-          <h2 class="col-12">Published: {{ published }}</h2>
-        </div>
-      </div>
-
-      <div class="col-12">
-        {{ remoteCalls | json }}
-      </div>
-    </article>
-
-    <article class="row pt-3">
-      <div class="col">
-        <h2>Local</h2>
-        <div id="agora_local" class="local"></div>
-      </div>
-      <div class="col">
-        <h2>Remote</h2>
-        <div class="remote_calls" [id]="remoteCalls[0]" class="remote"></div>
-      </div>
-    </article>
-
-  </section>
 </ion-content>

@@ -154,12 +154,13 @@ export class AppComponent {
     async initStore(user) {
         this.store.dispatch(new GetUserByMail(user.email)).toPromise().then(() => {
             this.user = this.store.selectSnapshot(AppState.user);
-
         });
+
         this.store.dispatch(new GetUsers()).toPromise().then(() => {
             const users = this.store.selectSnapshot(UsersState.users);
             this.store.dispatch(new GetEvents(users));
         });
+
         this.store.dispatch(new GetPatients(user.uid));
 
     }

@@ -60,15 +60,6 @@ export class CallPage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    /*
-    this.interval = setInterval(() => {
-      this.now = moment();
-
-      if(this.events.length > 0){
-        this.findCurrentEvent();
-      }
-    }, 30000);*/
-
     this.user = this.store.selectSnapshot(AppState.user);
     this.events = this.store.selectSnapshot(AppState.currentCall);
 
@@ -76,7 +67,7 @@ export class CallPage implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    //clearInterval(this.interval);
+    this.localStream.close();
   }
 
   toggleMenu() {
