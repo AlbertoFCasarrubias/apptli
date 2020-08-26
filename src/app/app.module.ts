@@ -26,6 +26,7 @@ import {EventsState} from './store/states/events.state';
 import {AgoraConfig, NgxAgoraModule} from 'ngx-agora';
 import {AngularFireFunctionsModule} from '@angular/fire/functions';
 import {AngularFireMessagingModule} from '@angular/fire/messaging';
+import {AngularFirePerformanceModule} from '@angular/fire/performance';
 
 const agoraConfig: AgoraConfig = {
     AppID: 'c7d5f3bc5f4345fcaa57bba1fc1e5f6d',
@@ -47,6 +48,7 @@ registerLocaleData(localeEs);
         AngularFireStorageModule,
         AngularFireFunctionsModule,
         AngularFireMessagingModule,
+        AngularFirePerformanceModule,
         AngularFireModule.initializeApp(environment.firebase),
         NgxsModule.forRoot([
             AppState,

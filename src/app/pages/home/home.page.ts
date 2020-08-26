@@ -1,5 +1,5 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import {AlertController, MenuController} from '@ionic/angular';
+import {AlertController, LoadingController, MenuController} from '@ionic/angular';
 import {FirebaseService} from '../../services/firebase/firebase.service';
 import * as moment from 'moment/moment';
 import {environment} from '../../../environments/environment';
@@ -10,6 +10,7 @@ import {AppState} from '../../store/states/app.state';
 import {EventsState} from '../../store/states/events.state';
 import {UpdateEvent} from '../../store/actions/events.action';
 import {SetCurrentCall} from '../../store/actions/app.action';
+import {FirebaseFunctionsService} from '../../services/firebase-functions/firebase-functions.service';
 
 @Component({
     selector: 'app-home',
@@ -20,14 +21,19 @@ export class HomePage implements OnInit, OnDestroy {
     now;
     interval;
     user: any;
+    loading: any;
     events: any = [];
     currentEvent = [];
     eventsApproved = [];
     eventsCancelled = [];
     eventsNotApproved = [];
+    eventsRequestDoctor = [];
+    eventsRequestPatient = [];
     status = environment.EVENT_STATUS;
 
     constructor(public menuCtrl: MenuController,
+                public loadingController: LoadingController,
+                private firebaseFunctionsService: FirebaseFunctionsService,
                 private router: Router,
                 private store: Store,
                 public alertController: AlertController) {}
@@ -37,17 +43,17 @@ export class HomePage implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
-        this.store.select(AppState.user).subscribe(user => {
+        this.presentLoading();
+        this.user = this.store.select(AppState.user).subscribe(user => {
             if (user) {
                 this.user = user;
             }
         });
 
-        this.store.select(EventsState.schedule).subscribe(events => {
-            if (events) {
-                console.log('THIS USER ', this.user);
+        this.store.select(EventsState.schedule).subscribe(async (events) => {
+            if (this.user && events) {
                 let filter;
-                if(this.user.doctor){
+                if (this.user.doctor) {
                     filter = Object.keys(events).map((k) => events[k]).filter(e => moment(e.start).format('MM-DD') >= moment().format('MM-DD'));
                 } else {
                     filter = Object.keys(events).map((k) => events[k]).filter(e => {
@@ -64,11 +70,15 @@ export class HomePage implements OnInit, OnDestroy {
 
                 this.events = filter;
                 this.eventsApproved = this.events.filter(e => e.status === this.status.approved);
-                this.eventsNotApproved = this.events.filter(e => e.status !== this.status.approved && e.status !== this.status.cancelled);
                 this.eventsCancelled = this.events.filter(e => e.status === this.status.cancelled);
+                this.eventsRequestPatient = this.events.filter(e => e.status === this.status.requestByPatient);
+                this.eventsRequestDoctor = this.events.filter(e => e.status === this.status.requestByDoctor);
+                this.eventsNotApproved = this.events.filter(e => !e.status);
+                console.log(this.events);
 
                 this.now = moment();
                 this.findCurrentEvent();
+                this.dismissLoading();
 
                 this.interval = setInterval(() => {
                     this.now = moment();
@@ -77,15 +87,39 @@ export class HomePage implements OnInit, OnDestroy {
                         this.findCurrentEvent();
                     }
                 }, 30000);
+            } else {
+                this.dismissLoading();
             }
 
         });
     }
 
+    presentLoading() {
+        this.loadingController.create({
+            message: 'Cargando datos...'
+        }).then((res) => {
+            this.loading = true;
+
+            res.present();
+
+            res.onDidDismiss().then((dis) => {
+                console.log('DISMISS loading');
+            });
+        });
+    }
+
+    dismissLoading() {
+        if(this.loading) {
+            this.loadingController.dismiss();
+            this.loading = null;
+        }
+    }
+
     findCurrentEvent() {
         this.events.forEach( event => {
             if (this.now.isBetween(moment(event.start), moment(event.end)) && !this.currentEvent.find(e => e.id === event.id)) {
-                this.currentEvent.push(event);
+                console.log(typeof this.currentEvent, this.currentEvent);
+                // this.currentEvent.push(event);
                 this.store.dispatch(new SetCurrentCall(this.currentEvent));
             }
         });
@@ -95,7 +129,7 @@ export class HomePage implements OnInit, OnDestroy {
         clearInterval(this.interval);
     }
 
-    async confirmEvent(event) {
+    async confirmEvent(event, status = null) {
         const names = event.patient.map(u => u.name).join();
 
         const alert = await this.alertController.create({
@@ -105,7 +139,11 @@ export class HomePage implements OnInit, OnDestroy {
                 {
                     text: 'Aceptar',
                     handler: () => {
-                        this.updateStatusEvent(event, this.status.approved);
+                        if (!status) {
+                            this.updateStatusEvent(event, this.user.doctor ? this.status.requestByDoctor : this.status.requestByPatient);
+                        } else {
+                            this.updateStatusEvent(event, status);
+                        }
                     }
                 },
                 {
@@ -143,16 +181,44 @@ export class HomePage implements OnInit, OnDestroy {
         await alert.present();
     }
 
-    updateStatusEvent(event, status){
+    updateStatusEvent(event, status) {
         const payload = Object.assign({}, event);
         payload.status = status;
         payload.users = event.users.map(u => u.id);
         payload.patient = event.patient.map(u => u.id);
 
-        console.log('update ', payload);
+        console.log('*** ', status, event);
+
         this.store.dispatch(new UpdateEvent(payload))
             .subscribe(data => {
-                console.log('update ', data);
+                let tokens;
+                switch (status) {
+                    case this.status.approved:
+                    case this.status.cancelled:
+                        const users = event.users.map(u => u.token);
+                        const patient = event.patient.map(u => u.token);
+                        tokens = users.concat(patient);
+                        break;
+
+                    case this.status.requestByPatient:
+                        tokens = event.users.map(u => u.token);
+                        break;
+
+                    case this.status.requestByDoctor:
+                        tokens = event.patient.map(u => u.token);
+                        break;
+                }
+
+                console.log('TOKENS ' , tokens, status);
+                if (tokens) {
+                    const payloadPush = Object.assign({}, event);
+                    payloadPush.tokens = tokens;
+                    console.log('pushNotification ', payloadPush);
+
+                    this.firebaseFunctionsService.pushNotification(payloadPush)
+                        .then(resp => console.log(resp))
+                        .catch(resp => console.error(resp));
+                }
             });
     }
 

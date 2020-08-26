@@ -170,6 +170,7 @@ export class AppComponent {
             this.afAuth.auth.signOut()
                 .then(() => {
                     this.router.navigate(['/login']);
+
                 })
                 .catch(err => console.log('Error logout ', err));
         }

@@ -63,7 +63,7 @@ export class ModalScheduleComponent implements OnInit {
 
     this.addMinutes(60);
 
-    this.form.controls.status.patchValue(this.status.requestByDoctor);
+    this.form.controls.status.patchValue(null);
 
     if (this.navParams.data.event) {
       this.title            = 'Editar';

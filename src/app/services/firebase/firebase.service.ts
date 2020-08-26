@@ -563,4 +563,8 @@ export class FirebaseService {
             .set(value);
     }
 
+    public close(){
+
+    }
+
 }

@@ -8,6 +8,7 @@ import {Store} from '@ngxs/store';
 import {UsersState} from '../../store/states/users.state';
 import {EventsState} from '../../store/states/events.state';
 import {AppState} from '../../store/states/app.state';
+import * as moment from 'moment/moment';
 
 @Component({
     selector: 'app-calendar',
@@ -54,7 +55,16 @@ export class CalendarPage implements OnInit {
                 return false;
             });
         } else {
-            this.scheduleData.events = eventsArray;
+            this.scheduleData.events = eventsArray.filter(e => {
+                let userEvent = false;
+                e.patient.forEach(u => {
+                    if (u.id === this.scheduleData.user.id) {
+                        userEvent = true;
+                    }
+                });
+
+                return userEvent;
+            });
             this.scheduleData.users = this.store.selectSnapshot(UsersState.users);
         }
 

@@ -108,13 +108,27 @@ export class ScheduleComponent implements AfterContentChecked, OnDestroy, OnChan
 
     this.store.select(EventsState.schedule).subscribe(events => {
       if (events && this.data && this.data.events) {
-        this.data.events = Object.keys(events).map((k) => events[k]).filter(e => {
-          const find = e.users.find(u => u.id === this.data.user.id);
-          if (find) {
-            return true;
-          }
-          return false;
-        });
+        console.log('this.data.user ' , this.data.user);
+        if(this.data.user.doctor){
+          this.data.events = Object.keys(events).map((k) => events[k]).filter(e => {
+            const find = e.users.find(u => u.id === this.data.user.id);
+            if (find) {
+              return true;
+            }
+            return false;
+          });
+        } else {
+          this.data.events = Object.keys(events).map((k) => events[k]).filter(e => {
+            let userEvent = false;
+            e.patient.forEach(u => {
+              if (u.id === this.data.user.id) {
+                userEvent = true;
+              }
+            });
+            return userEvent;
+          });
+        }
+
 
         this.printData();
       }
@@ -455,11 +469,12 @@ export class ScheduleComponent implements AfterContentChecked, OnDestroy, OnChan
         .then(dismissData => {
           if(dismissData.data.action !== 'close')
           {
+            /*
             this.firebaseService.getSchedules()
                 .subscribe(data => {
                   this.data.events = data;
                   this.printData();
-                });
+                });*/
           }
 
         })
