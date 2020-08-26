@@ -33,7 +33,7 @@ export class AuthService {
   }
 
   doLogout() {
-    return this.afAuth.auth.signOut();
+    return this.afAuth.signOut();
   }
 
   doChangePassword() {

@@ -461,7 +461,7 @@ export class FirebaseService {
     }
 
     private getCurrentUser() {
-        return this.afAuth.auth.currentUser;
+        return this.afAuth.currentUser;
     }
 
     private getLastRecord(collection, field = 'autoincrement') {

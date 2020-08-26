@@ -167,7 +167,7 @@ export class AppComponent {
 
     callFunction(obj) {
         if (obj.title === 'Logout') {
-            this.afAuth.auth.signOut()
+            this.afAuth.signOut()
                 .then(() => {
                     this.router.navigate(['/login']);
 

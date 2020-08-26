@@ -43,6 +43,7 @@ export class HomePage implements OnInit, OnDestroy {
     }
 
     ngOnInit() {
+        this.currentEvent = [];
         this.presentLoading();
         this.user = this.store.select(AppState.user).subscribe(user => {
             if (user) {
@@ -119,7 +120,7 @@ export class HomePage implements OnInit, OnDestroy {
         this.events.forEach( event => {
             if (this.now.isBetween(moment(event.start), moment(event.end)) && !this.currentEvent.find(e => e.id === event.id)) {
                 console.log(typeof this.currentEvent, this.currentEvent);
-                // this.currentEvent.push(event);
+                this.currentEvent.push(event);
                 this.store.dispatch(new SetCurrentCall(this.currentEvent));
             }
         });
@@ -127,6 +128,7 @@ export class HomePage implements OnInit, OnDestroy {
 
     ngOnDestroy() {
         clearInterval(this.interval);
+        this.currentEvent = [];
     }
 
     async confirmEvent(event, status = null) {
@@ -187,8 +189,6 @@ export class HomePage implements OnInit, OnDestroy {
         payload.users = event.users.map(u => u.id);
         payload.patient = event.patient.map(u => u.id);
 
-        console.log('*** ', status, event);
-
         this.store.dispatch(new UpdateEvent(payload))
             .subscribe(data => {
                 let tokens;
@@ -209,7 +209,6 @@ export class HomePage implements OnInit, OnDestroy {
                         break;
                 }
 
-                console.log('TOKENS ' , tokens, status);
                 if (tokens) {
                     const payloadPush = Object.assign({}, event);
                     payloadPush.tokens = tokens;
