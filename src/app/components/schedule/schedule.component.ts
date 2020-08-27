@@ -17,6 +17,8 @@ import {Store} from '@ngxs/store';
 import {AppState} from '../../store/states/app.state';
 import {UpdateEvent} from '../../store/actions/events.action';
 import {EventsState} from '../../store/states/events.state';
+import {environment} from '../../../environments/environment';
+import {FirebaseFunctionsService} from '../../services/firebase-functions/firebase-functions.service';
 
 @Component({
   selector: 'schedule',
@@ -32,14 +34,7 @@ export class ScheduleComponent implements AfterContentChecked, OnDestroy, OnChan
     start: 7,
     end: 23
   }
-  EVENT_STATUS   = {
-    pay: 'pay',
-    cancelled: 'cancelled',
-    requestByDoctor: 'requestByDoctor',
-    requestByPatient: 'requestByPatient',
-    approved: 'approved',
-    unpay: 'unpay',
-  }
+  EVENT_STATUS   = environment.EVENT_STATUS;
   interval: any;
   initialTime = moment();
   time = 0;
@@ -72,6 +67,7 @@ export class ScheduleComponent implements AfterContentChecked, OnDestroy, OnChan
               private renderer: Renderer2,
               private store: Store,
               private alertCtrl: AlertController,
+              private firebaseFunctionsService: FirebaseFunctionsService,
               private firebaseService: FirebaseService) {
     this.user       = this.store.selectSnapshot(AppState.user);
 
@@ -483,7 +479,7 @@ export class ScheduleComponent implements AfterContentChecked, OnDestroy, OnChan
     return await modal.present();
   }
 
-  async chooseAction(day, hour , events , event = false) {
+  async chooseAction(day, hour , events , event: any = false) {
     if (events.length > 0) {
       const alert = await this.alertCtrl.create({
         header: 'Agenda',
@@ -492,11 +488,19 @@ export class ScheduleComponent implements AfterContentChecked, OnDestroy, OnChan
         {
           text: 'Ver evento',
           handler: () => {
+            console.log('  ');
+            console.log('---');
+            console.log('day ', day);
+            console.log('hour ', hour);
+            console.log('events ', events);
+            console.log('event ', event);
+
+
             this.goToEvent(events[0].data, day, hour);
           }
         },
         {
-          text: 'Cancelado',
+          text: 'Cancelar consulta',
           handler: () => {
             this.cancelEvent(events[0].data);
           }
@@ -617,15 +621,46 @@ export class ScheduleComponent implements AfterContentChecked, OnDestroy, OnChan
   }
 
   cancelEvent(event) {
-    event.status = this.EVENT_STATUS.cancelled;
-    event.users  = event.users.map(usr => usr.id);
+    const payload = Object.assign({}, event);
+    console.log('EVENT CANCEL ', event);
+    payload.status = this.EVENT_STATUS.cancelled;
+    payload.users  = event.users.map(usr => usr.id);
+    payload.patient  = event.patient.map(usr => usr.id);
 
-    console.log('cancel ', event);
-    if (event.id) {
-      this.firebaseService.updateSchedule(event)
-          .then(() => console.log('cancel ok'))
-          .catch(err => console.error(err));
-    }
+    console.log('cancel ', payload);
+
+    this.store.dispatch(new UpdateEvent(payload))
+        .subscribe(data => {
+          if (moment(event.start) >= moment()) {
+            let tokens;
+            switch (status) {
+              case this.EVENT_STATUS.approved:
+              case this.EVENT_STATUS.cancelled:
+                const users = event.users.map(u => u.token);
+                const patient = event.patient.map(u => u.token);
+                tokens = users.concat(patient);
+                break;
+
+              case this.EVENT_STATUS.requestByPatient:
+                tokens = event.users.map(u => u.token);
+                break;
+
+              case this.EVENT_STATUS.requestByDoctor:
+                tokens = event.patient.map(u => u.token);
+                break;
+            }
+
+            if (tokens) {
+              const payloadPush = Object.assign({}, event);
+              payloadPush.tokens = tokens;
+              console.log('pushNotification ', payloadPush);
+
+              this.firebaseFunctionsService.pushNotification(payloadPush)
+                  .then(resp => console.log(resp))
+                  .catch(resp => console.error(resp));
+            }
+          }
+        });
   }
 
 }

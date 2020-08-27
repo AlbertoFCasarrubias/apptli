@@ -36,9 +36,9 @@ export class AuthService {
     return this.afAuth.signOut();
   }
 
-  doChangePassword() {
+  doChangePassword(mail) {
     return new Promise<any>((resolve, reject) => {
-      firebase.auth().sendPasswordResetEmail('alberto@chukan.net')
+      firebase.auth().sendPasswordResetEmail(mail)
           .then(
               res => resolve(res),
               err => reject(err));

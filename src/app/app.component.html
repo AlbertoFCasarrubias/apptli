@@ -11,14 +11,17 @@
       <ion-content>
         <ion-list>
           <ion-menu-toggle auto-hide="false" >
-            <ion-item *ngIf="user">
-              <div class="profile">
-                <div class="name">{{user.name}}</div>
-                <div class="name">{{user.mail}}</div>
-                <div class="name">doctor: {{user.doctor}}</div>
-                <div class="name">admin: {{user.admin}}</div>
+            <div class="profile" *ngIf="user">
+              <div class="doctor" >
+                <div class="circle">
+                  <i class="fas fa-user-md" *ngIf="user.doctor"></i>
+                  <i class="fas fa-user" *ngIf="!user.doctor"></i>
+                </div>
               </div>
-            </ion-item>
+              <div class="name">{{user.name}}</div>
+              <div class="mail"><i class="far fa-envelope"></i> {{user.mail}}</div>
+              <!--div class="admin">admin: {{user.admin}}</div-->
+            </div>
             <div *ngFor="let p of appPages">
               <ion-item [routerDirection]="'forward'" [routerLink]="[p.url]" *ngIf="!p.function && p.show">
                 <ion-icon slot="start" [name]="p.icon"></ion-icon>

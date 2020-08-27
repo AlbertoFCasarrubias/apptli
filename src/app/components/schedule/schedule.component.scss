@@ -1,4 +1,33 @@
 $size:40px;
+$color: #3a97b5;
+$darkColor: #296a7f;
+$lightColor: #49b8dc;
+
+.mainColor{
+  color: $color;
+}
+
+.darkColor{
+  color: $darkColor;
+}
+
+.lightColor{
+  color: $lightColor;
+}
+
+.iconSize{
+  font-size: 25px;
+}
+
+.doubleIcon{
+  &.right{
+    margin-left: -5px;
+  }
+
+  &.left{
+    margin-right: -5px;
+  }
+}
 
 .schedule{
   width: 100%;
@@ -240,7 +269,7 @@ schedule {
       text-align: center;
       font-size: 13.5px;
       font-weight: 500;
-      color: #75dccd;
+      color: $lightColor;
       margin-bottom: 5px;
       text-transform: uppercase;
     }
@@ -260,7 +289,7 @@ schedule {
       span{
         font-size: 20px;
         font-weight: 800 !important;
-        color: var(--ion-color-danger) !important;
+        color: #3a97b5 !important;
       }
     }
 

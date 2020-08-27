@@ -35,6 +35,7 @@ export class LoginPage implements OnInit {
               public afAuth: AngularFireAuth,
               public menuCtrl: MenuController,
               private formBuilder: FormBuilder,
+              private authService: AuthService,
               private store: Store,
               private router: Router) {
   }
@@ -57,7 +58,6 @@ export class LoginPage implements OnInit {
 
   tryLogin(value) {
     this.store.dispatch(new Login(value)).subscribe(res => {
-      console.log('RES ', res);
       this.store.dispatch(new SetUser(res));
       this.store.dispatch(new GetUsers()).toPromise().then(() => {
         const users = this.store.selectSnapshot(UsersState.users);
@@ -75,13 +75,15 @@ export class LoginPage implements OnInit {
     this.router.navigate(['/register']);
   }
 
-  setNewPassword(){
-    /*
-    this.authService.doChangePassword()
-        .then(() => this.presentAlert('Cambio de contraseña', 'Favor de revisar tu correo electrónico.'))
-        .catch(err => this.presentAlert('Error de cambio de contraseña', err));
+  setNewPassword() {
+    if (this.validations_form.controls.email.valid) {
+      this.authService.doChangePassword(this.validations_form.value.email)
+          .then(() => this.presentAlert('Cambio de contraseña', 'Favor de revisar tu correo electrónico.'))
+          .catch(err => this.presentAlert('Error de cambio de contraseña', err));
+    } else {
+      this.presentAlert('Correo electrónico', 'Favor de escribir un correo electrónico válido.');
+    }
 
-     */
   }
 
   async presentAlert(header, message) {

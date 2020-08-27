@@ -67,7 +67,9 @@ export class CallPage implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.localStream.close();
+    if(this.localStream){
+      this.localStream.close();
+    }
   }
 
   toggleMenu() {

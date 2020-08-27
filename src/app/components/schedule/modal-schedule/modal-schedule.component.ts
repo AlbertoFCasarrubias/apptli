@@ -69,14 +69,22 @@ export class ModalScheduleComponent implements OnInit {
       this.title            = 'Editar';
       this.id               = this.navParams.data.event.id;
       this.date             = this.navParams.data.event.start;
-      this.selectedUsers    = this.navParams.data.event.users;
 
       if (this.navParams.data.event.comments) {
         this.form.controls.comments.patchValue(this.navParams.data.event.comments);
       }
 
       this.addMinutes(this.navParams.data.event.duration);
-      this.setSelected('users',   this.navParams.data.event.users.map(el => el.id));
+
+      if(this.navParams.data.data.user.doctor){
+        this.setSelected('users',   this.navParams.data.event.patient.map(el => el.id));
+        this.selectedUsers    = this.navParams.data.event.patient;
+      }
+      else {
+        this.setSelected('users',   this.navParams.data.event.users.map(el => el.id));
+        this.selectedUsers    = this.navParams.data.event.users;
+      }
+
     }
   }
 
@@ -171,6 +179,8 @@ export class ModalScheduleComponent implements OnInit {
   }
 
   setSelected(control, response) {
+    console.log('control ', control);
+    console.log('response ', response);
     this.selectedUsers = response;
     this.form.controls[control].patchValue(response);
   }
@@ -202,6 +212,18 @@ export class ModalScheduleComponent implements OnInit {
 
   editEvent(value) {
     value.id = this.id;
+    console.log('VALUE ', value);
+
+    if (!this.user.doctor) {
+      value.users = value.users.map(el => el.id);
+      value.patient = [this.user.id];
+    } else {
+      value.patient = value.users.map(el => el.id);
+      value.users = [this.user.id];
+    }
+
+    console.log('VALUE ', value);
+
 
     this.store.dispatch(new UpdateEvent(value)).toPromise()
         .then(() => {

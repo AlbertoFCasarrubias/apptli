@@ -75,7 +75,6 @@ export class HomePage implements OnInit, OnDestroy {
                 this.eventsRequestPatient = this.events.filter(e => e.status === this.status.requestByPatient);
                 this.eventsRequestDoctor = this.events.filter(e => e.status === this.status.requestByDoctor);
                 this.eventsNotApproved = this.events.filter(e => !e.status);
-                console.log(this.events);
 
                 this.now = moment();
                 this.findCurrentEvent();
@@ -102,10 +101,6 @@ export class HomePage implements OnInit, OnDestroy {
             this.loading = true;
 
             res.present();
-
-            res.onDidDismiss().then((dis) => {
-                console.log('DISMISS loading');
-            });
         });
     }
 
@@ -118,8 +113,8 @@ export class HomePage implements OnInit, OnDestroy {
 
     findCurrentEvent() {
         this.events.forEach( event => {
-            if (this.now.isBetween(moment(event.start), moment(event.end)) && !this.currentEvent.find(e => e.id === event.id)) {
-                console.log(typeof this.currentEvent, this.currentEvent);
+            if (this.now.isBetween(moment(event.start), moment(event.end))
+                && !this.currentEvent.find(e => e.id === event.id && e.status !== this.status.cancelled)) {
                 this.currentEvent.push(event);
                 this.store.dispatch(new SetCurrentCall(this.currentEvent));
             }
