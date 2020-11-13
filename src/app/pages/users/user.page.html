@@ -12,7 +12,7 @@
       Usuarios
     </ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="add()">
+      <ion-button (click)="goTo()">
         <ion-icon slot="icon-only" name="add-circle-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -21,9 +21,16 @@
 
 <ion-content class="ion-padding">
   <app-swipe></app-swipe>
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content></ion-refresher-content>
+  </ion-refresher>
   <ion-list>
+    <ion-item>
+      <ion-label position="floating">Buscar</ion-label>
+      <ion-input (ionChange)="filterUsers($event)"></ion-input>
+    </ion-item>
     <ion-item-sliding *ngFor="let m of users">
-      <ion-item (click)="add(m)">
+      <ion-item (click)="goTo(m)">
         <ion-label>
           <ion-icon name="bowtie" *ngIf="m.admin == 'true'"></ion-icon>
           {{m.name}}

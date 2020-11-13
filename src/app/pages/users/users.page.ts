@@ -6,6 +6,7 @@ import {Store} from '@ngxs/store';
 import {GetUsers} from '../../store/actions/users.action';
 import {UsersState} from '../../store/states/users.state';
 import {AppState} from '../../store/states/app.state';
+import {GetEvents} from '../../store/actions/events.action';
 
 @Component({
   selector: 'app-user',
@@ -27,15 +28,17 @@ export class UsersPage implements OnInit {
 
   async ngOnInit() {
     await this.presentLoading();
-
     this.appUser = this.store.selectSnapshot(AppState.user);
+    this.getUsers();
     console.log('this.appUser ', this.appUser);
+    console.log('this.users ', this.users);
+  }
 
+  getUsers() {
     if (this.appUser.admin) {
       this.users = this.store.selectSnapshot(UsersState.users);
       this.dismissLoading();
-    }
-    else {
+    } else {
       this.users = this.store.selectSnapshot(UsersState.patients);
       this.dismissLoading();
     }
@@ -87,12 +90,33 @@ export class UsersPage implements OnInit {
     await alert.present();
   }
 
-  add(m: any = false) {
-    this.router.navigate([m ? '/user/' + m.id : '/user']);
+  goTo(m?) {
+    //this.router.navigate([m ? '/user/' + m.id : '/user']);
+    console.log('GOTO ', m);
+    //this.router.navigate([m ? '/user-tab/' + m.id : '/user-tab/' + m.id]);
+    this.router.navigate(['/user-tab/user/' + m.id]);
   }
 
   delete(m) {
     this.presentAlertConfirm('Usuarios', `¿Seguro que deseas borrar al usuario ${m.name}?` , m);
+  }
+
+  doRefresh(event) {
+    console.log('Begin async operation');
+    this.store.dispatch(new GetUsers()).toPromise().then(() => {
+      this.users = this.store.selectSnapshot(UsersState.users);
+      event.target.complete();
+      console.log('Async operation has ended');
+    });
+  }
+
+  filterUsers(event) {
+    if (event.target.value.length > 2) {
+      this.getUsers();
+      this.users = this.users.filter( u => u.name.search(event.target.value) !== -1 || u.mail.search(event.target.value) !== -1);
+    } else {
+      this.getUsers();
+    }
   }
 
 }

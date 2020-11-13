@@ -17,7 +17,6 @@ import {registerLocaleData} from '@angular/common';
 import localeEs from '@angular/common/locales/es-MX';
 import {AngularFireAuthModule} from '@angular/fire/auth';
 import {DragulaModule, DragulaService} from 'ng2-dragula';
-import {PipesModule} from './pipes/pipes.module';
 import {NgxsModule} from '@ngxs/store';
 import {AppState} from './store/states/app.state';
 import {NgxsReduxDevtoolsPluginModule} from '@ngxs/devtools-plugin';
@@ -27,6 +26,7 @@ import {AgoraConfig, NgxAgoraModule} from 'ngx-agora';
 import {AngularFireFunctionsModule} from '@angular/fire/functions';
 import {AngularFireMessagingModule} from '@angular/fire/messaging';
 import {AngularFirePerformanceModule, PerformanceMonitoringService} from '@angular/fire/performance';
+import {ParseFilePage} from './pages/users/parse-file/parse-file.page';
 
 const agoraConfig: AgoraConfig = {
     AppID: 'c7d5f3bc5f4345fcaa57bba1fc1e5f6d',
@@ -39,7 +39,6 @@ registerLocaleData(localeEs);
     entryComponents: [],
     imports: [
         BrowserModule,
-        PipesModule,
         DragulaModule.forRoot(),
         AppRoutingModule,
         IonicModule.forRoot(),

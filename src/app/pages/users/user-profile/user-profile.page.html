@@ -1,0 +1,35 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button >
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-buttons slot="end" *ngIf="showParseBtn">
+      <ion-button (click)="showParseFileModal()">
+        <ion-icon name="document-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>
+      Usuario
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content>
+  <ion-tabs #tabs (ionTabsDidChange)="setCurrentTab()">
+    <ion-tab-bar slot="bottom" selectedTab="user">
+
+      <ion-tab-button tab="user/{{userID}}" [ngClass]="{selected : selectedTab == 'user'}">
+        <ion-icon name="map"></ion-icon>
+        <ion-label>Usuario</ion-label>
+      </ion-tab-button>
+
+      <ion-tab-button tab="medical/{{userID}}" [ngClass]="{selected : selectedTab == 'medical'}">
+        <ion-icon name="information-circle"></ion-icon>
+        <ion-label>Perfil</ion-label>
+      </ion-tab-button>
+
+    </ion-tab-bar>
+  </ion-tabs>
+</ion-content>

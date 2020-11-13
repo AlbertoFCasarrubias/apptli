@@ -34,6 +34,12 @@ const routes: Routes = [
     path: 'call',
     loadChildren: () => import('./pages/call/call.module').then(m => m.CallPageModule)
   },
+
+  {
+    path: 'user-tab',
+    loadChildren: () => import('./pages/users/user-profile/user-profile.module').then( m => m.UserProfilePageModule),
+    canActivate: [AuthGuard],
+  }
 ];
 
 @NgModule({

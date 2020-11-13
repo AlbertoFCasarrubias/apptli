@@ -45,7 +45,6 @@ export class UserPage implements OnInit {
 
   ngOnInit() {
     this.appUser = this.store.selectSnapshot(AppState.user);
-    console.log('this.appUser ', this.appUser);
     this.form = this.formBuilder.group({
       name: new FormControl('', Validators.compose([Validators.required])),
       mail: new FormControl('', Validators.compose([Validators.required, Validators.email])),
@@ -88,7 +87,7 @@ export class UserPage implements OnInit {
   }
 
   setNewPassword() {
-    this.authService.doChangePassword()
+    this.authService.doChangePassword('')
         .then(() => this.presentAlert('Cambio de contraseña', 'Favor de revisar tu correo electrónico.'))
         .catch(err => this.presentAlert('Error de cambio de contraseña', err));
   }
@@ -172,6 +171,7 @@ export class UserPage implements OnInit {
   createUser(value) {
     value.doctor = value.doctor === 'true' ? true : false;
     value.admin = value.admin === 'true' ? true : false;
+    console.log('VALUE', value);
 
     this.store.dispatch(new AddUser(value))
         .subscribe(data => this.savedOK(value, true),
