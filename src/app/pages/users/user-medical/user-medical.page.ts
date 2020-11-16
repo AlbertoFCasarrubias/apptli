@@ -220,31 +220,31 @@ export class UserMedicalPage implements OnInit, OnDestroy {
         text: title
       },
 
+      xAxis: {
+        type: 'category'
+      },
       yAxis: {
         title: {
-          text: 'Number of Employees'
-        }
-      },
-
-      xAxis: {
-        accessibility: {
-          rangeDescription: 'Range: 2010 to 2017'
+          text: '$'
         }
       },
 
       legend: {
-        layout: 'vertical',
-        align: 'right',
-        verticalAlign: 'middle'
+        enabled: false
       },
 
       plotOptions: {
         series: {
-          label: {
-            connectorAllowed: false
-          },
-          pointStart: 2010
+          borderWidth: 0,
+          dataLabels: {
+            enabled: true,
+            format: '${point.y:.2f}'
+          }
         }
+      },
+
+      credits : {
+        enabled: false
       },
 
       series: [{
