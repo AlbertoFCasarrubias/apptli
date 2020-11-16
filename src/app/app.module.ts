@@ -27,6 +27,7 @@ import {AngularFireFunctionsModule} from '@angular/fire/functions';
 import {AngularFireMessagingModule} from '@angular/fire/messaging';
 import {AngularFirePerformanceModule, PerformanceMonitoringService} from '@angular/fire/performance';
 import {ParseFilePage} from './pages/users/parse-file/parse-file.page';
+import {HighchartsChartModule} from 'highcharts-angular';
 
 const agoraConfig: AgoraConfig = {
     AppID: 'c7d5f3bc5f4345fcaa57bba1fc1e5f6d',
@@ -42,6 +43,7 @@ registerLocaleData(localeEs);
         DragulaModule.forRoot(),
         AppRoutingModule,
         IonicModule.forRoot(),
+        HighchartsChartModule,
         AngularFireAuthModule,
         AngularFirestoreModule,
         AngularFireStorageModule,

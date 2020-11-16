@@ -1,6 +1,6 @@
 import {Action, Selector, State, StateContext} from '@ngxs/store';
 import {Injectable} from '@angular/core';
-import {AddUser, GetPatients, GetUser, GetUsers, UsersStateModel} from '../actions/users.action';
+import {AddUser, GetPatients, GetUser, GetUsers, UpdateUserData, UsersStateModel} from '../actions/users.action';
 import {FirebaseService} from '../../services/firebase/firebase.service';
 import {tap} from 'rxjs/operators';
 
@@ -68,12 +68,39 @@ export class UsersState {
             .then(data => {
 
                 const {patients} = ctx.getState();
-                //patients.push(data);
-                console.log('DATA ', data, patients);
 
                 ctx.patchState({
                     patients
                 });
+            });
+    }
+
+    @Action(UpdateUserData)
+    updateUser(ctx: StateContext<UsersStateModel>, action: UpdateUserData) {
+        console.log('DATA UPDATE ', action);
+        const {users, patients} = ctx.getState();
+        const userID = action.payload['id'];
+
+        return this.firebaseService.updateUser(action.payload)
+            .then(data => {
+                const user = users.findIndex(u => u.id === userID);
+                const patient = patients.findIndex(u => u.id === userID);
+
+                if(user !== -1) {
+                    const tmp = Object.assign([], users);
+                    tmp[user] = action.payload;
+                    ctx.patchState({
+                        users: tmp
+                    });
+                }
+
+                if(patient !== -1){
+                    const tmp = Object.assign([], patients);
+                    tmp[patient] = action.payload;
+                    ctx.patchState({
+                        patients: tmp
+                    });
+                }
             });
     }
 }

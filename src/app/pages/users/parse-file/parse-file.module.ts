@@ -15,6 +15,6 @@ import { ParseFilePage } from './parse-file.page';
     IonicModule,
     ParseFilePageRoutingModule
   ],
-  declarations: [ParseFilePage]
+  declarations: []
 })
 export class ParseFilePageModule {}

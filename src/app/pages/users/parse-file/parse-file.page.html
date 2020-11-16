@@ -5,5 +5,13 @@
 </ion-header>
 
 <ion-content>
-
+  <ion-list>
+    <ion-item>
+      <ion-label position="floating">Comment</ion-label>
+      <ion-textarea clearOnEdit="true" auto-grow="true" [(ngModel)]="text"></ion-textarea>
+    </ion-item>
+    <ion-item>
+      <ion-button (click)="parseFile()">Procesar datos</ion-button>
+    </ion-item>
+  </ion-list>
 </ion-content>

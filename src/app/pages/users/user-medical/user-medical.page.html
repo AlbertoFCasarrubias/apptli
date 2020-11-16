@@ -1,3 +1,154 @@
 <ion-content>
-  perfil
+  <form class="form" [formGroup]="form" (ngSubmit)="submit(form.value)">
+    <ion-list>
+      <ion-item-divider color="secondary">
+        <ion-label>
+          Hábitos Alimenticios
+        </ion-label>
+      </ion-item-divider>
+      <ion-item>
+        <ion-label position="floating">Desayuno</ion-label>
+        <ion-input [formControl]="form.controls['alimenticios'].controls['desayuno']"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Colación Matutina</ion-label>
+        <ion-input [formControl]="form.controls['alimenticios'].controls['colacionMatutina']"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Comida</ion-label>
+        <ion-input [formControl]="form.controls['alimenticios'].controls['comida']"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Colación Vespertina</ion-label>
+        <ion-input [formControl]="form.controls['alimenticios'].controls['colacionVespertina']"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Cena</ion-label>
+        <ion-input [formControl]="form.controls['alimenticios'].controls['cena']"></ion-input>
+      </ion-item>
+
+      <ion-item-divider color="secondary" >
+        <ion-label>
+          Antecedentes personales patológicos
+        </ion-label>
+      </ion-item-divider>
+      <ion-item>
+        <ion-label position="floating">Alergias</ion-label>
+        <ion-input [formControl]="form.controls['antecedentes'].controls['alergias']"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Tabaquismo</ion-label>
+        <ion-input [formControl]="form.controls['antecedentes'].controls['tabaquismo']"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Alcoholismo</ion-label>
+        <ion-input [formControl]="form.controls['antecedentes'].controls['alcoholismo']"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Enfermedades</ion-label>
+        <ion-input [formControl]="form.controls['antecedentes'].controls['enfermedades']"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Cirugías</ion-label>
+        <ion-input [formControl]="form.controls['antecedentes'].controls['cirugias']"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="floating">Medicamentos</ion-label>
+        <ion-input [formControl]="form.controls['antecedentes'].controls['medicamentos']"></ion-input>
+      </ion-item>
+
+
+      <div *ngIf="edit">
+        <ion-list *ngFor="let consulta of user.consultas">
+          <ion-item-divider color="secondary" sticky="true" (click)="moveInto(consulta)">
+            <ion-label>
+              {{consulta.date}}
+            </ion-label>
+            <ion-icon name="download-outline" slot="end" *ngIf="swap" class="dateIcon"></ion-icon>
+          </ion-item-divider>
+          <ion-item [ngClass]="{selected: swap.field == 'peso' && consulta.id == swap.consulta.id}">
+            <ion-label position="stacked">Peso</ion-label>
+            <ion-input value="{{consulta.peso}}"></ion-input>
+            <ion-icon name="reorder-four-outline" slot="end" class="inputIcon" (click)="moveTo(consulta, 'peso')"></ion-icon>
+          </ion-item>
+          <ion-item [ngClass]="{selected: swap.field == 'grasa' && consulta.id == swap.consulta.id}">
+            <ion-label position="stacked">% Grasa</ion-label>
+            <ion-input value="{{consulta.grasa}}"></ion-input>
+            <ion-icon name="reorder-four-outline" slot="end" class="inputIcon" (click)="moveTo(consulta, 'grasa')" ></ion-icon>
+          </ion-item>
+          <ion-item [ngClass]="{selected: swap.field == 'agua' && consulta.id == swap.consulta.id}">
+            <ion-label position="stacked">% Agua</ion-label>
+            <ion-input value="{{consulta.agua}}"></ion-input>
+            <ion-icon name="reorder-four-outline" slot="end" class="inputIcon" (click)="moveTo(consulta, 'agua')" ></ion-icon>
+          </ion-item>
+          <ion-item [ngClass]="{selected: swap.field == 'grasaVisceral' && consulta.id == swap.consulta.id}">
+            <ion-label position="stacked">Grasa visceral</ion-label>
+            <ion-input value="{{consulta.grasaVisceral}}"></ion-input>
+            <ion-icon name="reorder-four-outline" slot="end" class="inputIcon" (click)="moveTo(consulta, 'grasaVisceral')"></ion-icon>
+          </ion-item>
+          <ion-item  [ngClass]="{selected: swap.field == 'pesoMuscular' && consulta.id == swap.consulta.id}">
+            <ion-label position="stacked">Peso muscular</ion-label>
+            <ion-input value="{{consulta.pesoMuscular}}"></ion-input>
+            <ion-icon name="reorder-four-outline" slot="end" class="inputIcon" (click)="moveTo(consulta, 'pesoMuscular')"></ion-icon>
+          </ion-item>
+          <ion-item  [ngClass]="{selected: swap.field == 'edadMetabolica' && consulta.id == swap.consulta.id}">
+            <ion-label position="stacked">Edad metabólica</ion-label>
+            <ion-input value="{{consulta.edadMetabolica}}"></ion-input>
+            <ion-icon name="reorder-four-outline" slot="end" class="inputIcon" (click)="moveTo(consulta, 'edadMetabolica')"></ion-icon>
+          </ion-item>
+          <ion-item [ngClass]="{selected: swap.field == 'edadOsea' && consulta.id == swap.consulta.id}">
+            <ion-label position="stacked">Edad ósea</ion-label>
+            <ion-input value="{{consulta.edadOsea}}"></ion-input>
+            <ion-icon name="reorder-four-outline" slot="end" class="inputIcon" (click)="moveTo(consulta, 'edadOsea')"></ion-icon>
+          </ion-item>
+          <ion-item  [ngClass]="{selected: swap.field == 'pecho' && consulta.id == swap.consulta.id}">
+            <ion-label position="stacked">Pecho</ion-label>
+            <ion-input value="{{consulta.pecho}}"></ion-input>
+            <ion-icon name="reorder-four-outline" slot="end" class="inputIcon" (click)="moveTo(consulta, 'pecho')"></ion-icon>
+          </ion-item>
+          <ion-item  [ngClass]="{selected: swap.field == 'cintura' && consulta.id == swap.consulta.id}">
+            <ion-label position="stacked">Cintura</ion-label>
+            <ion-input value="{{consulta.cintura}}"></ion-input>
+            <ion-icon name="reorder-four-outline" slot="end" class="inputIcon" (click)="moveTo(consulta, 'cintura')"></ion-icon>
+          </ion-item>
+          <ion-item  [ngClass]="{selected: swap.field == 'cadera' && consulta.id == swap.consulta.id}">
+            <ion-label position="stacked">Cadera</ion-label>
+            <ion-input value="{{consulta.cadera}}"></ion-input>
+            <ion-icon name="reorder-four-outline" slot="end" class="inputIcon" (click)="moveTo(consulta, 'cadera')"></ion-icon>
+          </ion-item>
+          <ion-item  [ngClass]="{selected: swap.field == 'bd' && consulta.id == swap.consulta.id}">
+            <ion-label position="stacked">Brazo Derecho</ion-label>
+            <ion-input value="{{consulta.bd}}"></ion-input>
+            <ion-icon name="reorder-four-outline" slot="end" class="inputIcon" (click)="moveTo(consulta, 'bd')"></ion-icon>
+          </ion-item>
+          <ion-item [ngClass]="{selected: swap.field == 'bi' && consulta.id == swap.consulta.id}">
+            <ion-label position="stacked">Brazo Izquierdo</ion-label>
+            <ion-input value="{{consulta.bi}}"></ion-input>
+            <ion-icon name="reorder-four-outline" slot="end" class="inputIcon" (click)="moveTo(consulta, 'bi')"></ion-icon>
+          </ion-item>
+          <ion-item [ngClass]="{selected: swap.field == 'pd' && consulta.id == swap.consulta.id}">
+            <ion-label position="stacked">Pierna Derecha</ion-label>
+            <ion-input value="{{consulta.pd}}"></ion-input>
+            <ion-icon name="reorder-four-outline" slot="end" class="inputIcon" (click)="moveTo(consulta, 'pd')"></ion-icon>
+          </ion-item>
+          <ion-item [ngClass]="{selected: swap.field == 'pi' && consulta.id == swap.consulta.id}">
+            <ion-label position="stacked">Pierna Izquierda</ion-label>
+            <ion-input value="{{consulta.pi}}"></ion-input>
+            <ion-icon name="reorder-four-outline" slot="end" class="inputIcon" (click)="moveTo(consulta, 'pi')"></ion-icon>
+          </ion-item>
+        </ion-list>
+      </div>
+
+      <ion-item>
+        <div class="chart-container">
+          <div [chart]="chartMes"></div>
+        </div>
+      </ion-item>
+
+      <ion-item lines="none" class="ion-text-center" *ngIf="edit">
+        <ion-button expand="block" type="submit" [disabled]="!form.valid">Guardar</ion-button>
+      </ion-item>
+
+    </ion-list>
+  </form>
 </ion-content>

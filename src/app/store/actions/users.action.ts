@@ -22,3 +22,8 @@ export class AddUser {
     static readonly type = '[User] add user';
     constructor(public payload: object) {}
 }
+
+export class UpdateUserData {
+    static readonly type = '[User] update user';
+    constructor(public payload: object) {}
+}

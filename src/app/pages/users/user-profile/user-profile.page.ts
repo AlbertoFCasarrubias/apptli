@@ -1,7 +1,10 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import { Router} from '@angular/router';
-import {IonTabs, ModalController} from '@ionic/angular';
+import {IonTabs, ModalController, NavController} from '@ionic/angular';
 import {ParseFilePage} from '../parse-file/parse-file.page';
+import {AppState} from '../../../store/states/app.state';
+import {Store} from '@ngxs/store';
+import {UsersState} from '../../../store/states/users.state';
 
 @Component({
   selector: 'app-user-profile',
@@ -13,9 +16,21 @@ export class UserProfilePage implements OnInit, AfterViewInit {
   userID: any;
   selectedTab: any;
   showParseBtn = false;
+  appUser: any;
+  users: any;
+  user: any;
+  badge = {
+    medical: 0,
+    user: 0
+  };
 
   constructor(private router: Router,
-              public modalController: ModalController) { }
+              private nav: NavController,
+              private store: Store,
+              public modalController: ModalController) {
+    this.appUser = this.store.selectSnapshot(AppState.user);
+    this.getUsers();
+  }
 
   ngOnInit() {
     const url = this.router.url.split('/');
@@ -24,6 +39,19 @@ export class UserProfilePage implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     this.tabs.select(`user/${this.userID}`);
+    this.user = this.users.find(u => u.id === this.userID);
+  }
+
+  back(){
+    this.nav.back();
+  }
+
+  getUsers() {
+    if (this.appUser.admin) {
+      this.users = this.store.selectSnapshot(UsersState.users);
+    } else {
+      this.users = this.store.selectSnapshot(UsersState.patients);
+    }
   }
 
   setCurrentTab() {
@@ -41,6 +69,24 @@ export class UserProfilePage implements OnInit, AfterViewInit {
     const modal = await this.modalController.create({
       component: ParseFilePage,
     });
+
+    modal.onWillDismiss().then( data => {
+      const json = data['data']['json'];
+      //console.log('DISMISS ', json);
+      if (this.user.name !== json.name) {
+        this.badge.user++;
+      }
+
+      if (this.user.height !== json.height) {
+        this.badge.user++;
+      }
+
+      if (this.user.age !== json.age) {
+        this.badge.user++;
+      }
+
+    });
+
     return await modal.present();
   }
 

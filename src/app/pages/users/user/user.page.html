@@ -1,7 +1,7 @@
 <ion-content class="ion-padding">
   <form class="form" [formGroup]="form" (ngSubmit)="submit(form.value)">
     <ion-list>
-      <ion-item>
+      <ion-item [ngClass]="{change: changed && changed.name}">
         <ion-label position="stacked">Nombre</ion-label>
         <ion-input formControlName="name"></ion-input>
       </ion-item>
@@ -17,6 +17,16 @@
       </ion-item>
       <ion-item *ngIf="form.controls.mail.hasError('email') && (form.controls.mail.dirty || form.controls.mail.touched)">
         No es un correo electrónico.
+      </ion-item>
+
+      <ion-item *ngIf="!appUser.admin" [ngClass]="{change: changed && changed.height}">
+        <ion-label position="stacked">Altura</ion-label>
+        <ion-input formControlName="height"></ion-input>
+      </ion-item>
+
+      <ion-item *ngIf="!appUser.admin" [ngClass]="{change: changed && changed.age}">
+        <ion-label position="stacked">Edad</ion-label>
+        <ion-input formControlName="age"></ion-input>
       </ion-item>
 
       <ion-item *ngIf="appUser.admin">

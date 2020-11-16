@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import {AfterViewChecked, Component, OnInit} from '@angular/core';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {AlertController, LoadingController, NavController} from '@ionic/angular';
 import {FirebaseService} from '../../../services/firebase/firebase.service';
@@ -7,7 +7,9 @@ import {AuthService} from '../../../services/auth/auth.service';
 import {RoutingService} from '../../../services/routing/routing.service';
 import {Store} from '@ngxs/store';
 import {AppState} from '../../../store/states/app.state';
-import {AddUser} from '../../../store/actions/users.action';
+import {AddUser, UpdateUserData} from '../../../store/actions/users.action';
+import {Observable, Subscription} from 'rxjs';
+import {UtilitiesService} from '../../../services/utilities/utilities.service';
 
 @Component({
   selector: 'app-user',
@@ -29,6 +31,10 @@ export class UserPage implements OnInit {
     sábado:       this.initHours,
     domingo:      this.initHours
   };
+  subscriptionJSON: Subscription;
+  json$: Observable<object>;
+  json: any;
+  changed: any = {};
 
   constructor(
       private store: Store,
@@ -39,14 +45,46 @@ export class UserPage implements OnInit {
       private activatedRoute: ActivatedRoute,
       private routingService: RoutingService,
       private authService: AuthService,
+      private utilitiesService: UtilitiesService,
       private nav: NavController,
       private router: Router
-  ) {}
+  ) {
+    this.json$ = this.utilitiesService.json;
+    this.subscriptionJSON = this.json$.subscribe( data => {
+
+      if (data['json']) {
+        this.json = data['json'];
+        setTimeout(() => {
+          if (this.user.name !== this.json.name) {
+            this.form.controls.name.patchValue(this.json.name);
+            this.changed.name = true;
+          }
+
+          if (this.user.age !== this.json.age) {
+            this.form.controls.age.patchValue(this.json.age);
+            this.changed.age = true;
+          }
+
+          if (this.user.height !== this.json.height) {
+            this.form.controls.height.patchValue(this.json.height);
+            this.changed.height = true;
+          }
+
+        });
+
+      }
+    });
+
+
+  }
 
   ngOnInit() {
     this.appUser = this.store.selectSnapshot(AppState.user);
     this.form = this.formBuilder.group({
       name: new FormControl('', Validators.compose([Validators.required])),
+      age: new FormControl(''),
+      birthday: new FormControl(''),
+      height: new FormControl(''),
       mail: new FormControl('', Validators.compose([Validators.required, Validators.email])),
       schedule: [this.workingHours],
       admin: new FormControl(true),
@@ -59,6 +97,7 @@ export class UserPage implements OnInit {
       this.getUser(id);
     }
   }
+
 
   goBack() {
     this.nav.back();
@@ -115,6 +154,8 @@ export class UserPage implements OnInit {
 
           this.form.controls.name.patchValue(this.user.name);
           this.form.controls.mail.patchValue(this.user.mail);
+          this.form.controls.age.patchValue(this.user.age);
+          this.form.controls.height.patchValue(this.user.height);
           this.form.controls.admin.patchValue(this.user.admin);
           this.form.controls.doctor.patchValue(this.user.doctor.toString());
           this.form.controls.schedule.patchValue(this.user.schedule);
@@ -143,6 +184,9 @@ export class UserPage implements OnInit {
       value.admin = 'false';
     }
     this.presentLoading();
+    value.age = value.age ? value.age : '';
+    value.height = value.height ? value.height : '';
+
     if (value.admin === 'false' || !value.admin) {
       if (this.user) {
         this.updateUser(value);
@@ -184,11 +228,12 @@ export class UserPage implements OnInit {
     value.admin = value.admin === 'true' ? true : false;
 
     console.log('updateUser value ', value);
+    console.log('/// ', this.form.value);
 
-    this.firebaseService
-        .updateUser(value)
-        .then(() => this.savedOK(value))
-        .catch(err => this.saveError(err));
+    this.store.dispatch(new UpdateUserData(value)).subscribe(data => {
+      console.log('DATA UPDATE ', data);
+      this.savedOK(value, true);
+    });
   }
 
   savedOK(value, showPassword = false) {

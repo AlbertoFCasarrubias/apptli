@@ -212,13 +212,11 @@ export class FirebaseService {
     }
 
     updateUser(value) {
-        this.getAdminUsers();
         return this.update(this.USERS, value);
     }
 
     getUsers() {
-        return this.getAll(this.USERS);
-        ;
+        return this.getAll(this.USERS);;
     }
 
     getUser(id) {
@@ -558,9 +556,11 @@ export class FirebaseService {
             value['createdAt'] = timestamp;
         }
 
-        return this.afs.collection(collection)
-            .doc(id)
-            .set(value);
+        if(id){
+            return this.afs.collection(collection)
+                .doc(id)
+                .set(value);
+        }
     }
 
     public close(){

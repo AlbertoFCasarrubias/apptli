@@ -1,7 +1,7 @@
 <ion-header>
   <ion-toolbar>
     <ion-buttons slot="start">
-      <ion-button >
+      <ion-button (click)="back()">
         <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -21,13 +21,15 @@
     <ion-tab-bar slot="bottom" selectedTab="user">
 
       <ion-tab-button tab="user/{{userID}}" [ngClass]="{selected : selectedTab == 'user'}">
-        <ion-icon name="map"></ion-icon>
+        <ion-icon name="person-circle-outline"></ion-icon>
         <ion-label>Usuario</ion-label>
+        <ion-badge *ngIf="badge.user > 0">{{badge.user}}</ion-badge>
       </ion-tab-button>
 
       <ion-tab-button tab="medical/{{userID}}" [ngClass]="{selected : selectedTab == 'medical'}">
-        <ion-icon name="information-circle"></ion-icon>
+        <ion-icon name="medical-outline"></ion-icon>
         <ion-label>Perfil</ion-label>
+        <ion-badge *ngIf="badge.medical > 0">badge.medical</ion-badge>
       </ion-tab-button>
 
     </ion-tab-bar>
