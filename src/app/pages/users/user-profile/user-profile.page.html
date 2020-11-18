@@ -9,6 +9,9 @@
       <ion-button (click)="showParseFileModal()">
         <ion-icon name="document-outline"></ion-icon>
       </ion-button>
+      <ion-button (click)="editMode()" [ngClass]="{selected: edit}">
+        <ion-icon name="pencil"></ion-icon>
+      </ion-button>
     </ion-buttons>
     <ion-title>
       Usuario

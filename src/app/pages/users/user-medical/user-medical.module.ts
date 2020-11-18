@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import {CUSTOM_ELEMENTS_SCHEMA, NgModule} from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
@@ -9,6 +9,9 @@ import { UserMedicalPageRoutingModule } from './user-medical-routing.module';
 import { UserMedicalPage } from './user-medical.page';
 import {HighchartsChartModule} from 'highcharts-angular';
 import {ChartModule} from 'angular-highcharts';
+import {HighchartsComponent} from '../../../components/highcharts/highcharts.component';
+import {ChartsComponent} from '../../../components/charts/charts.component';
+import {AppModule} from '../../../app.module';
 
 @NgModule({
   imports: [
@@ -18,8 +21,10 @@ import {ChartModule} from 'angular-highcharts';
     ReactiveFormsModule,
     ChartModule,
     HighchartsChartModule,
-    UserMedicalPageRoutingModule
+    UserMedicalPageRoutingModule,
+    AppModule
   ],
-  declarations: [UserMedicalPage]
+  declarations: [UserMedicalPage, HighchartsComponent, ChartsComponent],
+  schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 })
 export class UserMedicalPageModule {}

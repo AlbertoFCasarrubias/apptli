@@ -78,7 +78,8 @@ export class UsersState {
     @Action(UpdateUserData)
     updateUser(ctx: StateContext<UsersStateModel>, action: UpdateUserData) {
         console.log('DATA UPDATE ', action);
-        const {users, patients} = ctx.getState();
+        const users = Object.assign([], ctx.getState().users);
+        const patients = Object.assign([], ctx.getState().patients);
         const userID = action.payload['id'];
 
         return this.firebaseService.updateUser(action.payload)
@@ -86,7 +87,7 @@ export class UsersState {
                 const user = users.findIndex(u => u.id === userID);
                 const patient = patients.findIndex(u => u.id === userID);
 
-                if(user !== -1) {
+                if  (user !== -1) {
                     const tmp = Object.assign([], users);
                     tmp[user] = action.payload;
                     ctx.patchState({
@@ -94,7 +95,7 @@ export class UsersState {
                     });
                 }
 
-                if(patient !== -1){
+                if(patient !== -1) {
                     const tmp = Object.assign([], patients);
                     tmp[patient] = action.payload;
                     ctx.patchState({
