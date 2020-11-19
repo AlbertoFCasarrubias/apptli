@@ -99,7 +99,6 @@ export class HomePage implements OnInit, OnDestroy {
             message: 'Cargando datos...'
         }).then((res) => {
             this.loading = true;
-
             res.present();
         });
     }

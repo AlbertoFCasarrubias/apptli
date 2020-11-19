@@ -1,14 +1,13 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {Store} from '@ngxs/store';
-import {AppState} from '../../../store/states/app.state';
 import {UsersState} from '../../../store/states/users.state';
 import {Observable, Subscription} from 'rxjs';
 import {UtilitiesService} from '../../../services/utilities/utilities.service';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
 import {AlertController, LoadingController, ToastController} from '@ionic/angular';
 import {UpdateUserData} from '../../../store/actions/users.action';
-import {Chart} from "angular-highcharts";
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-user-medical',
@@ -18,6 +17,11 @@ import {Chart} from "angular-highcharts";
 export class UserMedicalPage implements OnInit, OnDestroy {
   subscriptionJSON: Subscription;
   json$: Observable<object>;
+
+  subscriptionEdit: Subscription;
+  edit$: Observable<object>;
+
+
   form: FormGroup;
   user: any = {
     alimenticios: {},
@@ -28,9 +32,22 @@ export class UserMedicalPage implements OnInit, OnDestroy {
   loading: any;
   edit = false;
 
-  chartMes: any;
-  chartMesOptions: any = this.createColumnChart('Ventas por mes');
-  colors = ['#0072bb', '#024ea2', '#2e3192', '#5b2d90', '#92278f', '#8f52a0', '#64E572', '#8c62aa', '#727dbd', '#95b5de']
+  charts: any = {
+    peso: {},
+    grasa: {},
+    agua: {},
+    grasaVisceral: {},
+    pesoMuscular: {},
+    edadMetabolica: {},
+    edadOsea: {},
+    pecho: {},
+    cintura: {},
+    cadera: {},
+    bd: {},
+    bi: {},
+    pd: {},
+    pi: {}
+  };
 
   constructor(private activatedRoute: ActivatedRoute,
               private formBuilder: FormBuilder,
@@ -40,9 +57,9 @@ export class UserMedicalPage implements OnInit, OnDestroy {
               public loadingController: LoadingController,
               private utilitiesService: UtilitiesService) {
     this.json$ = this.utilitiesService.json;
+    this.edit$ = this.utilitiesService.edit;
+
     this.subscriptionJSON = this.json$.subscribe( data => {
-      console.log('data[\'json\']' , data['json']);
-      console.log('this.user' , this.user);
       const user = Object.assign({}, this.user);
 
       user.alimenticios = data['json'].alimenticios;
@@ -54,6 +71,12 @@ export class UserMedicalPage implements OnInit, OnDestroy {
       this.form.controls.alimenticios.patchValue(data['json'].alimenticios);
       this.form.controls.antecedentes.patchValue(data['json'].antecedentes);
       this.form.controls.consultas.patchValue(data['json'].consultas);
+
+      this.generateCharts();
+    });
+
+    this.subscriptionEdit = this.edit$.subscribe( data => {
+      this.edit = data['edit'] ? true : false;
     });
 
     this.form = this.formBuilder.group({
@@ -78,37 +101,46 @@ export class UserMedicalPage implements OnInit, OnDestroy {
 
   ngOnInit() {
     const id = this.activatedRoute.snapshot.paramMap.get('id');
-    this.user = this.store.selectSnapshot(UsersState.users).find(u => u.id === id);
+    const users = Object.assign([], this.store.selectSnapshot(UsersState.users));
+    this.user = Object.assign({}, users.find(u => u.id === id));
 
     if (this.user) {
       this.form.controls.alimenticios.patchValue(this.user.alimenticios);
       this.form.controls.antecedentes.patchValue(this.user.antecedentes);
       this.form.controls.consultas.patchValue(this.user.consultas);
+      this.generateCharts();
     }
-
-    /*
-    this.chartMesOptions.series[0].data = month.map(order => {
-            const reduce = order.data.reduce((a, b) => {
-              const price = b.price ? Number(b.price) : 0;
-              return a + price;
-            } , 0);
-
-            return {
-              name: order.group,
-              y: reduce
-            };
-          });
-          this.chartMes = new Chart(this.chartMesOptions);
-     */
-
-    this.chartMes = new Chart(this.chartMesOptions);
-
-
-
   }
 
   ngOnDestroy() {
     this.subscriptionJSON.unsubscribe();
+    this.subscriptionEdit.unsubscribe();
+  }
+
+  generateCharts() {
+    this.generateValuesChart('peso');
+    this.generateValuesChart('grasa');
+    this.generateValuesChart('agua');
+    this.generateValuesChart('grasaVisceral');
+    this.generateValuesChart('pesoMuscular');
+    this.generateValuesChart('edadMetabolica');
+    this.generateValuesChart('edadOsea');
+    this.generateValuesChart('pecho');
+    this.generateValuesChart('cintura');
+    this.generateValuesChart('cadera');
+    this.generateValuesChart('bd');
+    this.generateValuesChart('bi');
+    this.generateValuesChart('pd');
+    this.generateValuesChart('pi');
+  }
+
+  generateValuesChart(chart) {
+    const xLabels = this.user.consultas.map(c => moment(c.date, 'DD/MM/YYYY').format('DD-MMM'));
+    this.charts[chart].type = 'spline';
+    this.charts[chart].xAxis = xLabels;
+    this.charts[chart].data = this.user.consultas.map(c => Number(c[chart]));
+    this.charts[chart].data.push(this.charts[chart].data.pop());
+    this.charts[chart].xAxis.push('');
   }
 
   async presentToast(message) {
@@ -158,6 +190,18 @@ export class UserMedicalPage implements OnInit, OnDestroy {
 
   }
 
+  editConsultaValue(consulta, field, event) {
+    this.user.consultas = this.user.consultas.map(c => {
+      const tmp = Object.assign({}, c);
+
+      if (tmp.date === consulta.date) {
+        tmp[field] = event.target.value;
+      }
+
+      return tmp;
+    });
+  }
+
   submit(value) {
     this.presentLoading();
     this.user.alimenticios = this.form.value.alimenticios;
@@ -170,11 +214,9 @@ export class UserMedicalPage implements OnInit, OnDestroy {
     value.doctor = value.doctor === 'true' ? true : false;
     value.admin = value.admin === 'true' ? true : false;
 
-    console.log('updateUser value ', value);
-    console.log('/// ', this.form.value);
+    console.log('VALUE ', value);
 
     this.store.dispatch(new UpdateUserData(value)).subscribe(data => {
-      console.log('DATA UPDATE ', data);
       this.savedOK(value, true);
     });
   }
@@ -208,64 +250,15 @@ export class UserMedicalPage implements OnInit, OnDestroy {
   }
 
   savedOK(value, showPassword = false) {
-    console.log('VALUE SAVED OK ', value);
     const message = !showPassword ? ' La contraseña temporal es 12341234' : '';
     this.dismissLoading();
     this.presentAlert('Usuario', value.name + ' guardado correctamente.' + message);
+    this.utilitiesService.setEdit(false);
+    this.generateCharts();
   }
 
   createColumnChart(title) {
-    return {
-      title: {
-        text: title
-      },
 
-      xAxis: {
-        type: 'category'
-      },
-      yAxis: {
-        title: {
-          text: '$'
-        }
-      },
-
-      legend: {
-        enabled: false
-      },
-
-      plotOptions: {
-        series: {
-          borderWidth: 0,
-          dataLabels: {
-            enabled: true,
-            format: '${point.y:.2f}'
-          }
-        }
-      },
-
-      credits : {
-        enabled: false
-      },
-
-      series: [{
-        name: 'Installation',
-        data: [43934, 52503, 57177, 69658, 97031, 119931, 137133, 154175]
-      }],
-      responsive: {
-        rules: [{
-          condition: {
-            maxWidth: 500
-          },
-          chartOptions: {
-            legend: {
-              layout: 'horizontal',
-              align: 'center',
-              verticalAlign: 'bottom'
-            }
-          }
-        }]
-      }
-    };
   }
 
 }
