@@ -5,6 +5,7 @@ import {ParseFilePage} from '../parse-file/parse-file.page';
 import {AppState} from '../../../store/states/app.state';
 import {Store} from '@ngxs/store';
 import {UsersState} from '../../../store/states/users.state';
+import {UtilitiesService} from '../../../services/utilities/utilities.service';
 
 @Component({
   selector: 'app-user-profile',
@@ -19,6 +20,7 @@ export class UserProfilePage implements OnInit, AfterViewInit {
   appUser: any;
   users: any;
   user: any;
+  edit = false;
   badge = {
     medical: 0,
     user: 0
@@ -27,6 +29,7 @@ export class UserProfilePage implements OnInit, AfterViewInit {
   constructor(private router: Router,
               private nav: NavController,
               private store: Store,
+              private utilitiesService: UtilitiesService,
               public modalController: ModalController) {
     this.appUser = this.store.selectSnapshot(AppState.user);
     this.getUsers();
@@ -65,24 +68,31 @@ export class UserProfilePage implements OnInit, AfterViewInit {
     }
   }
 
+  editMode() {
+    this.edit = !this.edit;
+    this.utilitiesService.setEdit(this.edit);
+  }
+
   async showParseFileModal() {
     const modal = await this.modalController.create({
       component: ParseFilePage,
     });
 
     modal.onWillDismiss().then( data => {
-      const json = data['data']['json'];
-      //console.log('DISMISS ', json);
-      if (this.user.name !== json.name) {
-        this.badge.user++;
-      }
+      if (data['data']) {
+        const json = data['data']['json'];
+        //console.log('DISMISS ', json);
+        if (this.user.name !== json.name) {
+          this.badge.user++;
+        }
 
-      if (this.user.height !== json.height) {
-        this.badge.user++;
-      }
+        if (this.user.height !== json.height) {
+          this.badge.user++;
+        }
 
-      if (this.user.age !== json.age) {
-        this.badge.user++;
+        if (this.user.age !== json.age) {
+          this.badge.user++;
+        }
       }
 
     });

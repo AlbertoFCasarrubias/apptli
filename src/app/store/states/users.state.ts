@@ -78,7 +78,8 @@ export class UsersState {
     @Action(UpdateUserData)
     updateUser(ctx: StateContext<UsersStateModel>, action: UpdateUserData) {
         console.log('DATA UPDATE ', action);
-        const {users, patients} = ctx.getState();
+        const users = Object.assign([], ctx.getState().users);
+        const patients = Object.assign([], ctx.getState().patients);
         const userID = action.payload['id'];
 
         return this.firebaseService.updateUser(action.payload)

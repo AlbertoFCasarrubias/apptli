@@ -57,98 +57,226 @@
         <ion-input [formControl]="form.controls['antecedentes'].controls['medicamentos']"></ion-input>
       </ion-item>
 
-
       <div *ngIf="edit">
         <ion-list *ngFor="let consulta of user.consultas">
           <ion-item-divider color="secondary" sticky="true" (click)="moveInto(consulta)">
             <ion-label>
-              {{consulta.date}}
+              {{consulta.date }}
             </ion-label>
             <ion-icon name="download-outline" slot="end" *ngIf="swap" class="dateIcon"></ion-icon>
           </ion-item-divider>
           <ion-item [ngClass]="{selected: swap.field == 'peso' && consulta.id == swap.consulta.id}">
             <ion-label position="stacked">Peso</ion-label>
-            <ion-input value="{{consulta.peso}}"></ion-input>
+            <ion-input value="{{consulta.peso}}" (ionChange)="editConsultaValue(consulta, 'peso' , $event)"></ion-input>
             <ion-icon name="reorder-four-outline" slot="end" class="inputIcon" (click)="moveTo(consulta, 'peso')"></ion-icon>
           </ion-item>
           <ion-item [ngClass]="{selected: swap.field == 'grasa' && consulta.id == swap.consulta.id}">
             <ion-label position="stacked">% Grasa</ion-label>
-            <ion-input value="{{consulta.grasa}}"></ion-input>
+            <ion-input value="{{consulta.grasa}}" (ionChange)="editConsultaValue(consulta, 'grasa' , $event)"></ion-input>
             <ion-icon name="reorder-four-outline" slot="end" class="inputIcon" (click)="moveTo(consulta, 'grasa')" ></ion-icon>
           </ion-item>
           <ion-item [ngClass]="{selected: swap.field == 'agua' && consulta.id == swap.consulta.id}">
             <ion-label position="stacked">% Agua</ion-label>
-            <ion-input value="{{consulta.agua}}"></ion-input>
+            <ion-input value="{{consulta.agua}}" (ionChange)="editConsultaValue(consulta, 'agua' , $event)"></ion-input>
             <ion-icon name="reorder-four-outline" slot="end" class="inputIcon" (click)="moveTo(consulta, 'agua')" ></ion-icon>
           </ion-item>
           <ion-item [ngClass]="{selected: swap.field == 'grasaVisceral' && consulta.id == swap.consulta.id}">
             <ion-label position="stacked">Grasa visceral</ion-label>
-            <ion-input value="{{consulta.grasaVisceral}}"></ion-input>
+            <ion-input value="{{consulta.grasaVisceral}}" (ionChange)="editConsultaValue(consulta, 'grasaVisceral' , $event)"></ion-input>
             <ion-icon name="reorder-four-outline" slot="end" class="inputIcon" (click)="moveTo(consulta, 'grasaVisceral')"></ion-icon>
           </ion-item>
           <ion-item  [ngClass]="{selected: swap.field == 'pesoMuscular' && consulta.id == swap.consulta.id}">
             <ion-label position="stacked">Peso muscular</ion-label>
-            <ion-input value="{{consulta.pesoMuscular}}"></ion-input>
+            <ion-input value="{{consulta.pesoMuscular}}" (ionChange)="editConsultaValue(consulta, 'pesoMuscular' , $event)"></ion-input>
             <ion-icon name="reorder-four-outline" slot="end" class="inputIcon" (click)="moveTo(consulta, 'pesoMuscular')"></ion-icon>
           </ion-item>
           <ion-item  [ngClass]="{selected: swap.field == 'edadMetabolica' && consulta.id == swap.consulta.id}">
             <ion-label position="stacked">Edad metabólica</ion-label>
-            <ion-input value="{{consulta.edadMetabolica}}"></ion-input>
+            <ion-input value="{{consulta.edadMetabolica}}" (ionChange)="editConsultaValue(consulta, 'edadMetabolica' , $event)"></ion-input>
             <ion-icon name="reorder-four-outline" slot="end" class="inputIcon" (click)="moveTo(consulta, 'edadMetabolica')"></ion-icon>
           </ion-item>
           <ion-item [ngClass]="{selected: swap.field == 'edadOsea' && consulta.id == swap.consulta.id}">
             <ion-label position="stacked">Edad ósea</ion-label>
-            <ion-input value="{{consulta.edadOsea}}"></ion-input>
+            <ion-input value="{{consulta.edadOsea}}" (ionChange)="editConsultaValue(consulta, 'edadOsea' , $event)"></ion-input>
             <ion-icon name="reorder-four-outline" slot="end" class="inputIcon" (click)="moveTo(consulta, 'edadOsea')"></ion-icon>
           </ion-item>
           <ion-item  [ngClass]="{selected: swap.field == 'pecho' && consulta.id == swap.consulta.id}">
             <ion-label position="stacked">Pecho</ion-label>
-            <ion-input value="{{consulta.pecho}}"></ion-input>
+            <ion-input value="{{consulta.pecho}}" (ionChange)="editConsultaValue(consulta, 'pecho' , $event)"></ion-input>
             <ion-icon name="reorder-four-outline" slot="end" class="inputIcon" (click)="moveTo(consulta, 'pecho')"></ion-icon>
           </ion-item>
           <ion-item  [ngClass]="{selected: swap.field == 'cintura' && consulta.id == swap.consulta.id}">
             <ion-label position="stacked">Cintura</ion-label>
-            <ion-input value="{{consulta.cintura}}"></ion-input>
+            <ion-input value="{{consulta.cintura}}" (ionChange)="editConsultaValue(consulta, 'cintura' , $event)"></ion-input>
             <ion-icon name="reorder-four-outline" slot="end" class="inputIcon" (click)="moveTo(consulta, 'cintura')"></ion-icon>
           </ion-item>
           <ion-item  [ngClass]="{selected: swap.field == 'cadera' && consulta.id == swap.consulta.id}">
             <ion-label position="stacked">Cadera</ion-label>
-            <ion-input value="{{consulta.cadera}}"></ion-input>
+            <ion-input value="{{consulta.cadera}}" (ionChange)="editConsultaValue(consulta, 'cadera' , $event)"></ion-input>
             <ion-icon name="reorder-four-outline" slot="end" class="inputIcon" (click)="moveTo(consulta, 'cadera')"></ion-icon>
           </ion-item>
           <ion-item  [ngClass]="{selected: swap.field == 'bd' && consulta.id == swap.consulta.id}">
             <ion-label position="stacked">Brazo Derecho</ion-label>
-            <ion-input value="{{consulta.bd}}"></ion-input>
+            <ion-input value="{{consulta.bd}}" (ionChange)="editConsultaValue(consulta, 'bd' , $event)"></ion-input>
             <ion-icon name="reorder-four-outline" slot="end" class="inputIcon" (click)="moveTo(consulta, 'bd')"></ion-icon>
           </ion-item>
           <ion-item [ngClass]="{selected: swap.field == 'bi' && consulta.id == swap.consulta.id}">
             <ion-label position="stacked">Brazo Izquierdo</ion-label>
-            <ion-input value="{{consulta.bi}}"></ion-input>
+            <ion-input value="{{consulta.bi}}" (ionChange)="editConsultaValue(consulta, 'bi' , $event)"></ion-input>
             <ion-icon name="reorder-four-outline" slot="end" class="inputIcon" (click)="moveTo(consulta, 'bi')"></ion-icon>
           </ion-item>
           <ion-item [ngClass]="{selected: swap.field == 'pd' && consulta.id == swap.consulta.id}">
             <ion-label position="stacked">Pierna Derecha</ion-label>
-            <ion-input value="{{consulta.pd}}"></ion-input>
+            <ion-input value="{{consulta.pd}}" (ionChange)="editConsultaValue(consulta, 'pd' , $event)"></ion-input>
             <ion-icon name="reorder-four-outline" slot="end" class="inputIcon" (click)="moveTo(consulta, 'pd')"></ion-icon>
           </ion-item>
           <ion-item [ngClass]="{selected: swap.field == 'pi' && consulta.id == swap.consulta.id}">
             <ion-label position="stacked">Pierna Izquierda</ion-label>
-            <ion-input value="{{consulta.pi}}"></ion-input>
+            <ion-input value="{{consulta.pi}}" (ionChange)="editConsultaValue(consulta, 'pi' , $event)"></ion-input>
             <ion-icon name="reorder-four-outline" slot="end" class="inputIcon" (click)="moveTo(consulta, 'pi')"></ion-icon>
           </ion-item>
         </ion-list>
       </div>
 
-      <ion-item>
-        <div class="chart-container">
-          <div [chart]="chartMes"></div>
-        </div>
-      </ion-item>
+      <ion-item-divider color="secondary" *ngIf="!edit">
+        <ion-label>
+          Gráficas
+        </ion-label>
+      </ion-item-divider>
+      <ion-grid *ngIf="!edit">
+        <ion-row>
+          <ion-col class="chartItem" size-lg="4" size-md="6" size-sm="12" size="12">
+            <ion-item-divider color="tertiary">
+              <ion-label>
+                Peso
+              </ion-label>
+            </ion-item-divider>
+            <app-charts [data]="charts.peso"></app-charts>
+          </ion-col>
 
-      <ion-item lines="none" class="ion-text-center" *ngIf="edit">
-        <ion-button expand="block" type="submit" [disabled]="!form.valid">Guardar</ion-button>
-      </ion-item>
+          <ion-col class="chartItem" size-lg="4" size-md="6" size-sm="12" size="12">
+            <ion-item-divider color="tertiary">
+              <ion-label>
+                % Grasa
+              </ion-label>
+            </ion-item-divider>
+            <app-charts [data]="charts.grasa"></app-charts>
+          </ion-col>
+
+          <ion-col class="chartItem" size-lg="4" size-md="6" size-sm="12" size="12">
+            <ion-item-divider color="tertiary">
+              <ion-label>
+                % Agua
+              </ion-label>
+            </ion-item-divider>
+            <app-charts [data]="charts.agua"></app-charts>
+          </ion-col>
+
+          <ion-col class="chartItem" size-lg="4" size-md="6" size-sm="12" size="12">
+            <ion-item-divider color="tertiary">
+              <ion-label>
+                Grasa visceral
+              </ion-label>
+            </ion-item-divider>
+            <app-charts [data]="charts.grasaVisceral"></app-charts>
+          </ion-col>
+
+          <ion-col class="chartItem" size-lg="4" size-md="6" size-sm="12" size="12">
+            <ion-item-divider color="tertiary">
+              <ion-label>
+                Peso Muscular
+              </ion-label>
+            </ion-item-divider>
+            <app-charts [data]="charts.pesoMuscular"></app-charts>
+          </ion-col>
+
+          <ion-col class="chartItem" size-lg="4" size-md="6" size-sm="12" size="12">
+            <ion-item-divider color="tertiary">
+              <ion-label>
+                Edad Metabólica
+              </ion-label>
+            </ion-item-divider>
+            <app-charts [data]="charts.edadMetabolica"></app-charts>
+          </ion-col>
+
+          <ion-col class="chartItem" size-lg="4" size-md="6" size-sm="12" size="12">
+            <ion-item-divider color="tertiary">
+              <ion-label>
+                Edad Ósea
+              </ion-label>
+            </ion-item-divider>
+            <app-charts [data]="charts.edadOsea"></app-charts>
+          </ion-col>
+
+          <ion-col class="chartItem" size-lg="4" size-md="6" size-sm="12" size="12">
+            <ion-item-divider color="tertiary">
+              <ion-label>
+                Pecho
+              </ion-label>
+            </ion-item-divider>
+            <app-charts [data]="charts.pecho"></app-charts>
+          </ion-col>
+
+          <ion-col class="chartItem" size-lg="4" size-md="6" size-sm="12" size="12">
+            <ion-item-divider color="tertiary">
+              <ion-label>
+                Cintura
+              </ion-label>
+            </ion-item-divider>
+            <app-charts [data]="charts.cintura"></app-charts>
+          </ion-col>
+
+          <ion-col class="chartItem" size-lg="4" size-md="6" size-sm="12" size="12">
+            <ion-item-divider color="tertiary">
+              <ion-label>
+                Cadera
+              </ion-label>
+            </ion-item-divider>
+            <app-charts [data]="charts.cadera"></app-charts>
+          </ion-col>
+
+          <ion-col class="chartItem" size-lg="4" size-md="6" size-sm="12" size="12">
+            <ion-item-divider color="tertiary">
+              <ion-label>
+                Brazo Derecho
+              </ion-label>
+            </ion-item-divider>
+            <app-charts [data]="charts.bd"></app-charts>
+          </ion-col>
+
+          <ion-col class="chartItem" size-lg="4" size-md="6" size-sm="12" size="12">
+            <ion-item-divider color="tertiary">
+              <ion-label>
+                Brazo Izquierdo
+              </ion-label>
+            </ion-item-divider>
+            <app-charts [data]="charts.bi"></app-charts>
+          </ion-col>
+
+          <ion-col class="chartItem" size-lg="4" size-md="6" size-sm="12" size="12">
+            <ion-item-divider color="tertiary">
+              <ion-label>
+                Pierna Derecha
+              </ion-label>
+            </ion-item-divider>
+            <app-charts [data]="charts.pd"></app-charts>
+          </ion-col>
+
+          <ion-col class="chartItem" size-lg="4" size-md="6" size-sm="12" size="12">
+            <ion-item-divider color="tertiary">
+              <ion-label>
+                Pierna Izquierda
+              </ion-label>
+            </ion-item-divider>
+            <app-charts [data]="charts.pi"></app-charts>
+          </ion-col>
+
+        </ion-row>
+      </ion-grid>
 
     </ion-list>
   </form>
 </ion-content>
+<ion-footer *ngIf="edit">
+  <ion-button expand="block" type="button" (click)="submit(form.value)" [disabled]="!form.valid">Guardar</ion-button>
+</ion-footer>

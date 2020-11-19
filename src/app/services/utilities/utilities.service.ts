@@ -8,7 +8,10 @@ export class UtilitiesService {
 
   private _json: Subject<any> = new Subject<any>();
   public readonly json: Observable<object> = this._json.asObservable();
-  
+
+  private _edit: Subject<any> = new Subject<any>();
+  public readonly edit: Observable<object> = this._edit.asObservable();
+
   constructor() { }
 
   dates: any;
@@ -74,6 +77,10 @@ export class UtilitiesService {
 
   setJSON(json) {
     this._json.next({json});
+  }
+
+  setEdit(edit) {
+    this._edit.next({edit});
   }
 
   parseFile(file) {
