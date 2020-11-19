@@ -30,8 +30,6 @@ export class UsersPage implements OnInit {
     await this.presentLoading();
     this.appUser = this.store.selectSnapshot(AppState.user);
     this.getUsers();
-    console.log('this.appUser ', this.appUser);
-    console.log('this.users ', this.users);
   }
 
   getUsers() {
@@ -113,7 +111,7 @@ export class UsersPage implements OnInit {
   filterUsers(event) {
     if (event.target.value.length > 2) {
       this.getUsers();
-      this.users = this.users.filter( u => u.name.search(event.target.value) !== -1 || u.mail.search(event.target.value) !== -1);
+      this.users = this.users.filter( u => u.name.toLowerCase().search(event.target.value.toLowerCase()) !== -1 || u.mail.toLowerCase().search(event.target.value.toLowerCase()) !== -1);
     } else {
       this.getUsers();
     }
