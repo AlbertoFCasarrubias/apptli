@@ -1,6 +1,8 @@
+import {UserModel} from '../../models/models';
+
 export interface UsersStateModel {
-    users: object | null;
-    patients: object | null;
+    users: any | UserModel[] | null;
+    patients: any | UserModel[] | null;
 }
 
 export class GetUsers {
@@ -26,4 +28,9 @@ export class AddUser {
 export class UpdateUserData {
     static readonly type = '[User] update user';
     constructor(public payload: object) {}
+}
+
+export class SwapConsultaValues {
+    static readonly type = '[User] swap consulta value';
+    constructor(public idUser, public indexFrom, public indexTo, public valueFrom, public valueTo, public field) {}
 }

@@ -10,6 +10,7 @@ import { UserMedicalPage } from './user-medical.page';
 import {HighchartsChartModule} from 'highcharts-angular';
 import {ChartModule} from 'angular-highcharts';
 import {ChartsComponent} from '../../../components/charts/charts.component';
+import {AppointmentPage} from '../appointment/appointment.page';
 
 @NgModule({
   imports: [
@@ -21,7 +22,8 @@ import {ChartsComponent} from '../../../components/charts/charts.component';
     HighchartsChartModule,
     UserMedicalPageRoutingModule
   ],
-  declarations: [UserMedicalPage, ChartsComponent],
+  declarations: [UserMedicalPage, ChartsComponent, AppointmentPage],
+  entryComponents: [ AppointmentPage],
   schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
 })
 export class UserMedicalPageModule {}

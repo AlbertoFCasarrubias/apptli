@@ -5,9 +5,12 @@ import {UsersState} from '../../../store/states/users.state';
 import {Observable, Subscription} from 'rxjs';
 import {UtilitiesService} from '../../../services/utilities/utilities.service';
 import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
-import {AlertController, LoadingController, ToastController} from '@ionic/angular';
-import {UpdateUserData} from '../../../store/actions/users.action';
+import {AlertController, LoadingController, ModalController, ToastController} from '@ionic/angular';
+import {SwapConsultaValues, UpdateUserData} from '../../../store/actions/users.action';
 import * as moment from 'moment';
+import {ConsultaModel, UserModel} from '../../../models/models';
+import {ParseFilePage} from '../parse-file/parse-file.page';
+import {AppointmentPage} from '../appointment/appointment.page';
 
 @Component({
   selector: 'app-user-medical',
@@ -21,13 +24,9 @@ export class UserMedicalPage implements OnInit, OnDestroy {
   subscriptionEdit: Subscription;
   edit$: Observable<object>;
 
-
+  consultas: ConsultaModel[];
   form: FormGroup;
-  user: any = {
-    alimenticios: {},
-    antecedentes: {},
-    consultas: []
-  };
+  user: UserModel;
   swap: any = false;
   loading: any;
   edit = false;
@@ -54,6 +53,7 @@ export class UserMedicalPage implements OnInit, OnDestroy {
               private store: Store,
               public toastController: ToastController,
               public alertController: AlertController,
+              public modalController: ModalController,
               public loadingController: LoadingController,
               private utilitiesService: UtilitiesService) {
     this.json$ = this.utilitiesService.json;
@@ -67,12 +67,14 @@ export class UserMedicalPage implements OnInit, OnDestroy {
       user.consultas = data['json'].consultas;
 
       this.user = user;
+      this.consultas = data['json'].consultas;
 
       this.form.controls.alimenticios.patchValue(data['json'].alimenticios);
       this.form.controls.antecedentes.patchValue(data['json'].antecedentes);
       this.form.controls.consultas.patchValue(data['json'].consultas);
 
       this.generateCharts();
+      this.utilitiesService.setEdit(true);
     });
 
     this.subscriptionEdit = this.edit$.subscribe( data => {
@@ -100,21 +102,27 @@ export class UserMedicalPage implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    const id = this.activatedRoute.snapshot.paramMap.get('id');
-    const users = Object.assign([], this.store.selectSnapshot(UsersState.users));
-    this.user = Object.assign({}, users.find(u => u.id === id));
-
-    if (this.user) {
-      this.form.controls.alimenticios.patchValue(this.user.alimenticios);
-      this.form.controls.antecedentes.patchValue(this.user.antecedentes);
-      this.form.controls.consultas.patchValue(this.user.consultas);
-      this.generateCharts();
-    }
+    this.getUser();
   }
 
   ngOnDestroy() {
     this.subscriptionJSON.unsubscribe();
     this.subscriptionEdit.unsubscribe();
+  }
+
+  getUser() {
+    const id = this.activatedRoute.snapshot.paramMap.get('id');
+    const users = Object.assign([], this.store.selectSnapshot(UsersState.users));
+    this.user = users.find(u => u.id === id);
+    console.log('ID ' , id , this.user, users);
+
+    if (this.user) {
+      this.consultas = this.copyConsultas();
+      this.form.controls.alimenticios.patchValue(this.user.alimenticios ? this.user.alimenticios : {});
+      this.form.controls.antecedentes.patchValue(this.user.antecedentes ? this.user.antecedentes : {});
+      this.form.controls.consultas.patchValue(this.user.consultas ? this.user.consultas : {});
+      this.generateCharts();
+    }
   }
 
   generateCharts() {
@@ -135,12 +143,14 @@ export class UserMedicalPage implements OnInit, OnDestroy {
   }
 
   generateValuesChart(chart) {
-    const xLabels = this.user.consultas.map(c => moment(c.date, 'DD/MM/YYYY').format('DD-MMM'));
-    this.charts[chart].type = 'spline';
-    this.charts[chart].xAxis = xLabels;
-    this.charts[chart].data = this.user.consultas.map(c => Number(c[chart]));
-    this.charts[chart].data.push(this.charts[chart].data.pop());
-    this.charts[chart].xAxis.push('');
+    if (this.consultas) {
+      const xLabels = this.consultas.map(c => moment(c.date, 'DD/MM/YYYY').format('DD-MMM'));
+      this.charts[chart].type = 'spline';
+      this.charts[chart].xAxis = xLabels;
+      this.charts[chart].data = this.user.consultas.map(c => Number(c[chart]));
+      this.charts[chart].data.push(this.charts[chart].data.pop());
+      this.charts[chart].xAxis.push('');
+    }
   }
 
   async presentToast(message) {
@@ -151,8 +161,30 @@ export class UserMedicalPage implements OnInit, OnDestroy {
     toast.present();
   }
 
-  chartCallback(){
+  copyConsultas() {
+    if (this.user && this.user.consultas) {
+      return this.user.consultas.map( (c: ConsultaModel) => {
+        return {
+          agua : c.agua,
+          bd : c.bd,
+          bi : c.bi,
+          cadera : c.cadera,
+          cintura : c.cintura,
+          date : c.date,
+          edadMetabolica : c.edadMetabolica,
+          edadOsea : c.edadOsea,
+          grasa : c.grasa,
+          grasaVisceral : c.grasaVisceral,
+          pd : c.pd,
+          pi : c.pi,
+          pecho : c.pecho,
+          peso : c.peso,
+          pesoMuscular : c.pesoMuscular,
+        };
+      });
+    }
 
+    return [];
   }
 
   moveTo(consulta, field) {
@@ -177,13 +209,14 @@ export class UserMedicalPage implements OnInit, OnDestroy {
       return;
     }
 
+    this.consultas = this.copyConsultas();
     const indexFrom = this.user.consultas.findIndex(c => c.date === this.swap.consulta.date);
     const indexTo = this.user.consultas.findIndex(c => c.date === consulta.date);
     const valueFrom = this.user.consultas[indexFrom][this.swap.field];
     const valueTo = this.user.consultas[indexTo][this.swap.field];
 
-    this.user.consultas[indexFrom][this.swap.field] = valueTo;
-    this.user.consultas[indexTo][this.swap.field] = valueFrom;
+    this.consultas[indexFrom][this.swap.field] = valueTo;
+    this.consultas[indexTo][this.swap.field] = valueFrom;
 
     this.presentToast('El valor de ' + this.swap.field + ' fue intercambiado.');
     setTimeout(() => this.swap = false);
@@ -191,7 +224,7 @@ export class UserMedicalPage implements OnInit, OnDestroy {
   }
 
   editConsultaValue(consulta, field, event) {
-    this.user.consultas = this.user.consultas.map(c => {
+    this.consultas = this.consultas.map(c => {
       const tmp = Object.assign({}, c);
 
       if (tmp.date === consulta.date) {
@@ -204,21 +237,39 @@ export class UserMedicalPage implements OnInit, OnDestroy {
 
   submit(value) {
     this.presentLoading();
-    this.user.alimenticios = this.form.value.alimenticios;
-    this.user.antecedentes = this.form.value.antecedentes;
 
-    this.updateUser(this.user);
-  }
-
-  updateUser(value) {
+    value.id = this.user.id;
+    value.name = this.user.name;
+    value.age = this.user.age;
+    value.birthday = this.user.birthday;
+    value.height = this.user.height;
+    value.mail = this.user.mail;
+    value.schedule = this.user.schedule;
+    value.admin = this.user.admin;
+    value.doctor = this.user.doctor;
+    value.patient = this.user.patient;
+    value.alimenticios = this.form.value.alimenticios;
+    value.antecedentes = this.form.value.antecedentes;
+    value.consultas = this.consultas;
     value.doctor = value.doctor === 'true' ? true : false;
     value.admin = value.admin === 'true' ? true : false;
 
-    console.log('VALUE ', value);
+    this.updateUser(value);
+  }
 
-    this.store.dispatch(new UpdateUserData(value)).subscribe(data => {
-      this.savedOK(value, true);
-    });
+  updateUser(value) {
+    if(value.id){
+      console.log('TIENE ID');
+      this.store.dispatch(new UpdateUserData(value)).subscribe(data => {
+        this.getUser();
+        this.savedOK(value, true);
+      });
+    }
+    else{
+      console.log('NO TIENE ID');
+    }
+
+
   }
 
   async presentAlert(header, message) {
@@ -254,11 +305,18 @@ export class UserMedicalPage implements OnInit, OnDestroy {
     this.dismissLoading();
     this.presentAlert('Usuario', value.name + ' guardado correctamente.' + message);
     this.utilitiesService.setEdit(false);
-    this.generateCharts();
   }
 
-  createColumnChart(title) {
+  async showAppointmentModal() {
+    const modal = await this.modalController.create({
+      component: AppointmentPage,
+    });
 
+    modal.onWillDismiss().then( data => {
+      console.log('dismiss', data);
+    });
+
+    return await modal.present();
   }
 
 }

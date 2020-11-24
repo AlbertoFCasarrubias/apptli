@@ -134,6 +134,10 @@ export class ParseFilePage implements OnInit {
 
   ngOnInit() {}
 
+  close() {
+    this.modalController.dismiss();
+  }
+
   parseFile() {
     this.json = this.utilities.parseFile(this.text);
     this.utilities.setJSON(this.json);

@@ -11,6 +11,10 @@ const routes: Routes = [
   {
     path: 'parse-file',
     loadChildren: () => import('./parse-file/parse-file.module').then( m => m.ParseFilePageModule)
+  },
+  {
+    path: 'appointment',
+    loadChildren: () => import('./appointment/appointment.module').then( m => m.AppointmentPageModule)
   }
 ];
 

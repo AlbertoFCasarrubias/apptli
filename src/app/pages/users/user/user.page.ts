@@ -71,7 +71,6 @@ export class UserPage implements OnInit {
           }
 
         });
-
       }
     });
 
@@ -150,7 +149,7 @@ export class UserPage implements OnInit {
         data => {
           this.user = data;
 
-          console.log('this.user ', this.user);
+          //console.log('this.user ', this.user);
 
           this.form.controls.name.patchValue(this.user.name);
           this.form.controls.mail.patchValue(this.user.mail);

@@ -15,3 +15,8 @@
   height: auto;
   position: relative;
 }
+
+.blueBg{
+  --background: var(--ion-color-primary);
+  color: white;
+}

@@ -107,19 +107,4 @@ export class AppState {
             token: action.token
         });
     }
-
-    @Action(UpdateUser)
-    updateUser(ctx: StateContext<AppStateModel>, action: UpdateUser) {
-        return this.firebaseService.updateUser(action.payload)
-            .then(data => {
-
-                const {user} = ctx.getState();
-                //patients.push(data);
-                console.log('DATA ', data, user);
-/*
-                ctx.patchState({
-                    patients
-                });*/
-            });
-    }
 }

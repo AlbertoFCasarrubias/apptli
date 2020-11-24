@@ -1,6 +1,6 @@
 import {Action, Selector, State, StateContext} from '@ngxs/store';
 import {Injectable} from '@angular/core';
-import {AddUser, GetPatients, GetUser, GetUsers, UpdateUserData, UsersStateModel} from '../actions/users.action';
+import {AddUser, GetPatients, GetUser, GetUsers, SwapConsultaValues, UpdateUserData, UsersStateModel} from '../actions/users.action';
 import {FirebaseService} from '../../services/firebase/firebase.service';
 import {tap} from 'rxjs/operators';
 
@@ -77,7 +77,6 @@ export class UsersState {
 
     @Action(UpdateUserData)
     updateUser(ctx: StateContext<UsersStateModel>, action: UpdateUserData) {
-        console.log('DATA UPDATE ', action);
         const users = Object.assign([], ctx.getState().users);
         const patients = Object.assign([], ctx.getState().patients);
         const userID = action.payload['id'];
@@ -86,6 +85,10 @@ export class UsersState {
             .then(data => {
                 const user = users.findIndex(u => u.id === userID);
                 const patient = patients.findIndex(u => u.id === userID);
+
+                if(!action.payload['id']){
+                    action.payload['id'] = userID;
+                }
 
                 if(user !== -1) {
                     const tmp = Object.assign([], users);
@@ -103,5 +106,31 @@ export class UsersState {
                     });
                 }
             });
+    }
+
+    @Action(SwapConsultaValues)
+    swapConsultaValues(ctx: StateContext<UsersStateModel>, action: SwapConsultaValues) {
+        console.log(action);
+        const {idUser, indexFrom, indexTo, valueFrom, valueTo, field} = action;
+
+        const users = Object.assign([], ctx.getState().users);
+        const patients = Object.assign([], ctx.getState().patients);
+
+        const userIndex = users.findIndex(u => u.id === idUser);
+        const patientIndex = patients.findIndex(u => u.id === idUser);
+
+        console.log('userIndex ', userIndex, users);
+        console.log('patientIndex ', patientIndex, patients);
+
+        users[userIndex].consultas[indexFrom][field] = valueTo;
+        patients[patientIndex].consultas[indexFrom][field] = valueTo;
+
+        users[userIndex].consultas[indexTo][field] = valueFrom;
+        patients[patientIndex].consultas[indexTo][field] = valueFrom;
+
+        ctx.patchState({
+            users,
+            patients
+        });
     }
 }

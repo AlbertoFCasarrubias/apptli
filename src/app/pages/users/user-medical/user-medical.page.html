@@ -58,7 +58,10 @@
       </ion-item>
 
       <div *ngIf="edit">
-        <ion-list *ngFor="let consulta of user.consultas">
+        <ion-item class="blueBg" (click)="showAppointmentModal()">
+          Agregar consulta
+        </ion-item>
+        <ion-list *ngFor="let consulta of consultas">
           <ion-item-divider color="secondary" sticky="true" (click)="moveInto(consulta)">
             <ion-label>
               {{consulta.date }}
