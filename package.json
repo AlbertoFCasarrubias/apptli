@@ -11,7 +11,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "server": "ionic build  && http-server ./www -p 8888",
-    "firebase": "npm --no-git-tag-version version patch && ionic build --prod && firebase deploy",
+    "firebase": "ionic build --prod && firebase deploy && npm --no-git-tag-version version patch",
     "lighthouse": "lighthouse http://localhost:8888 --view",
     "dist": "ionic build --prod -- --base-href /apptli/"
   },

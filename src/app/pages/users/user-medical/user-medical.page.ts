@@ -2,14 +2,13 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {Store} from '@ngxs/store';
 import {UsersState} from '../../../store/states/users.state';
-import {Observable, Subscription} from 'rxjs';
+import {Observable, Subject, Subscription} from 'rxjs';
 import {UtilitiesService} from '../../../services/utilities/utilities.service';
-import {FormBuilder, FormControl, FormGroup, Validators} from '@angular/forms';
+import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
 import {AlertController, LoadingController, ModalController, ToastController} from '@ionic/angular';
-import {SwapConsultaValues, UpdateUserData} from '../../../store/actions/users.action';
+import { UpdateUserData} from '../../../store/actions/users.action';
 import * as moment from 'moment';
 import {ConsultaModel, UserModel} from '../../../models/models';
-import {ParseFilePage} from '../parse-file/parse-file.page';
 import {AppointmentPage} from '../appointment/appointment.page';
 
 @Component({
@@ -23,6 +22,8 @@ export class UserMedicalPage implements OnInit, OnDestroy {
 
   subscriptionEdit: Subscription;
   edit$: Observable<object>;
+
+  chartSubject: Subject<boolean> = new Subject<boolean>();
 
   consultas: ConsultaModel[];
   form: FormGroup;
@@ -132,6 +133,7 @@ export class UserMedicalPage implements OnInit, OnDestroy {
   }
 
   generateCharts() {
+    console.log('generating charts...');
     this.generateValuesChart('peso');
     this.generateValuesChart('grasa');
     this.generateValuesChart('agua');
@@ -153,9 +155,14 @@ export class UserMedicalPage implements OnInit, OnDestroy {
       const xLabels = this.consultas.map(c => moment(c.date, 'DD/MM/YYYY').format('DD-MMM'));
       this.charts[chart].type = 'spline';
       this.charts[chart].xAxis = xLabels;
-      this.charts[chart].data = this.user.consultas.map(c => Number(c[chart]));
+      this.charts[chart].data = this.consultas.map(c => Number(c[chart]));
       this.charts[chart].data.push(this.charts[chart].data.pop());
       this.charts[chart].xAxis.push('');
+
+      this.chartSubject.next(true);
+      setTimeout(() => {
+        this.chartSubject.next(false);
+      }, 1000);
     }
   }
 
@@ -349,7 +356,7 @@ export class UserMedicalPage implements OnInit, OnDestroy {
     return await modal.present();
   }
 
-  sortDatesConsultas(array){
-    return array.sort((a, b) => moment(a.date, 'DD/MM/YYYY') - moment(b.date, 'DD/MM/YYYY'));
+  sortDatesConsultas(array) {
+    return array.sort((a, b) => +moment(a.date, 'DD/MM/YYYY') - +moment(b.date, 'DD/MM/YYYY'));
   }
 }

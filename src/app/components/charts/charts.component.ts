@@ -1,6 +1,7 @@
-import {Component, Input, OnInit, ViewChild} from '@angular/core';
+import {Component, Input, OnChanges, OnInit, SimpleChanges, ViewChild} from '@angular/core';
 import { Chart } from 'chart.js';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import {Subject} from 'rxjs';
 
 @Component({
   selector: 'app-charts',
@@ -10,6 +11,7 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 export class ChartsComponent implements OnInit {
   @Input() data;
   @ViewChild('barChart', {static: true}) barChart;
+  @Input() chartSubject: Subject<boolean> = new Subject<boolean>();
   bars: any;
   colorArray: any;
 
@@ -19,6 +21,11 @@ export class ChartsComponent implements OnInit {
 
   ngOnInit() {
     this.createBarChart();
+    this.chartSubject.subscribe(response => {
+      if (response) {
+        this.createBarChart();
+      }
+    });
   }
 
   createBarChart() {

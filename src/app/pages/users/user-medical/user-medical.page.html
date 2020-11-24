@@ -154,7 +154,7 @@
                 Peso
               </ion-label>
             </ion-item-divider>
-            <app-charts [data]="charts.peso"></app-charts>
+            <app-charts [data]="charts.peso" [chartSubject]="chartSubject.asObservable()"></app-charts>
           </ion-col>
 
           <ion-col class="chartItem" size-lg="4" size-md="6" size-sm="12" size="12">
@@ -163,7 +163,7 @@
                 % Grasa
               </ion-label>
             </ion-item-divider>
-            <app-charts [data]="charts.grasa"></app-charts>
+            <app-charts [data]="charts.grasa" [chartSubject]="chartSubject.asObservable()"></app-charts>
           </ion-col>
 
           <ion-col class="chartItem" size-lg="4" size-md="6" size-sm="12" size="12">
@@ -172,7 +172,7 @@
                 % Agua
               </ion-label>
             </ion-item-divider>
-            <app-charts [data]="charts.agua"></app-charts>
+            <app-charts [data]="charts.agua" [chartSubject]="chartSubject.asObservable()"></app-charts>
           </ion-col>
 
           <ion-col class="chartItem" size-lg="4" size-md="6" size-sm="12" size="12">
@@ -181,7 +181,7 @@
                 Grasa visceral
               </ion-label>
             </ion-item-divider>
-            <app-charts [data]="charts.grasaVisceral"></app-charts>
+            <app-charts [data]="charts.grasaVisceral" [chartSubject]="chartSubject.asObservable()"></app-charts>
           </ion-col>
 
           <ion-col class="chartItem" size-lg="4" size-md="6" size-sm="12" size="12">
@@ -190,7 +190,7 @@
                 Peso Muscular
               </ion-label>
             </ion-item-divider>
-            <app-charts [data]="charts.pesoMuscular"></app-charts>
+            <app-charts [data]="charts.pesoMuscular" [chartSubject]="chartSubject.asObservable()"></app-charts>
           </ion-col>
 
           <ion-col class="chartItem" size-lg="4" size-md="6" size-sm="12" size="12">
@@ -199,7 +199,7 @@
                 Edad Metabólica
               </ion-label>
             </ion-item-divider>
-            <app-charts [data]="charts.edadMetabolica"></app-charts>
+            <app-charts [data]="charts.edadMetabolica" [chartSubject]="chartSubject.asObservable()"></app-charts>
           </ion-col>
 
           <ion-col class="chartItem" size-lg="4" size-md="6" size-sm="12" size="12">
@@ -208,7 +208,7 @@
                 Edad Ósea
               </ion-label>
             </ion-item-divider>
-            <app-charts [data]="charts.edadOsea"></app-charts>
+            <app-charts [data]="charts.edadOsea" [chartSubject]="chartSubject.asObservable()"></app-charts>
           </ion-col>
 
           <ion-col class="chartItem" size-lg="4" size-md="6" size-sm="12" size="12">
@@ -217,7 +217,7 @@
                 Pecho
               </ion-label>
             </ion-item-divider>
-            <app-charts [data]="charts.pecho"></app-charts>
+            <app-charts [data]="charts.pecho" [chartSubject]="chartSubject.asObservable()"></app-charts>
           </ion-col>
 
           <ion-col class="chartItem" size-lg="4" size-md="6" size-sm="12" size="12">
@@ -226,7 +226,7 @@
                 Cintura
               </ion-label>
             </ion-item-divider>
-            <app-charts [data]="charts.cintura"></app-charts>
+            <app-charts [data]="charts.cintura" [chartSubject]="chartSubject.asObservable()"></app-charts>
           </ion-col>
 
           <ion-col class="chartItem" size-lg="4" size-md="6" size-sm="12" size="12">
@@ -235,7 +235,7 @@
                 Cadera
               </ion-label>
             </ion-item-divider>
-            <app-charts [data]="charts.cadera"></app-charts>
+            <app-charts [data]="charts.cadera" [chartSubject]="chartSubject.asObservable()"></app-charts>
           </ion-col>
 
           <ion-col class="chartItem" size-lg="4" size-md="6" size-sm="12" size="12">
@@ -244,7 +244,7 @@
                 Brazo Derecho
               </ion-label>
             </ion-item-divider>
-            <app-charts [data]="charts.bd"></app-charts>
+            <app-charts [data]="charts.bd" [chartSubject]="chartSubject.asObservable()"></app-charts>
           </ion-col>
 
           <ion-col class="chartItem" size-lg="4" size-md="6" size-sm="12" size="12">
@@ -253,7 +253,7 @@
                 Brazo Izquierdo
               </ion-label>
             </ion-item-divider>
-            <app-charts [data]="charts.bi"></app-charts>
+            <app-charts [data]="charts.bi" [chartSubject]="chartSubject.asObservable()"></app-charts>
           </ion-col>
 
           <ion-col class="chartItem" size-lg="4" size-md="6" size-sm="12" size="12">
@@ -262,7 +262,7 @@
                 Pierna Derecha
               </ion-label>
             </ion-item-divider>
-            <app-charts [data]="charts.pd"></app-charts>
+            <app-charts [data]="charts.pd" [chartSubject]="chartSubject.asObservable()"></app-charts>
           </ion-col>
 
           <ion-col class="chartItem" size-lg="4" size-md="6" size-sm="12" size="12">
@@ -271,7 +271,7 @@
                 Pierna Izquierda
               </ion-label>
             </ion-item-divider>
-            <app-charts [data]="charts.pi"></app-charts>
+            <app-charts [data]="charts.pi" [chartSubject]="chartSubject.asObservable()"></app-charts>
           </ion-col>
 
         </ion-row>
