@@ -67,10 +67,15 @@ export class UsersState {
         return this.firebaseService.createUser(action.payload)
             .then(data => {
 
-                const {patients} = ctx.getState();
+                const users = Object.assign([], ctx.getState().users);
+                const patients = Object.assign([], ctx.getState().patients);
+
+                users.push(data);
+                patients.push(data);
 
                 ctx.patchState({
-                    patients
+                    patients,
+                    users
                 });
             });
     }

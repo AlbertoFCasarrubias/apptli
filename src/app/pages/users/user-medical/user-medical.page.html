@@ -6,25 +6,25 @@
           Hábitos Alimenticios
         </ion-label>
       </ion-item-divider>
-      <ion-item>
+      <ion-item [formGroup]="form.controls['alimenticios']">
         <ion-label position="floating">Desayuno</ion-label>
-        <ion-input [formControl]="form.controls['alimenticios'].controls['desayuno']"></ion-input>
+        <ion-input formControlName="desayuno"></ion-input>
       </ion-item>
-      <ion-item>
+      <ion-item [formGroup]="form.controls['alimenticios']">
         <ion-label position="floating">Colación Matutina</ion-label>
-        <ion-input [formControl]="form.controls['alimenticios'].controls['colacionMatutina']"></ion-input>
+        <ion-input formControlName="colacionMatutina"></ion-input>
       </ion-item>
-      <ion-item>
+      <ion-item [formGroup]="form.controls['alimenticios']">
         <ion-label position="floating">Comida</ion-label>
-        <ion-input [formControl]="form.controls['alimenticios'].controls['comida']"></ion-input>
+        <ion-input formControlName="comida"></ion-input>
       </ion-item>
-      <ion-item>
+      <ion-item [formGroup]="form.controls['alimenticios']">
         <ion-label position="floating">Colación Vespertina</ion-label>
-        <ion-input [formControl]="form.controls['alimenticios'].controls['colacionVespertina']"></ion-input>
+        <ion-input formControlName="colacionVespertina"></ion-input>
       </ion-item>
-      <ion-item>
+      <ion-item [formGroup]="form.controls['alimenticios']">
         <ion-label position="floating">Cena</ion-label>
-        <ion-input [formControl]="form.controls['alimenticios'].controls['cena']"></ion-input>
+        <ion-input formControlName="cena"></ion-input>
       </ion-item>
 
       <ion-item-divider color="secondary" >
@@ -32,29 +32,29 @@
           Antecedentes personales patológicos
         </ion-label>
       </ion-item-divider>
-      <ion-item>
+      <ion-item [formGroup]="form.controls['antecedentes']">
         <ion-label position="floating">Alergias</ion-label>
-        <ion-input [formControl]="form.controls['antecedentes'].controls['alergias']"></ion-input>
+        <ion-input formControlName="alergias"></ion-input>
       </ion-item>
-      <ion-item>
+      <ion-item [formGroup]="form.controls['antecedentes']">
         <ion-label position="floating">Tabaquismo</ion-label>
-        <ion-input [formControl]="form.controls['antecedentes'].controls['tabaquismo']"></ion-input>
+        <ion-input formControlName="tabaquismo"></ion-input>
       </ion-item>
-      <ion-item>
+      <ion-item [formGroup]="form.controls['antecedentes']">
         <ion-label position="floating">Alcoholismo</ion-label>
-        <ion-input [formControl]="form.controls['antecedentes'].controls['alcoholismo']"></ion-input>
+        <ion-input formControlName="alcoholismo"></ion-input>
       </ion-item>
-      <ion-item>
+      <ion-item [formGroup]="form.controls['antecedentes']">
         <ion-label position="floating">Enfermedades</ion-label>
-        <ion-input [formControl]="form.controls['antecedentes'].controls['enfermedades']"></ion-input>
+        <ion-input formControlName="enfermedades"></ion-input>
       </ion-item>
-      <ion-item>
+      <ion-item [formGroup]="form.controls['antecedentes']">
         <ion-label position="floating">Cirugías</ion-label>
-        <ion-input [formControl]="form.controls['antecedentes'].controls['cirugias']"></ion-input>
+        <ion-input formControlName="cirugias"></ion-input>
       </ion-item>
-      <ion-item>
+      <ion-item [formGroup]="form.controls['antecedentes']">
         <ion-label position="floating">Medicamentos</ion-label>
-        <ion-input [formControl]="form.controls['antecedentes'].controls['medicamentos']"></ion-input>
+        <ion-input formControlName="medicamentos"></ion-input>
       </ion-item>
       <ion-item class="blueBg" (click)="showAppointmentModal()">
         Agregar consulta

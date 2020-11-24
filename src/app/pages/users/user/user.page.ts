@@ -8,7 +8,7 @@ import {RoutingService} from '../../../services/routing/routing.service';
 import {Store} from '@ngxs/store';
 import {AppState} from '../../../store/states/app.state';
 import {AddUser, UpdateUserData} from '../../../store/actions/users.action';
-import {Observable, Subscription} from 'rxjs';
+import {Observable, Subject, Subscription} from 'rxjs';
 import {UtilitiesService} from '../../../services/utilities/utilities.service';
 
 @Component({
@@ -35,6 +35,7 @@ export class UserPage implements OnInit {
   json$: Observable<object>;
   json: any;
   changed: any = {};
+  tabSubject: Subject<boolean> = new Subject<boolean>();
 
   constructor(
       private store: Store,
@@ -92,7 +93,7 @@ export class UserPage implements OnInit {
     });
 
     const id = this.activatedRoute.snapshot.paramMap.get('id');
-    if (id) {
+    if (id && id !== 'user') {
       this.getUser(id);
     }
   }
@@ -214,7 +215,6 @@ export class UserPage implements OnInit {
   createUser(value) {
     value.doctor = value.doctor === 'true' ? true : false;
     value.admin = value.admin === 'true' ? true : false;
-    console.log('VALUE', value);
 
     this.store.dispatch(new AddUser(value))
         .subscribe(data => this.savedOK(value, true),
@@ -240,6 +240,7 @@ export class UserPage implements OnInit {
     const message = !showPassword ? ' La contraseña temporal es 12341234' : '';
     this.dismissLoading();
     this.presentAlert('Usuario', value.name + ' guardado correctamente.' + message);
+    this.tabSubject.next(true);
   }
 
   saveError(err) {

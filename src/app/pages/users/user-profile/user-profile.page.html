@@ -29,7 +29,7 @@
         <ion-badge *ngIf="badge.user > 0">{{badge.user}}</ion-badge>
       </ion-tab-button>
 
-      <ion-tab-button tab="medical/{{userID}}" [ngClass]="{selected : selectedTab == 'medical'}">
+      <ion-tab-button tab="medical/{{userID}}" [ngClass]="{selected : selectedTab == 'medical'}" [disabled]="!disable.medical">
         <ion-icon name="medical-outline"></ion-icon>
         <ion-label>Perfil</ion-label>
         <ion-badge *ngIf="badge.medical > 0">badge.medical</ion-badge>

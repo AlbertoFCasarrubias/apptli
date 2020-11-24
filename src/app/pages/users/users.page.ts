@@ -34,10 +34,18 @@ export class UsersPage implements OnInit {
 
   getUsers() {
     if (this.appUser.admin) {
-      this.users = this.store.selectSnapshot(UsersState.users);
+      this.store.select(UsersState.users).subscribe(users => {
+        if (users) {
+          this.users = Object.assign([], users).sort((a, b) => a.name.localeCompare(b.name));
+        }
+      });
       this.dismissLoading();
     } else {
-      this.users = this.store.selectSnapshot(UsersState.patients);
+      this.store.select(UsersState.patients).subscribe(users => {
+        if (users) {
+          this.users = Object.assign([], users).sort((a, b) => a.name.localeCompare(b.name));
+        }
+      });
       this.dismissLoading();
     }
   }
@@ -89,10 +97,7 @@ export class UsersPage implements OnInit {
   }
 
   goTo(m?) {
-    //this.router.navigate([m ? '/user/' + m.id : '/user']);
-    console.log('GOTO ', m);
-    //this.router.navigate([m ? '/user-tab/' + m.id : '/user-tab/' + m.id]);
-    this.router.navigate(['/user-tab/user/' + m.id]);
+    this.router.navigate([m ? '/user-tab/user/' + m.id : '/user-tab/user']);
   }
 
   delete(m) {

@@ -2,12 +2,10 @@ import {Injectable} from '@angular/core';
 import {AngularFirestore} from '@angular/fire/firestore';
 import {AngularFireAuth} from '@angular/fire/auth';
 import * as firebase from 'firebase/app';
-import * as moment from 'moment';
 import 'firebase/storage';
-import {combineAll, first, flatMap, map, mergeAll, switchMap} from 'rxjs/operators';
-import {combineLatest, forkJoin, of, zip} from 'rxjs';
+import {first, flatMap, map, switchMap} from 'rxjs/operators';
+import {combineLatest, of} from 'rxjs';
 import {Store} from '@ngxs/store';
-import {UsersState} from '../../store/states/users.state';
 
 @Injectable({
     providedIn: 'root'

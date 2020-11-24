@@ -12,6 +12,9 @@ export class UtilitiesService {
   private _edit: Subject<any> = new Subject<any>();
   public readonly edit: Observable<object> = this._edit.asObservable();
 
+  private _tabs: Subject<any> = new Subject<any>();
+  public readonly tabs: Observable<object> = this._tabs.asObservable();
+
   constructor() { }
 
   dates: any;
@@ -81,6 +84,10 @@ export class UtilitiesService {
 
   setEdit(edit) {
     this._edit.next({edit});
+  }
+
+  setTabs(tabs) {
+    this._tabs.next({tabs});
   }
 
   parseFile(file) {

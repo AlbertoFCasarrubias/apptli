@@ -1,6 +1,6 @@
 import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
 import { Router} from '@angular/router';
-import {IonTabs, ModalController, NavController} from '@ionic/angular';
+import {IonTabs, MenuController, ModalController, NavController} from '@ionic/angular';
 import {ParseFilePage} from '../parse-file/parse-file.page';
 import {AppState} from '../../../store/states/app.state';
 import {Store} from '@ngxs/store';
@@ -26,9 +26,14 @@ export class UserProfilePage implements OnInit, AfterViewInit {
     user: 0
   };
 
+  disable = {
+    medical: false
+  };
+
   constructor(private router: Router,
               private nav: NavController,
               private store: Store,
+              public menuCtrl: MenuController,
               private utilitiesService: UtilitiesService,
               public modalController: ModalController) {
     this.appUser = this.store.selectSnapshot(AppState.user);
@@ -43,10 +48,19 @@ export class UserProfilePage implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.tabs.select(`user/${this.userID}`);
     this.user = this.users.find(u => u.id === this.userID);
+
+    if (this.user) {
+      this.disable.medical = true;
+    }
   }
 
-  back(){
-    this.nav.back();
+
+  toggleMenu() {
+    this.menuCtrl.toggle();
+  }
+
+  back() {
+    this.router.navigate(['/users']);
   }
 
   getUsers() {

@@ -12,6 +12,9 @@ import {SwipeComponent} from '../components/instructions/swipe/swipe.component';
         ReactiveFormsModule
     ],
     declarations: [SwipeComponent],
-    schemas: [ CUSTOM_ELEMENTS_SCHEMA ]
+    exports: [
+        SwipeComponent
+    ],
+    schemas: [CUSTOM_ELEMENTS_SCHEMA]
 })
 export class SharedModule {}

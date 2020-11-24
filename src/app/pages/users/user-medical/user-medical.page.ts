@@ -10,6 +10,7 @@ import { UpdateUserData} from '../../../store/actions/users.action';
 import * as moment from 'moment';
 import {ConsultaModel, UserModel} from '../../../models/models';
 import {AppointmentPage} from '../appointment/appointment.page';
+import {AnalyticsService} from '../../../services/firebase/analytics.service';
 
 @Component({
   selector: 'app-user-medical',
@@ -56,7 +57,8 @@ export class UserMedicalPage implements OnInit, OnDestroy {
               public alertController: AlertController,
               public modalController: ModalController,
               public loadingController: LoadingController,
-              private utilitiesService: UtilitiesService) {
+              private utilitiesService: UtilitiesService,
+              private analyticsService: AnalyticsService) {
     this.json$ = this.utilitiesService.json;
     this.edit$ = this.utilitiesService.edit;
 
@@ -133,7 +135,6 @@ export class UserMedicalPage implements OnInit, OnDestroy {
   }
 
   generateCharts() {
-    console.log('generating charts...');
     this.generateValuesChart('peso');
     this.generateValuesChart('grasa');
     this.generateValuesChart('agua');
@@ -273,9 +274,9 @@ export class UserMedicalPage implements OnInit, OnDestroy {
   submit(value) {
     value.id = this.user.id;
     value.name = this.user.name;
-    value.age = this.user.age;
-    value.birthday = this.user.birthday;
-    value.height = this.user.height;
+    value.age = this.user.age ? this.user.age : '';
+    value.birthday = this.user.birthday ? this.user.birthday : '';
+    value.height = this.user.height ? this.user.height : '';
     value.mail = this.user.mail;
     value.schedule = this.user.schedule;
     value.admin = this.user.admin;
@@ -289,15 +290,14 @@ export class UserMedicalPage implements OnInit, OnDestroy {
   }
 
   updateUser(value) {
-    if(value.id){
+    if (value.id) {
       console.log('updateUser TIENE ID ', value);
       this.presentLoading();
       this.store.dispatch(new UpdateUserData(value)).subscribe(data => {
         this.getUser();
         this.savedOK(value, true);
       });
-    }
-    else{
+    } else {
       console.log('NO TIENE ID');
     }
 
@@ -346,6 +346,7 @@ export class UserMedicalPage implements OnInit, OnDestroy {
 
     modal.onWillDismiss().then( data => {
       if (data.data) {
+        this.analyticsService.sendEvent('add consulta');
         this.consultas.push(data.data);
         const payload = this.createPayloadForm();
         payload.consultas = this.sortDatesConsultas(payload.consultas);
