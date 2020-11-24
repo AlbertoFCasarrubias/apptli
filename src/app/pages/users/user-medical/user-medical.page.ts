@@ -67,7 +67,13 @@ export class UserMedicalPage implements OnInit, OnDestroy {
       user.consultas = data['json'].consultas;
 
       this.user = user;
-      this.consultas = data['json'].consultas;
+
+      if(this.consultas.length === 0) {
+        this.consultas = data['json'].consultas;
+      } else {
+        data['json'].consultas.forEach( c => this.consultas.push(c));
+      }
+      this.consultas = this.sortDatesConsultas(this.consultas);
 
       this.form.controls.alimenticios.patchValue(data['json'].alimenticios);
       this.form.controls.antecedentes.patchValue(data['json'].antecedentes);
@@ -114,7 +120,7 @@ export class UserMedicalPage implements OnInit, OnDestroy {
     const id = this.activatedRoute.snapshot.paramMap.get('id');
     const users = Object.assign([], this.store.selectSnapshot(UsersState.users));
     this.user = users.find(u => u.id === id);
-    console.log('ID ' , id , this.user, users);
+    console.log('getUser ID ' , id , this.user);
 
     if (this.user) {
       this.consultas = this.copyConsultas();
@@ -235,9 +241,29 @@ export class UserMedicalPage implements OnInit, OnDestroy {
     });
   }
 
-  submit(value) {
-    this.presentLoading();
+  createPayloadForm() {
+    return {
+      id: this.user.id,
+      name: this.user.name,
+      age: this.user.age,
+      birthday: this.user.birthday,
+      height: this.user.height,
+      mail: this.user.mail,
+      schedule: this.user.schedule,
+      admin: this.user.admin,
+      doctor: this.user.doctor,
+      patient: this.user.patient,
+      alimenticios: this.form.value.alimenticios,
+      antecedentes: this.form.value.antecedentes,
+      consultas: this.consultas,
+    };
+  }
 
+  deleteConsulta(index) {
+    this.consultas.splice(index, 1);
+  }
+
+  submit(value) {
     value.id = this.user.id;
     value.name = this.user.name;
     value.age = this.user.age;
@@ -251,15 +277,14 @@ export class UserMedicalPage implements OnInit, OnDestroy {
     value.alimenticios = this.form.value.alimenticios;
     value.antecedentes = this.form.value.antecedentes;
     value.consultas = this.consultas;
-    value.doctor = value.doctor === 'true' ? true : false;
-    value.admin = value.admin === 'true' ? true : false;
-
+    value.consultas = this.sortDatesConsultas(value.consultas);
     this.updateUser(value);
   }
 
   updateUser(value) {
     if(value.id){
-      console.log('TIENE ID');
+      console.log('updateUser TIENE ID ', value);
+      this.presentLoading();
       this.store.dispatch(new UpdateUserData(value)).subscribe(data => {
         this.getUser();
         this.savedOK(value, true);
@@ -313,10 +338,18 @@ export class UserMedicalPage implements OnInit, OnDestroy {
     });
 
     modal.onWillDismiss().then( data => {
-      console.log('dismiss', data);
+      if (data.data) {
+        this.consultas.push(data.data);
+        const payload = this.createPayloadForm();
+        payload.consultas = this.sortDatesConsultas(payload.consultas);
+        this.updateUser(payload);
+      }
     });
 
     return await modal.present();
   }
 
+  sortDatesConsultas(array){
+    return array.sort((a, b) => moment(a.date, 'DD/MM/YYYY') - moment(b.date, 'DD/MM/YYYY'));
+  }
 }

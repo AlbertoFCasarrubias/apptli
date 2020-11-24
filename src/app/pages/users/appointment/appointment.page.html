@@ -1,9 +1,86 @@
 <ion-header>
   <ion-toolbar>
-    <ion-title>appointment</ion-title>
+    <ion-buttons slot="start">
+      <ion-button (click)="close()">
+        <ion-icon name="close-outline"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>Consulta</ion-title>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-
+  <form class="form" [formGroup]="form" (ngSubmit)="submit(form.value)">
+    <ion-list>
+      <ion-item>
+        <ion-label position="stacked">Fecha</ion-label>
+        <ion-datetime
+                displayFormat="DD-MMM-YYYY"
+                monthShortNames="ene, feb, mar, abr, may, jun, jul, ago, sep, oct, nov, dec"
+                [formControl]="form.controls.date"></ion-datetime>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">*Peso</ion-label>
+        <ion-input [formControl]="form.controls.peso" type="number"></ion-input>
+        <div class="error-message" *ngIf="form.get('peso').hasError('required') && (form.get('peso').dirty || form.get('peso').touched)">
+          El peso es obligatorio.
+        </div>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">% Grasa</ion-label>
+        <ion-input [formControl]="form.controls.grasa" type="number"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">% Agua</ion-label>
+        <ion-input [formControl]="form.controls.agua" type="number"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Grasa visceral</ion-label>
+        <ion-input [formControl]="form.controls.grasaVisceral" type="number"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Peso muscular</ion-label>
+        <ion-input [formControl]="form.controls.pesoMuscular" type="number"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Edad metabólica</ion-label>
+        <ion-input [formControl]="form.controls.edadMetabolica" type="number"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Edad ósea</ion-label>
+        <ion-input [formControl]="form.controls.edadOsea" type="number"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Pecho</ion-label>
+        <ion-input [formControl]="form.controls.pecho" type="number"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Cintura</ion-label>
+        <ion-input [formControl]="form.controls.cintura" type="number"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Cadera</ion-label>
+        <ion-input [formControl]="form.controls.cadera" type="number"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Brazo Derecho</ion-label>
+        <ion-input [formControl]="form.controls.bd" type="number"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Brazo Izquierdo</ion-label>
+        <ion-input [formControl]="form.controls.bi" type="number"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Pierna Derecha</ion-label>
+        <ion-input [formControl]="form.controls.pd" type="number"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Pierna Izquierda</ion-label>
+        <ion-input [formControl]="form.controls.pi" type="number"></ion-input>
+      </ion-item>
+    </ion-list>
+  </form>
 </ion-content>
+<ion-footer>
+  <ion-button expand="block" type="button" (click)="submit(form.value)" [disabled]="!form.valid">Guardar</ion-button>
+</ion-footer>

@@ -56,18 +56,18 @@
         <ion-label position="floating">Medicamentos</ion-label>
         <ion-input [formControl]="form.controls['antecedentes'].controls['medicamentos']"></ion-input>
       </ion-item>
+      <ion-item class="blueBg" (click)="showAppointmentModal()">
+        Agregar consulta
+      </ion-item>
 
       <div *ngIf="edit">
-        <ion-item class="blueBg" (click)="showAppointmentModal()">
-          Agregar consulta
-        </ion-item>
-        <ion-list *ngFor="let consulta of consultas">
-          <ion-item-divider color="secondary" sticky="true" (click)="moveInto(consulta)">
-            <ion-label>
-              {{consulta.date }}
-            </ion-label>
-            <ion-icon name="download-outline" slot="end" *ngIf="swap" class="dateIcon"></ion-icon>
-          </ion-item-divider>
+        <ion-list *ngFor="let consulta of consultas; index as i;">
+          <ion-item color="secondary">
+            <ion-label position="stacked">Fecha</ion-label>
+            <ion-input value="{{consulta.date}}" (ionChange)="editConsultaValue(consulta, 'date' , $event)"></ion-input>
+            <ion-icon name="close-outline" slot="end" class="inputIcon" *ngIf="!swap" (click)="deleteConsulta(i)"></ion-icon>
+            <ion-icon name="download-outline" slot="end" *ngIf="swap" class="inputIcon" (click)="moveInto(consulta)"></ion-icon>
+          </ion-item>
           <ion-item [ngClass]="{selected: swap.field == 'peso' && consulta.id == swap.consulta.id}">
             <ion-label position="stacked">Peso</ion-label>
             <ion-input value="{{consulta.peso}}" (ionChange)="editConsultaValue(consulta, 'peso' , $event)"></ion-input>
