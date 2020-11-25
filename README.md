@@ -70,3 +70,9 @@ curl -X POST \
 }'
 
 ```
+
+## Deploy functions
+```
+firebase deploy --only functions
+```
+

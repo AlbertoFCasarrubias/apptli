@@ -3,10 +3,11 @@ import {AlertController, LoadingController, MenuController, NavController} from 
 import {FirebaseService} from '../../services/firebase/firebase.service';
 import {Router} from '@angular/router';
 import {Store} from '@ngxs/store';
-import {GetUsers} from '../../store/actions/users.action';
+import {DeleteUser, GetUsers} from '../../store/actions/users.action';
 import {UsersState} from '../../store/states/users.state';
 import {AppState} from '../../store/states/app.state';
 import {GetEvents} from '../../store/actions/events.action';
+import {AuthService} from '../../services/auth/auth.service';
 
 @Component({
   selector: 'app-user',
@@ -22,6 +23,7 @@ export class UsersPage implements OnInit {
               public loadingController: LoadingController,
               public firebaseService: FirebaseService,
               public menuCtrl: MenuController,
+              private authService: AuthService,
               private store: Store,
               private nav: NavController,
               private router: Router) { }
@@ -79,10 +81,10 @@ export class UsersPage implements OnInit {
         {
           text: 'Aceptar',
           handler: () => {
-            this.firebaseService.deleteUser(obj.id)
-                .then(() => this.users = this.users.filter(m => m !== obj.id))
-                .catch(err => console.error('delete users ', err));
-            ;
+            this.store.dispatch(new DeleteUser(obj.id)).subscribe(() => {
+              this.users = this.users.filter(m => m !== obj.id);
+              this.authService.doDeleteUser(obj.adminID);
+            });
           }
         },
         {

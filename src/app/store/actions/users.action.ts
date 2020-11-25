@@ -25,6 +25,11 @@ export class AddUser {
     constructor(public payload: object) {}
 }
 
+export class DeleteUser {
+    static readonly type = '[User] delete user';
+    constructor(public payload: object) {}
+}
+
 export class UpdateUserData {
     static readonly type = '[User] update user';
     constructor(public payload: object) {}

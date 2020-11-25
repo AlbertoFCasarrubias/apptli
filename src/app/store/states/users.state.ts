@@ -1,6 +1,15 @@
 import {Action, Selector, State, StateContext} from '@ngxs/store';
 import {Injectable} from '@angular/core';
-import {AddUser, GetPatients, GetUser, GetUsers, SwapConsultaValues, UpdateUserData, UsersStateModel} from '../actions/users.action';
+import {
+    AddUser,
+    DeleteUser,
+    GetPatients,
+    GetUser,
+    GetUsers,
+    SwapConsultaValues,
+    UpdateUserData,
+    UsersStateModel
+} from '../actions/users.action';
 import {FirebaseService} from '../../services/firebase/firebase.service';
 import {tap} from 'rxjs/operators';
 
@@ -72,6 +81,20 @@ export class UsersState {
 
                 users.push(data);
                 patients.push(data);
+
+                ctx.patchState({
+                    patients,
+                    users
+                });
+            });
+    }
+
+    @Action(DeleteUser)
+    deleteUser(ctx: StateContext<UsersStateModel>, action: DeleteUser) {
+        return this.firebaseService.deleteUser(action.payload)
+            .then(() => {
+                const users = Object.assign([], ctx.getState().users).filter(u => u.id !== action.payload);
+                const patients = Object.assign([], ctx.getState().patients).filter(u => u.id !== action.payload);
 
                 ctx.patchState({
                     patients,

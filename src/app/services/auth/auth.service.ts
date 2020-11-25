@@ -9,19 +9,33 @@ import {AngularFireFunctions} from '@angular/fire/functions';
   providedIn: 'root'
 })
 export class AuthService {
-  cloudFunction$;
-  callable;
+  cloudFunctionCreateUser$;
+  callableCreateUser;
+
+  cloudFunctionDeleteUser$;
+  callableDeleteUser;
 
   constructor(private firebaseService: FirebaseService,
               private fns: AngularFireFunctions,
               public afAuth: AngularFireAuth) {
-    this.callable = fns.httpsCallable('createUser');
+    this.callableCreateUser = fns.httpsCallable('createUser');
+    this.callableDeleteUser = fns.httpsCallable('deleteUser');
   }
 
   doRegister(value) {
     return new Promise<any>((resolve, reject) => {
-      this.cloudFunction$ = this.callable(value);
-      this.cloudFunction$.subscribe(
+      this.cloudFunctionCreateUser$ = this.callableCreateUser(value);
+      this.cloudFunctionCreateUser$.subscribe(
+          res => resolve(res),
+          err => reject(err)
+      );
+    });
+  }
+
+  doDeleteUser(uid) {
+    return new Promise<any>((resolve, reject) => {
+      this.cloudFunctionDeleteUser$ = this.callableDeleteUser(uid);
+      this.cloudFunctionDeleteUser$.subscribe(
           res => resolve(res),
           err => reject(err)
       );
