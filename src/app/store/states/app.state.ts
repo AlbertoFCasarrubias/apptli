@@ -3,9 +3,10 @@ import {Injectable} from '@angular/core';
 import {GetUserByMail, Login, Logout, SetCurrentCall, SetToken, SetUser, UpdateUser} from '../actions/app.action';
 import {AuthService} from '../../services/auth/auth.service';
 import {FirebaseService} from '../../services/firebase/firebase.service';
+import {UserModel} from '../../models/models';
 
 export interface AppStateModel {
-    user: object | null | string;
+    user: UserModel | null | string | object;
     currentCall: null | object;
     token: null | string;
 }
@@ -21,12 +22,12 @@ export interface AppStateModel {
 @Injectable()
 export class AppState {
     @Selector()
-    static user(state: AppStateModel): object | null | string {
+    static user(state: AppStateModel): any {
         return state.user;
     }
 
     @Selector()
-    static token(state: AppStateModel):  null | string {
+    static token(state: AppStateModel): UserModel | null | string {
         return state.token;
     }
 
@@ -57,7 +58,7 @@ export class AppState {
 
     @Action(GetUserByMail)
     getUserByMail(ctx: StateContext<AppStateModel>, action: GetUserByMail) {
-        return new Promise(resolve =>{
+        return new Promise(resolve => {
             this.firebaseService.getUserByMail(action.mail)
                 .subscribe( data => {
                     ctx.patchState({

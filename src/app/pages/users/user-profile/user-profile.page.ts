@@ -6,6 +6,7 @@ import {AppState} from '../../../store/states/app.state';
 import {Store} from '@ngxs/store';
 import {UsersState} from '../../../store/states/users.state';
 import {UtilitiesService} from '../../../services/utilities/utilities.service';
+import {Observable, Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-user-profile',
@@ -14,6 +15,9 @@ import {UtilitiesService} from '../../../services/utilities/utilities.service';
 })
 export class UserProfilePage implements OnInit, AfterViewInit {
   @ViewChild('tabs', { static: false }) tabs: IonTabs;
+  subscriptionTabs: Subscription;
+  tabs$: Observable<object>;
+
   userID: any;
   selectedTab: any;
   showParseBtn = false;
@@ -38,11 +42,21 @@ export class UserProfilePage implements OnInit, AfterViewInit {
               public modalController: ModalController) {
     this.appUser = this.store.selectSnapshot(AppState.user);
     this.getUsers();
+
+    this.tabs$ = this.utilitiesService.tabs;
+    this.subscriptionTabs = this.tabs$.subscribe( data => {
+      if (data['tabs'].tab) {
+        this.disable.medical = true;
+        this.user = data['tabs'].createdUser;
+        this.userID = data['tabs'].createdUser.id;
+        this.getUsers();
+        console.log('USER ', document.documentURI.split('/'), this.userID, this.user, this.users);
+      }
+    });
   }
 
   ngOnInit() {
-    const url = this.router.url.split('/');
-    this.userID = url.pop();
+    this.getUser();
   }
 
   ngAfterViewInit() {
@@ -52,6 +66,11 @@ export class UserProfilePage implements OnInit, AfterViewInit {
     if (this.user) {
       this.disable.medical = true;
     }
+  }
+
+  getUser() {
+    const url = this.router.url.split('/');
+    this.userID = url.pop();
   }
 
 

@@ -1,4 +1,4 @@
-import {Action, Selector, State, StateContext} from '@ngxs/store';
+import {Action, Selector, State, StateContext, Store} from '@ngxs/store';
 import {Injectable} from '@angular/core';
 import {
     AddUser,
@@ -12,6 +12,8 @@ import {
 } from '../actions/users.action';
 import {FirebaseService} from '../../services/firebase/firebase.service';
 import {tap} from 'rxjs/operators';
+import {AppState} from './app.state';
+import {UserModel} from '../../models/models';
 
 
 @State<UsersStateModel>({
@@ -24,7 +26,7 @@ import {tap} from 'rxjs/operators';
 @Injectable()
 export class UsersState {
     @Selector()
-    static users(state: UsersStateModel): object | null {
+    static users(state: UsersStateModel): UserModel[] | object | null {
         return state.users;
     }
 
@@ -33,7 +35,8 @@ export class UsersState {
         return state.patients;
     }
 
-    constructor(private firebaseService: FirebaseService) {}
+    constructor(private firebaseService: FirebaseService,
+                private store: Store) {}
 
     @Action(GetUsers)
     getUsers(ctx: StateContext<UsersStateModel>) {
@@ -50,7 +53,7 @@ export class UsersState {
 
     @Action(GetPatients)
     getPatients(ctx: StateContext<UsersStateModel>, payload: GetPatients) {
-        return new Promise((resolve, reject) =>{
+        return new Promise((resolve, reject) => {
             this.firebaseService.getPatients(payload.id)
                 .subscribe( data => {
                     ctx.patchState({
@@ -75,7 +78,6 @@ export class UsersState {
     addUser(ctx: StateContext<UsersStateModel>, action: AddUser) {
         return this.firebaseService.createUser(action.payload)
             .then(data => {
-
                 const users = Object.assign([], ctx.getState().users);
                 const patients = Object.assign([], ctx.getState().patients);
 
@@ -83,9 +85,10 @@ export class UsersState {
                 patients.push(data);
 
                 ctx.patchState({
-                    patients,
-                    users
+                    users,
+                    patients
                 });
+
             });
     }
 
@@ -146,9 +149,6 @@ export class UsersState {
 
         const userIndex = users.findIndex(u => u.id === idUser);
         const patientIndex = patients.findIndex(u => u.id === idUser);
-
-        console.log('userIndex ', userIndex, users);
-        console.log('patientIndex ', patientIndex, patients);
 
         users[userIndex].consultas[indexFrom][field] = valueTo;
         patients[patientIndex].consultas[indexFrom][field] = valueTo;

@@ -487,9 +487,12 @@ export class FirebaseService {
         value['updatedAt'] = timestamp;
         value['createAt'] = timestamp;
 
-        this.afs.collection(collection).add(value);
+        return this.afs.collection(collection).add(value)
+            .then(docRef => {
+                value.id = docRef.id;
+                return value;
+            });
 
-        return value;
     }
 
     private delete(collection, id) {

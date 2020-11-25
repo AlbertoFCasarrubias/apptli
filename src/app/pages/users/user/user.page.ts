@@ -10,6 +10,7 @@ import {AppState} from '../../../store/states/app.state';
 import {AddUser, UpdateUserData} from '../../../store/actions/users.action';
 import {Observable, Subject, Subscription} from 'rxjs';
 import {UtilitiesService} from '../../../services/utilities/utilities.service';
+import {UsersState} from '../../../store/states/users.state';
 
 @Component({
   selector: 'app-user',
@@ -35,7 +36,7 @@ export class UserPage implements OnInit {
   json$: Observable<object>;
   json: any;
   changed: any = {};
-  tabSubject: Subject<boolean> = new Subject<boolean>();
+  createdUser: any;
 
   constructor(
       private store: Store,
@@ -56,26 +57,25 @@ export class UserPage implements OnInit {
       if (data['json']) {
         this.json = data['json'];
         setTimeout(() => {
-          if (this.user.name !== this.json.name) {
-            this.form.controls.name.patchValue(this.json.name);
-            this.changed.name = true;
-          }
+          if(this.user){
+            if (this.user.name !== this.json.name) {
+              this.form.controls.name.patchValue(this.json.name);
+              this.changed.name = true;
+            }
 
-          if (this.user.age !== this.json.age) {
-            this.form.controls.age.patchValue(this.json.age);
-            this.changed.age = true;
-          }
+            if (this.user.age !== this.json.age) {
+              this.form.controls.age.patchValue(this.json.age);
+              this.changed.age = true;
+            }
 
-          if (this.user.height !== this.json.height) {
-            this.form.controls.height.patchValue(this.json.height);
-            this.changed.height = true;
+            if (this.user.height !== this.json.height) {
+              this.form.controls.height.patchValue(this.json.height);
+              this.changed.height = true;
+            }
           }
-
         });
       }
     });
-
-
   }
 
   ngOnInit() {
@@ -110,14 +110,13 @@ export class UserPage implements OnInit {
       buttons: [{
         text: 'Aceptar',
         handler: () => {
-          this.router.navigate(['/users']);
-          /*
-          if (this.routingService.getPreviousUrl() === '/order') {
-            this.router.navigate(['/order']);
-          } else {
-            this.router.navigate(['/users']);
+          if (this.createdUser && this.createdUser.id) {
+            this.utilitiesService.setTabs({
+              tab: true,
+              createdUser: this.createdUser
+            });
+            this.router.navigate(['/user-tab/user/' + this.createdUser.id]);
           }
-           */
         }
       }]
     });
@@ -150,8 +149,6 @@ export class UserPage implements OnInit {
         data => {
           this.user = data;
 
-          //console.log('this.user ', this.user);
-
           this.form.controls.name.patchValue(this.user.name);
           this.form.controls.mail.patchValue(this.user.mail);
           this.form.controls.age.patchValue(this.user.age);
@@ -162,14 +159,11 @@ export class UserPage implements OnInit {
           this.form.addControl('id', new FormControl(this.user.id));
           this.form.addControl('autoincrement', new FormControl(this.user.autoincrement));
 
-          if(this.user.schedule)
-          {
-            for(let i of Object.keys(this.user.schedule))
-            {
+          if (this.user.schedule) {
+            for (const i of Object.keys(this.user.schedule)) {
               this.workingHours[i] = this.user.schedule[i];
             }
-          }
-          else {
+          } else {
             this.form.controls.schedule.patchValue(this.workingHours);
           }
 
@@ -204,7 +198,6 @@ export class UserPage implements OnInit {
 
         this.authService.doRegister(reg)
             .then(register => {
-              console.log('REGISTER ', register);
               value.adminID = register.uid;
               this.createUser(value);
             });
@@ -217,8 +210,11 @@ export class UserPage implements OnInit {
     value.admin = value.admin === 'true' ? true : false;
 
     this.store.dispatch(new AddUser(value))
-        .subscribe(data => this.savedOK(value, true),
-            err => this.saveError(err));
+        .subscribe(() => {
+          this.createdUser = Object.assign([], this.store.selectSnapshot(UsersState.users)).find(u => u.mail === value.mail);
+          this.savedOK(value, true);
+        },
+        err => this.saveError(err));
 
   }
 
@@ -226,25 +222,18 @@ export class UserPage implements OnInit {
     value.doctor = value.doctor === 'true' ? true : false;
     value.admin = value.admin === 'true' ? true : false;
 
-    console.log('updateUser value ', value);
-    console.log('/// ', this.form.value);
-
     this.store.dispatch(new UpdateUserData(value)).subscribe(data => {
-      console.log('DATA UPDATE ', data);
       this.savedOK(value, true);
     });
   }
 
   savedOK(value, showPassword = false) {
-    console.log('VALUE SAVED OK ', value);
     const message = !showPassword ? ' La contraseña temporal es 12341234' : '';
     this.dismissLoading();
     this.presentAlert('Usuario', value.name + ' guardado correctamente.' + message);
-    this.tabSubject.next(true);
   }
 
   saveError(err) {
-    console.log('error');
     this.dismissLoading();
     this.presentAlert('Usuario', err.toString());
   }
@@ -254,7 +243,7 @@ export class UserPage implements OnInit {
     const json = JSON.parse($event);
 
     if (json.start) {
-      if (json.day.toLowerCase() == 'lunes') {
+      if (json.day.toLowerCase() === 'lunes') {
 
         this.initHours = json.start + '#' + json.end;
         for (const i of Object.keys(this.workingHours)) {

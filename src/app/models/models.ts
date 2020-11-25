@@ -34,6 +34,7 @@ export interface AlimenticiosModel {
 }
 
 export interface UserModel {
+    adminID: number;
     admin: boolean;
     age: string;
     alimenticios: AlimenticiosModel;
