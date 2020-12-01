@@ -1,6 +1,6 @@
 import {Component} from '@angular/core';
 
-import {Platform, ToastController} from '@ionic/angular';
+import {AlertController, Platform, ToastController} from '@ionic/angular';
 import {SplashScreen} from '@ionic-native/splash-screen/ngx';
 import {StatusBar} from '@ionic-native/status-bar/ngx';
 import {AngularFireAuth} from '@angular/fire/auth';
@@ -13,6 +13,7 @@ import {AppState} from './store/states/app.state';
 import {UsersState} from './store/states/users.state';
 import {AngularFireMessaging} from '@angular/fire/messaging';
 import {environment} from '../environments/environment';
+import { SwUpdate } from '@angular/service-worker';
 
 @Component({
     selector: 'app-root',
@@ -75,7 +76,9 @@ export class AppComponent {
         private router: Router,
         public afAuth: AngularFireAuth,
         private afMessaging: AngularFireMessaging,
-        private store: Store
+        public alertController: AlertController,
+        private store: Store,
+        public swUpdate: SwUpdate
     ) {
         this.initializeApp();
     }
@@ -95,7 +98,6 @@ export class AppComponent {
                     this.appPages = [];
                 }
             });
-
             this.store.select(AppState.currentCall).subscribe(currentCall => {
                 let show = false;
                 if (currentCall) {
@@ -150,7 +152,33 @@ export class AppComponent {
                 .subscribe((message) => {
                     this.presentToast(message);
                 });
+
+            this.checkUpdate();
         });
+    }
+
+    checkUpdate() {
+        if (this.swUpdate.isEnabled) {
+            this.swUpdate.available.subscribe(async () => {
+                const alert = await this.alertController.create({
+                    header: `¡Nueva versión!`,
+                    message: `Tenemos una nueva versión.`,
+                    buttons: [
+                        {
+                            text: 'Cancelar',
+                            role: 'cancel',
+                            cssClass: 'secondary',
+                        }, {
+                            text: 'Actualizar',
+                            handler: () => {
+                                window.location.reload();
+                            },
+                        },
+                    ],
+                });
+                await alert.present();
+            });
+        }
     }
 
     async initStore(user) {
