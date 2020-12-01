@@ -65,6 +65,8 @@ export class CalendarPage implements OnInit {
 
                 return userEvent;
             });
+
+            //this.scheduleData.users = Object.assign([], this.store.selectSnapshot(UsersState.users)).filter( u => u.adminID === this.scheduleData.user.patient);
             this.scheduleData.users = this.store.selectSnapshot(UsersState.users);
         }
 

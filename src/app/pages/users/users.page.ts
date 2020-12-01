@@ -35,6 +35,7 @@ export class UsersPage implements OnInit {
   }
 
   getUsers() {
+    console.log('admin ' , this.appUser.admin);
     if (this.appUser.admin) {
       this.store.select(UsersState.users).subscribe(users => {
         if (users) {

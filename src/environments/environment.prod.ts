@@ -1,3 +1,5 @@
+import { version } from '../../package.json';
+
 export const environment = {
   production: true,
   firebase: {
@@ -20,5 +22,6 @@ export const environment = {
   },
   agora: {
     appId: 'c7d5f3bc5f4345fcaa57bba1fc1e5f6d'
-  }
+  },
+  version
 };

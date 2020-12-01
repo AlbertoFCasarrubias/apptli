@@ -214,7 +214,7 @@ export class FirebaseService {
     }
 
     getUsers() {
-        return this.getAll(this.USERS);;
+        return this.getAll(this.USERS);
     }
 
     getUser(id) {

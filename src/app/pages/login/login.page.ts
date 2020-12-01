@@ -9,6 +9,7 @@ import {Login, SetUser} from '../../store/actions/app.action';
 import {GetUsers} from '../../store/actions/users.action';
 import {GetEvents} from '../../store/actions/events.action';
 import {UsersState} from '../../store/states/users.state';
+import {environment} from '../../../environments/environment';
 
 @Component({
   selector: 'app-login',
@@ -16,7 +17,7 @@ import {UsersState} from '../../store/states/users.state';
   styleUrls: ['./login.page.scss'],
 })
 export class LoginPage implements OnInit {
-
+  version =  environment.version;
   validations_form: FormGroup;
   errorMessage = '';
 

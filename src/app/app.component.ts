@@ -12,8 +12,7 @@ import {GetEvents} from './store/actions/events.action';
 import {AppState} from './store/states/app.state';
 import {UsersState} from './store/states/users.state';
 import {AngularFireMessaging} from '@angular/fire/messaging';
-import {mergeMapTo} from 'rxjs/operators';
-import {AngularFireFunctions} from '@angular/fire/functions';
+import {environment} from '../environments/environment';
 
 @Component({
     selector: 'app-root',
@@ -66,6 +65,7 @@ export class AppComponent {
     ];
     public appPages = [];
     user: any;
+    version = environment.version;
 
     constructor(
         private platform: Platform,
@@ -127,19 +127,21 @@ export class AppComponent {
                 .subscribe(
                     (token) => {
                         console.log(token, this.user, '****');
-                        this.store.dispatch(new SetToken(token));
-                        const interval = setInterval(() => {
-                            console.log('this.user ', this.user);
-                            if (this.user) {
-                                clearInterval(interval);
+                        if (this.user) {
+                            this.store.dispatch(new SetToken(token));
+                            const interval = setInterval(() => {
+                                console.log('this.user ', this.user);
+                                if (this.user) {
+                                    clearInterval(interval);
 
-                                if(this.user.token !== token) {
-                                    const payload = Object.assign({}, this.user);
-                                    payload.token = token;
-                                    this.store.dispatch(new UpdateUser(payload));
+                                    if(this.user.token !== token) {
+                                        const payload = Object.assign({}, this.user);
+                                        payload.token = token;
+                                        this.store.dispatch(new UpdateUser(payload));
+                                    }
                                 }
-                            }
-                        }, 500);
+                            }, 500);
+                        }
                         },
                     (error) => { console.error(error); }
                 );
