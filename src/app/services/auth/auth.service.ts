@@ -23,6 +23,7 @@ export class AuthService {
   }
 
   doRegister(value) {
+    console.log('do register');
     return new Promise<any>((resolve, reject) => {
       this.cloudFunctionCreateUser$ = this.callableCreateUser(value);
       this.cloudFunctionCreateUser$.subscribe(
@@ -33,6 +34,7 @@ export class AuthService {
   }
 
   doDeleteUser(uid) {
+    console.log('delete user');
     return new Promise<any>((resolve, reject) => {
       this.cloudFunctionDeleteUser$ = this.callableDeleteUser(uid);
       this.cloudFunctionDeleteUser$.subscribe(
@@ -43,14 +45,17 @@ export class AuthService {
   }
 
   doLogin(value) {
+    console.log('login');
     return firebase.auth().signInWithEmailAndPassword(value.email, value.password);
   }
 
   doLogout() {
+    console.log('logout');
     return this.afAuth.signOut();
   }
 
   doChangePassword(mail) {
+    console.log('change password');
     return new Promise<any>((resolve, reject) => {
       firebase.auth().sendPasswordResetEmail(mail)
           .then(

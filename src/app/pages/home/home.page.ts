@@ -114,6 +114,8 @@ export class HomePage implements OnInit, OnDestroy {
         this.events.forEach( event => {
             if (this.now.isBetween(moment(event.start), moment(event.end))
                 && !this.currentEvent.find(e => e.id === event.id && e.status !== this.status.cancelled)) {
+                console.log('this.currentEvent ', this.currentEvent);
+                this.currentEvent = Object.assign([], this.currentEvent);
                 this.currentEvent.push(event);
                 this.store.dispatch(new SetCurrentCall(this.currentEvent));
             }

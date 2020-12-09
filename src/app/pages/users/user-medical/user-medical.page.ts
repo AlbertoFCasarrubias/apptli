@@ -5,12 +5,13 @@ import {UsersState} from '../../../store/states/users.state';
 import {Observable, Subject, Subscription} from 'rxjs';
 import {UtilitiesService} from '../../../services/utilities/utilities.service';
 import {FormBuilder, FormControl, FormGroup} from '@angular/forms';
-import {AlertController, LoadingController, ModalController, ToastController} from '@ionic/angular';
+import {AlertController, LoadingController, ModalController, NavController, ToastController} from '@ionic/angular';
 import { UpdateUserData} from '../../../store/actions/users.action';
 import * as moment from 'moment';
 import {ConsultaModel, UserModel} from '../../../models/models';
 import {AppointmentPage} from '../appointment/appointment.page';
 import {AnalyticsService} from '../../../services/firebase/analytics.service';
+import {AppState} from '../../../store/states/app.state';
 
 @Component({
   selector: 'app-user-medical',
@@ -29,6 +30,7 @@ export class UserMedicalPage implements OnInit, OnDestroy {
   consultas: ConsultaModel[];
   form: FormGroup;
   user: UserModel;
+  mainUser = this.store.selectSnapshot(AppState.user);
   swap: any = false;
   loading: any;
   edit = false;
@@ -53,6 +55,7 @@ export class UserMedicalPage implements OnInit, OnDestroy {
   constructor(private activatedRoute: ActivatedRoute,
               private formBuilder: FormBuilder,
               private store: Store,
+              private navCtrl: NavController,
               public toastController: ToastController,
               public alertController: AlertController,
               public modalController: ModalController,
@@ -117,6 +120,10 @@ export class UserMedicalPage implements OnInit, OnDestroy {
   ngOnDestroy() {
     this.subscriptionJSON.unsubscribe();
     this.subscriptionEdit.unsubscribe();
+  }
+
+  back() {
+    this.navCtrl.back();
   }
 
   getUser() {

@@ -47,6 +47,14 @@ export class AppComponent {
             show: true
         },
         {
+            title: 'Mis consultas',
+            url: '/users',
+            icon: 'person',
+            doctor: false,
+            patient: true,
+            show: true
+        },
+        {
             title: 'Llamada',
             url: '/call',
             icon: 'videocam',
@@ -184,6 +192,10 @@ export class AppComponent {
     async initStore(user) {
         this.store.dispatch(new GetUserByMail(user.email)).toPromise().then(() => {
             this.user = this.store.selectSnapshot(AppState.user);
+
+            const consulta = this.menu.find( m => m.title === 'Mis consultas');
+            consulta.url = 'medical/' + this.user.id;
+            console.log('USER **', this.user, consulta.url);
         });
 
         this.store.dispatch(new GetUsers()).toPromise().then(() => {
@@ -199,8 +211,9 @@ export class AppComponent {
         if (obj.title === 'Logout') {
             this.afAuth.signOut()
                 .then(() => {
-                    this.router.navigate(['/login']);
-
+                    localStorage.clear();
+                    sessionStorage.clear();
+                    window.location.reload();
                 })
                 .catch(err => console.log('Error logout ', err));
         }

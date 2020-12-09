@@ -18,10 +18,7 @@
       </ion-item-divider>
       <ion-item *ngFor="let event of currentEvent">
         <div class="event" >
-          {{event.start | date:'medium'}} - {{event.end | date:'medium'}}
-          <!--div class="patient">
-            {{event.status | scheduleStatus}}
-          </div-->
+          {{event.start | date:'mediumDate'}} {{event.start | date:'shortTime'}} - {{event.end | date:'shortTime'}}
           <div class="patient" *ngFor="let patient of event.patient">
             {{patient.name}} {{patient.mail}}
           </div>
@@ -42,7 +39,7 @@
       </ion-item-divider>
       <ion-item *ngFor="let event of eventsApproved" [ngClass]="event.status">
         <div class="event" >
-          {{event.start | date:'medium'}}
+          {{event.start | date:'mediumDate'}} {{event.start | date:'shortTime'}}
           <!--div class="patient">
             {{event.status | scheduleStatus}}
           </div-->
@@ -70,7 +67,7 @@
       </ion-item-divider>
       <ion-item *ngFor="let event of eventsRequestPatient" [ngClass]="event.status">
         <div class="event" >
-          {{event.start | date:'medium'}}
+          {{event.start | date:'mediumDate'}} {{event.start | date:'shortTime'}}
           <div class="patient" *ngFor="let patient of event.patient">
             {{patient.name}} {{patient.mail}}
           </div>
@@ -94,7 +91,7 @@
       </ion-item-divider>
       <ion-item *ngFor="let event of eventsRequestDoctor" [ngClass]="event.status">
         <div class="event" >
-          {{event.start | date:'medium'}}
+          {{event.start | date:'mediumDate'}} {{event.start | date:'shortTime'}}
           <div class="patient" *ngFor="let patient of event.patient">
             {{patient.name}} {{patient.mail}}
           </div>
@@ -121,7 +118,7 @@
       </ion-item-divider>
       <ion-item *ngFor="let event of eventsNotApproved" [ngClass]="event.status">
         <div class="event" >
-          {{event.start | date:'medium'}}
+          {{event.start | date:'mediumDate'}} {{event.start | date:'shortTime'}}
           <!--div class="patient">
             {{event.status | scheduleStatus}}
           </div-->
@@ -151,7 +148,7 @@
       </ion-item-divider>
       <ion-item *ngFor="let event of eventsCancelled" [ngClass]="event.status">
         <div class="event" >
-          {{event.start | date:'medium'}}
+          {{event.start | date:'mediumDate'}} {{event.start | date:'shortTime'}}
           <!--div class="patient">
             {{event.status | scheduleStatus}}
           </div-->

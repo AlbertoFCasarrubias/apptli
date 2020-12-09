@@ -1,3 +1,15 @@
+<ion-header *ngIf="!mainUser.doctor">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="back()">
+        <ion-icon slot="icon-only" name="arrow-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>
+      {{user && user.name ? user.name : 'Usuario'}}
+    </ion-title>
+  </ion-toolbar>
+</ion-header>
 <ion-content>
   <form class="form" [formGroup]="form" (ngSubmit)="submit(form.value)">
     <ion-list>
@@ -6,23 +18,23 @@
           Hábitos Alimenticios
         </ion-label>
       </ion-item-divider>
-      <ion-item [formGroup]="form.controls['alimenticios']">
+      <ion-item [formGroup]="form.controls['alimenticios']" [disabled]="!mainUser.doctor">
         <ion-label position="floating">Desayuno</ion-label>
         <ion-input formControlName="desayuno"></ion-input>
       </ion-item>
-      <ion-item [formGroup]="form.controls['alimenticios']">
+      <ion-item [formGroup]="form.controls['alimenticios']" [disabled]="!mainUser.doctor">
         <ion-label position="floating">Colación Matutina</ion-label>
         <ion-input formControlName="colacionMatutina"></ion-input>
       </ion-item>
-      <ion-item [formGroup]="form.controls['alimenticios']">
+      <ion-item [formGroup]="form.controls['alimenticios']" [disabled]="!mainUser.doctor">
         <ion-label position="floating">Comida</ion-label>
         <ion-input formControlName="comida"></ion-input>
       </ion-item>
-      <ion-item [formGroup]="form.controls['alimenticios']">
+      <ion-item [formGroup]="form.controls['alimenticios']" [disabled]="!mainUser.doctor">
         <ion-label position="floating">Colación Vespertina</ion-label>
         <ion-input formControlName="colacionVespertina"></ion-input>
       </ion-item>
-      <ion-item [formGroup]="form.controls['alimenticios']">
+      <ion-item [formGroup]="form.controls['alimenticios']" [disabled]="!mainUser.doctor">
         <ion-label position="floating">Cena</ion-label>
         <ion-input formControlName="cena"></ion-input>
       </ion-item>
@@ -32,31 +44,31 @@
           Antecedentes personales patológicos
         </ion-label>
       </ion-item-divider>
-      <ion-item [formGroup]="form.controls['antecedentes']">
+      <ion-item [formGroup]="form.controls['antecedentes']" [disabled]="!mainUser.doctor">
         <ion-label position="floating">Alergias</ion-label>
         <ion-input formControlName="alergias"></ion-input>
       </ion-item>
-      <ion-item [formGroup]="form.controls['antecedentes']">
+      <ion-item [formGroup]="form.controls['antecedentes']" [disabled]="!mainUser.doctor">
         <ion-label position="floating">Tabaquismo</ion-label>
         <ion-input formControlName="tabaquismo"></ion-input>
       </ion-item>
-      <ion-item [formGroup]="form.controls['antecedentes']">
+      <ion-item [formGroup]="form.controls['antecedentes']" [disabled]="!mainUser.doctor">
         <ion-label position="floating">Alcoholismo</ion-label>
         <ion-input formControlName="alcoholismo"></ion-input>
       </ion-item>
-      <ion-item [formGroup]="form.controls['antecedentes']">
+      <ion-item [formGroup]="form.controls['antecedentes']" [disabled]="!mainUser.doctor">
         <ion-label position="floating">Enfermedades</ion-label>
         <ion-input formControlName="enfermedades"></ion-input>
       </ion-item>
-      <ion-item [formGroup]="form.controls['antecedentes']">
+      <ion-item [formGroup]="form.controls['antecedentes']" [disabled]="!mainUser.doctor">
         <ion-label position="floating">Cirugías</ion-label>
         <ion-input formControlName="cirugias"></ion-input>
       </ion-item>
-      <ion-item [formGroup]="form.controls['antecedentes']">
+      <ion-item [formGroup]="form.controls['antecedentes']" [disabled]="!mainUser.doctor">
         <ion-label position="floating">Medicamentos</ion-label>
         <ion-input formControlName="medicamentos"></ion-input>
       </ion-item>
-      <ion-item class="blueBg" (click)="showAppointmentModal()">
+      <ion-item class="blueBg" (click)="showAppointmentModal()" *ngIf="mainUser.doctor">
         Agregar consulta
       </ion-item>
 

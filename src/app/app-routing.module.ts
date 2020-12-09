@@ -21,6 +21,11 @@ const routes: Routes = [
     canActivate: [AuthGuard]
   },
   {
+    path: 'medical/:id',
+    loadChildren: () => import('./pages/users/user-medical/user-medical.module').then( m => m.UserMedicalPageModule),
+    canActivate: [AuthGuard]
+  },
+  {
     path: 'user',
     loadChildren: () => import('./pages/users/user/user.module').then( m => m.UserPageModule),
     canActivate: [AuthGuard]

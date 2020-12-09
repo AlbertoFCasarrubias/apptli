@@ -441,6 +441,7 @@ export class FirebaseService {
 
     // Notification
     private async checkNotificationExist(orderID) {
+        console.log('checkNotificationExist');
         return this.afs.collection(this.NOTIFICATION, ref => ref.where('order.id', '==', orderID))
             .get()
             .toPromise()
@@ -461,6 +462,7 @@ export class FirebaseService {
     }
 
     private getLastRecord(collection, field = 'autoincrement') {
+        console.log('getLastRecord');
         return this.afs.collection(collection, ref => ref.orderBy(field, 'desc').limit(1))
             .get()
             .toPromise()
@@ -476,6 +478,7 @@ export class FirebaseService {
     }
 
     private async create(collection, value) {
+        console.log('create');
         const timestamp = this.timestamp;
         const last = await this.getLastRecord(collection);
         const current = await this.getCurrentUser();
@@ -496,6 +499,7 @@ export class FirebaseService {
     }
 
     private delete(collection, id) {
+        console.log('delete');
         return this.afs.collection(collection)
             .doc(id)
             .delete();
@@ -519,6 +523,7 @@ export class FirebaseService {
     }
 
     private getById(collection, id) {
+        console.log('getById');
         return this.afs.doc(`${collection}/${id}`)
             .valueChanges()
             .pipe(map(doc => {
@@ -530,6 +535,7 @@ export class FirebaseService {
     }
 
     private getAll(collection) {
+        console.log('getAll');
         let field = 'name';
         if (collection === this.SCHEDULE) {
             field = 'autoincrement';
@@ -539,6 +545,7 @@ export class FirebaseService {
     }
 
     private async update(collection, value) {
+        console.log('update');
         const id = value.id;
         delete (value.id);
 

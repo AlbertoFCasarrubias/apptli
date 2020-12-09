@@ -29,6 +29,8 @@ import {AngularFirePerformanceModule, PerformanceMonitoringService} from '@angul
 import {ParseFilePage} from './pages/users/parse-file/parse-file.page';
 import {HighchartsChartModule} from 'highcharts-angular';
 import {AngularFireAnalyticsModule} from '@angular/fire/analytics';
+import {HTTP_INTERCEPTORS} from '@angular/common/http';
+import {HttpErrorInterceptor} from './services/interceptor/http-error.interceptor';
 
 const agoraConfig: AgoraConfig = {
     AppID: 'c7d5f3bc5f4345fcaa57bba1fc1e5f6d',
@@ -71,7 +73,12 @@ registerLocaleData(localeEs);
         DragulaService,
         PerformanceMonitoringService,
         {provide: LOCALE_ID, useValue: 'es-MX'},
-        {provide: RouteReuseStrategy, useClass: IonicRouteStrategy}
+        {provide: RouteReuseStrategy, useClass: IonicRouteStrategy},
+        {
+            provide: HTTP_INTERCEPTORS,
+            useClass: HttpErrorInterceptor,
+            multi: true
+        }
     ],
     bootstrap: [AppComponent],
     schemas: [CUSTOM_ELEMENTS_SCHEMA]

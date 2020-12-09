@@ -62,6 +62,7 @@ export class UserProfilePage implements OnInit, AfterViewInit {
   ngAfterViewInit() {
     this.tabs.select(`user/${this.userID}`);
     this.user = this.users.find(u => u.id === this.userID);
+    console.log('this.user ', this.user);
 
     if (this.user) {
       this.disable.medical = true;
@@ -83,11 +84,7 @@ export class UserProfilePage implements OnInit, AfterViewInit {
   }
 
   getUsers() {
-    if (this.appUser.admin) {
-      this.users = this.store.selectSnapshot(UsersState.users);
-    } else {
-      this.users = this.store.selectSnapshot(UsersState.patients);
-    }
+    this.users = this.store.selectSnapshot(UsersState.users);
   }
 
   setCurrentTab() {
