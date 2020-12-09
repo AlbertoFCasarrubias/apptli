@@ -10,8 +10,8 @@ import {ModalController} from '@ionic/angular';
   styleUrls: ['./parse-file.page.scss'],
 })
 export class ParseFilePage implements OnInit {
-  text1: any = '';
-  text: any = 'Ana Elizabeth García (liz)\n' +
+  text: any = '';
+  text1: any = 'Ana Elizabeth García (liz)\n' +
       '\n' +
       '175\n' +
       '\n' +
