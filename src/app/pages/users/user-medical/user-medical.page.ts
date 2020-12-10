@@ -34,6 +34,7 @@ export class UserMedicalPage implements OnInit, OnDestroy {
   swap: any = false;
   loading: any;
   edit = false;
+  timer;
 
   charts: any = {
     peso: {},
@@ -156,6 +157,8 @@ export class UserMedicalPage implements OnInit, OnDestroy {
     this.generateValuesChart('bi');
     this.generateValuesChart('pd');
     this.generateValuesChart('pi');
+
+    console.log('charts', this.charts)
   }
 
   generateValuesChart(chart) {
@@ -221,6 +224,8 @@ export class UserMedicalPage implements OnInit, OnDestroy {
       field
     };
 
+    console.log('MOVETO', consulta, field, this.swap);
+
     this.presentToast('Selecciona la fecha donde quieres intercambiar el valor de ' + field);
   }
 
@@ -230,30 +235,32 @@ export class UserMedicalPage implements OnInit, OnDestroy {
       return;
     }
 
-    this.consultas = this.copyConsultas();
-    const indexFrom = this.user.consultas.findIndex(c => c.date === this.swap.consulta.date);
-    const indexTo = this.user.consultas.findIndex(c => c.date === consulta.date);
-    const valueFrom = this.user.consultas[indexFrom][this.swap.field];
-    const valueTo = this.user.consultas[indexTo][this.swap.field];
+    //this.consultas = this.copyConsultas();
+    const indexFrom = this.consultas.findIndex(c => c.date === this.swap.consulta.date);
+    const indexTo = this.consultas.findIndex(c => c.date === consulta.date);
+    const valueFrom = this.consultas[indexFrom][this.swap.field];
+    const valueTo = this.consultas[indexTo][this.swap.field];
 
     this.consultas[indexFrom][this.swap.field] = valueTo;
     this.consultas[indexTo][this.swap.field] = valueFrom;
 
     this.presentToast('El valor de ' + this.swap.field + ' fue intercambiado.');
     setTimeout(() => this.swap = false);
-
   }
 
   editConsultaValue(consulta, field, event) {
-    this.consultas = this.consultas.map(c => {
-      const tmp = Object.assign({}, c);
+    clearTimeout(this.timer);
+    this.timer = setTimeout(() => {
+      this.consultas = this.consultas.map(c => {
+        const tmp = Object.assign({}, c);
 
-      if (tmp.date === consulta.date) {
-        tmp[field] = event.target.value;
-      }
+        if (tmp.date === consulta.date) {
+          tmp[field] = event.target.value;
+        }
 
-      return tmp;
-    });
+        return tmp;
+      });
+    }, 1000);
   }
 
   createPayloadForm() {

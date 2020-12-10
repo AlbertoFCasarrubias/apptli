@@ -18,6 +18,9 @@ export class UserProfilePage implements OnInit, AfterViewInit {
   subscriptionTabs: Subscription;
   tabs$: Observable<object>;
 
+  subscriptionEdit: Subscription;
+  edit$: Observable<object>;
+
   userID: any;
   selectedTab: any;
   showParseBtn = false;
@@ -52,6 +55,11 @@ export class UserProfilePage implements OnInit, AfterViewInit {
         this.getUsers();
         console.log('USER ', document.documentURI.split('/'), this.userID, this.user, this.users);
       }
+    });
+
+    this.edit$ = this.utilitiesService.edit;
+    this.subscriptionEdit = this.edit$.subscribe(next => {
+      this.edit = next['edit'];
     });
   }
 
