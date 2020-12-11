@@ -1,3 +1,11 @@
+<div class="tooltip" *ngIf="installIOS" (click)="closeTooltip()">
+  <div class="add">
+    <img src="/assets/images/iosAdd.png">
+  </div>
+  <div class="txt">
+    Instala en tú iPhone: click en <img src="/assets/images/iosShare.png"> y luego Agregar a Inicio
+  </div>
+</div>
 <ion-app>
   <ion-split-pane contentId="main-content">
     <ion-menu contentId="main-content" type="overlay">

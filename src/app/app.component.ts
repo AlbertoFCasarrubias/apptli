@@ -75,6 +75,7 @@ export class AppComponent {
     public appPages = [];
     user: any;
     version = environment.version;
+    installIOS = false;
 
     constructor(
         private platform: Platform,
@@ -92,8 +93,11 @@ export class AppComponent {
     }
 
     initializeApp() {
+        if (this.getOS().userOS === 'iOS' && !this.platform.platforms().includes('pwa')) {
+            this.installIOS = true;
+        }
 
-        console.log('platform ', this.platform.platforms());
+        console.log('platform ', this.platform.platforms(), this.getOS(), this.platform.platforms().includes('pwa'));
         this.platform.ready().then(() => {
             this.statusBar.styleDefault();
             this.store.select(AppState.user).subscribe(user => {
@@ -191,6 +195,10 @@ export class AppComponent {
         }
     }
 
+    closeTooltip() {
+        this.installIOS = false;
+    }
+
     async initStore(user) {
         this.store.dispatch(new GetUserByMail(user.email)).toPromise().then(() => {
             this.user = this.store.selectSnapshot(AppState.user);
@@ -236,5 +244,48 @@ export class AppComponent {
             duration: 2000
         });
         toast.present();
+    }
+
+    getOS( )
+    {
+        let userOS;
+        let userOSver;
+        const ua = navigator.userAgent;
+        let uaindex;
+
+        // determine OS
+        if ( ua.match(/iPad/i) || ua.match(/iPhone/i) )
+        {
+            userOS = 'iOS';
+            uaindex = ua.indexOf( 'OS ' );
+        }
+        else if ( ua.match(/Android/i) )
+        {
+            userOS = 'Android';
+            uaindex = ua.indexOf( 'Android ' );
+        }
+        else
+        {
+            userOS = 'unknown';
+        }
+
+        // determine version
+        if ( userOS === 'iOS'  &&  uaindex > -1 )
+        {
+            userOSver = ua.substr( uaindex + 3, 3 ).replace( '_', '.' );
+        }
+        else if ( userOS === 'Android'  &&  uaindex > -1 )
+        {
+            userOSver = ua.substr( uaindex + 8, 3 );
+        }
+        else
+        {
+            userOSver = 'unknown';
+        }
+
+        return {
+            userOS,
+            userOSver
+        };
     }
 }
