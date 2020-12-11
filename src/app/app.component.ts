@@ -92,6 +92,8 @@ export class AppComponent {
     }
 
     initializeApp() {
+
+        console.log('platform ', this.platform.platforms());
         this.platform.ready().then(() => {
             this.statusBar.styleDefault();
             this.store.select(AppState.user).subscribe(user => {
