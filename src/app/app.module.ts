@@ -26,11 +26,10 @@ import {AgoraConfig, NgxAgoraModule} from 'ngx-agora';
 import {AngularFireFunctionsModule} from '@angular/fire/functions';
 import {AngularFireMessagingModule} from '@angular/fire/messaging';
 import {AngularFirePerformanceModule, PerformanceMonitoringService} from '@angular/fire/performance';
-import {ParseFilePage} from './pages/users/parse-file/parse-file.page';
 import {HighchartsChartModule} from 'highcharts-angular';
-import {AngularFireAnalyticsModule} from '@angular/fire/analytics';
 import {HTTP_INTERCEPTORS} from '@angular/common/http';
 import {HttpErrorInterceptor} from './services/interceptor/http-error.interceptor';
+import {Mugan86GoogleAnalyticsModule} from 'mugan86-ng-google-analytics';
 
 const agoraConfig: AgoraConfig = {
     AppID: 'c7d5f3bc5f4345fcaa57bba1fc1e5f6d',
@@ -47,14 +46,13 @@ registerLocaleData(localeEs);
         AppRoutingModule,
         IonicModule.forRoot(),
         HighchartsChartModule,
+        AngularFireModule.initializeApp(environment.firebase),
         AngularFireAuthModule,
         AngularFirestoreModule,
         AngularFireStorageModule,
         AngularFireFunctionsModule,
-        AngularFireAnalyticsModule,
         AngularFireMessagingModule,
         AngularFirePerformanceModule,
-        AngularFireModule.initializeApp(environment.firebase),
         NgxsModule.forRoot([
             AppState,
             UsersState,
@@ -66,7 +64,14 @@ registerLocaleData(localeEs);
             disabled: environment.production,
         }),
         NgxAgoraModule.forRoot(agoraConfig),
-        ServiceWorkerModule.register('combined-sw.js', {enabled: environment.production})],
+        ServiceWorkerModule.register('combined-sw.js', {enabled: environment.production}),
+        /*Mugan86GoogleAnalyticsModule.forRoot(
+            {
+                analyticsId: 'UA-106884468-1',
+                showLog: true
+            }
+        ),*/
+    ],
     providers: [
         StatusBar,
         SplashScreen,

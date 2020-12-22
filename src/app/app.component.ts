@@ -14,6 +14,9 @@ import {UsersState} from './store/states/users.state';
 import {AngularFireMessaging} from '@angular/fire/messaging';
 import {environment} from '../environments/environment';
 import { SwUpdate } from '@angular/service-worker';
+import {AngularFireAnalytics} from '@angular/fire/analytics';
+import 'firebase/analytics';
+import * as firebase from 'firebase/app';
 
 @Component({
     selector: 'app-root',
@@ -93,11 +96,18 @@ export class AppComponent {
     }
 
     initializeApp() {
+        firebase.analytics();
         if (this.getOS().userOS === 'iOS' && !this.platform.platforms().includes('pwa')) {
             this.installIOS = true;
         }
+        //android, phablet, mobile, mobileweb Android 10
+        //iphone ios mobile , mobileweb iOS 14
+        //alert(this.platform.platforms().join() + ' ' + this.getOS().userOS + ' ' + this.getOS().userOSver);
+        //firebase.analytics();
+        //firebase.analytics().logEvent('notification_received');
 
-        console.log('platform ', this.platform.platforms(), this.getOS(), this.platform.platforms().includes('pwa'));
+        //this.analytics.logEvent('test', { name: 'test'}).then(data => console.log('then ', data)).catch(err => console.error(err));
+        //console.log('analytics ', this.analytics);
         this.platform.ready().then(() => {
             this.statusBar.styleDefault();
             this.store.select(AppState.user).subscribe(user => {
@@ -205,7 +215,6 @@ export class AppComponent {
 
             const consulta = this.menu.find( m => m.title === 'Mis consultas');
             consulta.url = 'medical/' + this.user.id;
-            console.log('USER **', this.user, consulta.url);
         });
 
         this.store.dispatch(new GetUsers()).toPromise().then(() => {

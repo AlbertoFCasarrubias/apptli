@@ -1,6 +1,6 @@
 {
   "name": "apptli",
-  "version": "0.0.8",
+  "version": "0.0.14",
   "author": "Ionic Framework",
   "homepage": "https://ionicframework.com/",
   "scripts": {
@@ -40,6 +40,7 @@
     "highcharts": "^8.2.2",
     "highcharts-angular": "^2.8.2",
     "moment": "^2.24.0",
+    "mugan86-ng-google-analytics": "^1.1.1",
     "ng2-dragula": "^2.1.1",
     "ngx-agora": "2.0.1",
     "rxjs": "~6.5.1",
