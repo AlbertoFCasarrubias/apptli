@@ -4,7 +4,7 @@ import {AlertController, Platform, ToastController} from '@ionic/angular';
 import {SplashScreen} from '@ionic-native/splash-screen/ngx';
 import {StatusBar} from '@ionic-native/status-bar/ngx';
 import {AngularFireAuth} from '@angular/fire/auth';
-import {Router} from '@angular/router';
+import {NavigationEnd, Router} from '@angular/router';
 import {Store} from '@ngxs/store';
 import {GetUserByMail, SetToken, SetUser, UpdateUser} from './store/actions/app.action';
 import {GetPatients, GetUsers} from './store/actions/users.action';
@@ -17,6 +17,7 @@ import { SwUpdate } from '@angular/service-worker';
 import {AngularFireAnalytics} from '@angular/fire/analytics';
 import 'firebase/analytics';
 import * as firebase from 'firebase/app';
+import {AnalyticsService} from './services/firebase/analytics.service';
 
 @Component({
     selector: 'app-root',
@@ -89,6 +90,7 @@ export class AppComponent {
         public afAuth: AngularFireAuth,
         private afMessaging: AngularFireMessaging,
         public alertController: AlertController,
+        private analyticsService: AnalyticsService,
         private store: Store,
         public swUpdate: SwUpdate
     ) {
@@ -96,15 +98,29 @@ export class AppComponent {
     }
 
     initializeApp() {
-        firebase.analytics();
         if (this.getOS().userOS === 'iOS' && !this.platform.platforms().includes('pwa')) {
             this.installIOS = true;
         }
-        //android, phablet, mobile, mobileweb Android 10
-        //iphone ios mobile , mobileweb iOS 14
-        //alert(this.platform.platforms().join() + ' ' + this.getOS().userOS + ' ' + this.getOS().userOSver);
-        //firebase.analytics();
-        //firebase.analytics().logEvent('notification_received');
+
+        this.analyticsService.sendEvent('platform', {
+            platform: this.platform.platforms().join()
+        });
+
+        this.analyticsService.sendEvent('os', {
+            userOs: this.getOS().userOS,
+            userOSver: this.getOS().userOSver,
+            installIOS: this.installIOS
+        });
+
+        this.router.events.subscribe(event => {
+
+            if (event instanceof NavigationEnd) {
+                this.analyticsService.sendEvent('page', {
+                    url: event.urlAfterRedirects
+                });
+            }
+
+        });
 
         //this.analytics.logEvent('test', { name: 'test'}).then(data => console.log('then ', data)).catch(err => console.error(err));
         //console.log('analytics ', this.analytics);

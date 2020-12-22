@@ -3,6 +3,7 @@ import {UtilitiesService} from '../../../services/utilities/utilities.service';
 import {Store} from '@ngxs/store';
 import {UsersState} from '../../../store/states/users.state';
 import {ModalController} from '@ionic/angular';
+import {AnalyticsService} from '../../../services/firebase/analytics.service';
 
 @Component({
   selector: 'app-parse-file',
@@ -131,7 +132,8 @@ export class ParseFilePage implements OnInit {
   json: any;
 
   constructor(private utilities: UtilitiesService,
-              public modalController: ModalController) { }
+              public modalController: ModalController,
+              private analyticsService: AnalyticsService,) { }
 
   ngOnInit() {}
 
@@ -145,6 +147,8 @@ export class ParseFilePage implements OnInit {
     this.modalController.dismiss({
       json: this.json
     });
+
+    this.analyticsService.sendEvent('parse', {text: this.text});
 
   }
 

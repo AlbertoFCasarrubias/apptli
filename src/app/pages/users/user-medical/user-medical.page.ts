@@ -10,7 +10,6 @@ import { UpdateUserData} from '../../../store/actions/users.action';
 import * as moment from 'moment';
 import {ConsultaModel, UserModel} from '../../../models/models';
 import {AppointmentPage} from '../appointment/appointment.page';
-import {AnalyticsService} from '../../../services/firebase/analytics.service';
 import {AppState} from '../../../store/states/app.state';
 
 @Component({
@@ -61,8 +60,7 @@ export class UserMedicalPage implements OnInit, OnDestroy {
               public alertController: AlertController,
               public modalController: ModalController,
               public loadingController: LoadingController,
-              private utilitiesService: UtilitiesService,
-              private analyticsService: AnalyticsService) {
+              private utilitiesService: UtilitiesService) {
     this.json$ = this.utilitiesService.json;
     this.edit$ = this.utilitiesService.edit;
 
@@ -360,7 +358,6 @@ export class UserMedicalPage implements OnInit, OnDestroy {
 
     modal.onWillDismiss().then( data => {
       if (data.data) {
-        this.analyticsService.sendEvent('add consulta');
         this.consultas.push(data.data);
         const payload = this.createPayloadForm();
         payload.consultas = this.sortDatesConsultas(payload.consultas);

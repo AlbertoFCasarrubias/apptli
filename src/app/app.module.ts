@@ -29,7 +29,6 @@ import {AngularFirePerformanceModule, PerformanceMonitoringService} from '@angul
 import {HighchartsChartModule} from 'highcharts-angular';
 import {HTTP_INTERCEPTORS} from '@angular/common/http';
 import {HttpErrorInterceptor} from './services/interceptor/http-error.interceptor';
-import {Mugan86GoogleAnalyticsModule} from 'mugan86-ng-google-analytics';
 
 const agoraConfig: AgoraConfig = {
     AppID: 'c7d5f3bc5f4345fcaa57bba1fc1e5f6d',
@@ -65,12 +64,6 @@ registerLocaleData(localeEs);
         }),
         NgxAgoraModule.forRoot(agoraConfig),
         ServiceWorkerModule.register('combined-sw.js', {enabled: environment.production}),
-        /*Mugan86GoogleAnalyticsModule.forRoot(
-            {
-                analyticsId: 'UA-106884468-1',
-                showLog: true
-            }
-        ),*/
     ],
     providers: [
         StatusBar,

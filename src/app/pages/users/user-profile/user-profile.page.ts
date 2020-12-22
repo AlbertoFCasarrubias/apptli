@@ -7,6 +7,7 @@ import {Store} from '@ngxs/store';
 import {UsersState} from '../../../store/states/users.state';
 import {UtilitiesService} from '../../../services/utilities/utilities.service';
 import {Observable, Subscription} from 'rxjs';
+import {AnalyticsService} from '../../../services/firebase/analytics.service';
 
 @Component({
   selector: 'app-user-profile',
@@ -42,6 +43,7 @@ export class UserProfilePage implements OnInit, AfterViewInit {
               private store: Store,
               public menuCtrl: MenuController,
               private utilitiesService: UtilitiesService,
+              private analyticsService: AnalyticsService,
               public modalController: ModalController) {
     this.appUser = this.store.selectSnapshot(AppState.user);
     this.getUsers();
@@ -112,6 +114,7 @@ export class UserProfilePage implements OnInit, AfterViewInit {
   }
 
   async showParseFileModal() {
+    this.analyticsService.sendEvent('open-parse');
     const modal = await this.modalController.create({
       component: ParseFilePage,
     });
