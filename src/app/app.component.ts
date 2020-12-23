@@ -102,11 +102,8 @@ export class AppComponent {
             this.installIOS = true;
         }
 
-        this.analyticsService.sendEvent('platform', {
-            platform: this.platform.platforms().join()
-        });
-
         this.analyticsService.sendEvent('os', {
+            platform: this.platform.platforms().join(),
             userOs: this.getOS().userOS,
             userOSver: this.getOS().userOSver,
             installIOS: this.installIOS

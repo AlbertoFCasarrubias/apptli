@@ -114,7 +114,7 @@ export class UserProfilePage implements OnInit, AfterViewInit {
   }
 
   async showParseFileModal() {
-    this.analyticsService.sendEvent('open-parse');
+    this.analyticsService.sendEvent('open_parse_file');
     const modal = await this.modalController.create({
       component: ParseFilePage,
     });

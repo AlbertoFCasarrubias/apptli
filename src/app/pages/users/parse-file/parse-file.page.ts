@@ -4,6 +4,8 @@ import {Store} from '@ngxs/store';
 import {UsersState} from '../../../store/states/users.state';
 import {ModalController} from '@ionic/angular';
 import {AnalyticsService} from '../../../services/firebase/analytics.service';
+import * as minifier from 'string-minify';
+import {FirebaseService} from '../../../services/firebase/firebase.service';
 
 @Component({
   selector: 'app-parse-file',
@@ -11,8 +13,8 @@ import {AnalyticsService} from '../../../services/firebase/analytics.service';
   styleUrls: ['./parse-file.page.scss'],
 })
 export class ParseFilePage implements OnInit {
-  text: any = '';
-  text1: any = 'Ana Elizabeth García (liz)\n' +
+  text1: any = '';
+  text: any = 'Ana Elizabeth García (liz)\n' +
       '\n' +
       '175\n' +
       '\n' +
@@ -133,7 +135,8 @@ export class ParseFilePage implements OnInit {
 
   constructor(private utilities: UtilitiesService,
               public modalController: ModalController,
-              private analyticsService: AnalyticsService,) { }
+              private analyticsService: AnalyticsService,
+              private firebase: FirebaseService) { }
 
   ngOnInit() {}
 
@@ -148,7 +151,8 @@ export class ParseFilePage implements OnInit {
       json: this.json
     });
 
-    this.analyticsService.sendEvent('parse', {text: this.text});
+    this.analyticsService.sendEvent('parse_file');
+    this.firebase.log({text: this.text});
 
   }
 

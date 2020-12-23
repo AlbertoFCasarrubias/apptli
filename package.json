@@ -1,6 +1,6 @@
 {
   "name": "apptli",
-  "version": "0.0.14",
+  "version": "0.0.15",
   "author": "Ionic Framework",
   "homepage": "https://ionicframework.com/",
   "scripts": {
@@ -44,6 +44,7 @@
     "ng2-dragula": "^2.1.1",
     "ngx-agora": "2.0.1",
     "rxjs": "~6.5.1",
+    "string-minify": "^1.0.1",
     "tslib": "^1.9.0",
     "zone.js": "~0.9.1"
   },

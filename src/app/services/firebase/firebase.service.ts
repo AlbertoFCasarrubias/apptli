@@ -19,6 +19,7 @@ export class FirebaseService {
     private ORDERS = 'orders';
     private STATUS = 'status';
     private NOTIFICATION = 'notification';
+    private LOGS = 'logs';
 
     constructor(private afs: AngularFirestore,
                 private store: Store,
@@ -457,6 +458,12 @@ export class FirebaseService {
             });
     }
 
+    // LOGS
+    log(value) {
+        this.create(this.LOGS, value);
+    }
+
+    // COMMON FUNCTIONS
     private getCurrentUser() {
         return this.afAuth.currentUser;
     }
@@ -478,7 +485,6 @@ export class FirebaseService {
     }
 
     private async create(collection, value) {
-        console.log('create');
         const timestamp = this.timestamp;
         const last = await this.getLastRecord(collection);
         const current = await this.getCurrentUser();
